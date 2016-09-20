@@ -4,8 +4,42 @@
     <string name="mane_text">paste your text by tapping on pink button</string>
     <string-array name="poets">
         <item>А.С. Пушкин</item>
+        <item>А.С. Пушкин</item>
+        <item>А.С. Пушкин</item>
+        <item>А.С. Пушкин</item>
+        <item>А.С. Пушкин</item>
+        <item>А.С. Пушкин</item>
+        <item>А.С. Пушкин</item>
+        <item>А.С. Пушкин</item>
+        <item>А.С. Пушкин</item>
+        <item>А.С. Пушкин</item>
+        <item>А.С. Пушкин</item>
+        <item>А.С. Пушкин</item>
+        <item>А.С. Пушкин</item>
+        <item>А.С. Пушкин</item>
+        <item>А.С. Пушкин</item>
+        <item>А.С. Пушкин</item>
+        <item>А.С. Пушкин</item>
+        <item>А.С. Пушкин</item>
     </string-array>
     <string-array name="titles">
+        <item>Зимнее утро</item>
+        <item>Зимнее утро</item>
+        <item>Зимнее утро</item>
+        <item>Зимнее утро</item>
+        <item>Зимнее утро</item>
+        <item>Зимнее утро</item>
+        <item>Зимнее утро</item>
+        <item>Зимнее утро</item>
+        <item>Зимнее утро</item>
+        <item>Зимнее утро</item>
+        <item>Зимнее утро</item>
+        <item>Зимнее утро</item>
+        <item>Зимнее утро</item>
+        <item>Зимнее утро</item>
+        <item>Зимнее утро</item>
+        <item>Зимнее утро</item>
+        <item>Зимнее утро</item>
         <item>Зимнее утро</item>
     </string-array>
     <string-array name="poems">
