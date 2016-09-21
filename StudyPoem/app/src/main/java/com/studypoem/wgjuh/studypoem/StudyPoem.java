@@ -69,6 +69,9 @@ public class StudyPoem extends AppCompatActivity implements View.OnClickListener
         fab            = (FloatingActionButton) findViewById(R.id.fab);
         fab_random_hide = (FloatingActionButton) findViewById(R.id.fab_text_hide);
         fab_random_show = (FloatingActionButton) findViewById(R.id.fab_text_show);
+
+        if(getIntent().getExtras() != null && getIntent().getExtras().getBoolean("newText"))
+            stringBuilders.clear();
         System.out.println("SIZE_ARRAY: " + stringBuilders.size());
         arrayAdapter = new MyTextAdapter((StudyPoem) context, R.layout.list_view_test, R.id.my_custom_text, stringBuilders);
         ((ListView) findViewById(R.id.listView)).setAdapter(arrayAdapter);
@@ -87,6 +90,7 @@ public class StudyPoem extends AppCompatActivity implements View.OnClickListener
     protected void onPause() {
         super.onPause();
     }
+
 
     @NonNull
     private SpannableString getSpannableString(String s) {

@@ -1,9 +1,11 @@
 package com.studypoem.wgjuh.studypoem;
 
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,12 +32,11 @@ public class ListPoems extends AppCompatActivity implements AdapterView.OnItemSe
         String[] poets = getResources().getStringArray(R.array.poets);
         String[] titles = getResources().getStringArray(R.array.titles);
         System.out.println("Poets: " + Arrays.toString(poets) + " titles: " + Arrays.toString(titles) );
-
         mLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(mLayoutManager);
-
-        myRecyclerViewAdapter = new MyRecyclerViewAdapter(poets,titles,progress);
+        myRecyclerViewAdapter = new MyRecyclerViewAdapter(poets,titles,progress, this);
         recyclerView.setAdapter(myRecyclerViewAdapter);
+        ((FloatingActionButton)findViewById(R.id.fab)).setVisibility(View.INVISIBLE);
     }
 
     private boolean checkIfStandartPoemsExist(){
