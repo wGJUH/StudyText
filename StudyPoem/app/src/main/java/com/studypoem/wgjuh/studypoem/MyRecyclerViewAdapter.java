@@ -22,12 +22,15 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     private String[] titles;
     private int[] progress;
     private Context context;
-    static int last_position;
-    MyRecyclerViewAdapter(String[] authors, String[] titles, int[] progress, Context context){
+    private static boolean isFromDefaultLib = true;
+    static int last_position = -1;
+
+    MyRecyclerViewAdapter(String[] authors, String[] titles, int[] progress, Context context, Boolean isFromDefaultLib){
         this.authors = authors;
         this.titles = titles;
         this.progress = progress;
         this.context = context;
+        this.isFromDefaultLib = isFromDefaultLib;
     }
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -59,10 +62,19 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         @Override
         public void onClick(View v) {
             int itemPosition = ((RecyclerView)v.getParent()).indexOfChild(v);
+            String[] titles = v.getContext().getResources().getStringArray(R.array.titles);
+            int positionInMass = 0;
+            for(String s : titles){
+                if (s.equals(((TextView)v.findViewById(R.id.poem_title)).getText()))
+                break;
+                positionInMass++;
+            }
+
             System.out.println("Clicked and Position isViewHolder "+itemPosition + " last position" + last_position);
             Intent intent = new Intent(v.getContext(),StudyPoem.class);
-            if(last_position != itemPosition)
-            intent.putExtra("newText",true);
+            if(last_position != itemPosition){
+                intent.putExtra("newText",positionInMass);}
+            intent.putExtra("defaultPoems",isFromDefaultLib);
             last_position = itemPosition;
             v.getContext().startActivity(intent);
         }

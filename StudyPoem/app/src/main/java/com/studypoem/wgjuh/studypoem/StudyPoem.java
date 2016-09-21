@@ -3,6 +3,9 @@ package com.studypoem.wgjuh.studypoem;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -20,6 +23,7 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.BackgroundColorSpan;
 import android.util.TypedValue;
 import android.view.GestureDetector;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -49,6 +53,7 @@ public class StudyPoem extends AppCompatActivity implements View.OnClickListener
 
     public static final String TAG = "STUDY_POEM";
     public static Object tempString;
+    //TODO подумать надо ли все время держать в памяти масив строк
     public static ArrayList<SpannableStringBuilder> stringBuilders = new ArrayList<>();
     public static Map<Integer, ArrayList<Integer>> map = new HashMap<>();
     private Context context;
@@ -56,9 +61,10 @@ public class StudyPoem extends AppCompatActivity implements View.OnClickListener
     private int HideLevel = 0;
     public static Random random = new Random();
     private int first_visible = 0;
-     FloatingActionButton fab;
-     FloatingActionButton fab_random_hide;
-     FloatingActionButton fab_random_show;
+    private FloatingActionButton fab;
+    private FloatingActionButton fab_random_hide;
+    private FloatingActionButton fab_random_show;
+    private boolean isPrevDefault = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,8 +76,36 @@ public class StudyPoem extends AppCompatActivity implements View.OnClickListener
         fab_random_hide = (FloatingActionButton) findViewById(R.id.fab_text_hide);
         fab_random_show = (FloatingActionButton) findViewById(R.id.fab_text_show);
 
-        if(getIntent().getExtras() != null && getIntent().getExtras().getBoolean("newText"))
+        /**
+         * TODO check and chaneg this strange logic
+         */
+
+
+
+
+
+        if(getIntent().getExtras() != null) {
+            isPrevDefault = getIntent().getExtras().getBoolean("defaultPoems",false);
+            if(isPrevDefault){
+                fab.setImageResource(R.drawable.ic_settings_backup_restore_white_48dp);
+
+
             stringBuilders.clear();
+            map.clear();
+            System.out.println("TEXT: " +getResources().getStringArray(R.array.poems)[getIntent().getExtras().getInt("newText")]);
+            stringBuilders.addAll(getArray(getSpannableString(getResources().getStringArray(R.array.poems)[getIntent().getExtras().getInt("newText")])));
+        } else{
+            fab.setImageResource(R.drawable.ic_content_paste_white_48dp);
+            stringBuilders.clear();
+            map.clear();
+            System.out.println("TEXT: " +getResources().getStringArray(R.array.poems)[getIntent().getExtras().getInt("newText")]);
+            stringBuilders.addAll(getArray(getSpannableString(getResources().getStringArray(R.array.poems)[getIntent().getExtras().getInt("newText")])));
+        }
+        }
+
+
+
+
         System.out.println("SIZE_ARRAY: " + stringBuilders.size());
         arrayAdapter = new MyTextAdapter((StudyPoem) context, R.layout.list_view_test, R.id.my_custom_text, stringBuilders);
         ((ListView) findViewById(R.id.listView)).setAdapter(arrayAdapter);
@@ -97,26 +131,33 @@ public class StudyPoem extends AppCompatActivity implements View.OnClickListener
         SpannableString text = new SpannableString(s);
         Matcher matcher = Pattern.compile("[A-zA-Z0-9а-яА-ЯёЁ]+").matcher(s);
         while (matcher.find()) {
-
             text.setSpan(new LoremIpsumSpan(), matcher.start(), matcher.end(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
         return text;
     }
 
     private ArrayList<SpannableStringBuilder> getArray(SpannableString spannableString) {
+        Paint paint = new Paint();
+        Rect bounds = new Rect();
         ArrayList<SpannableStringBuilder> spannableStrings = new ArrayList<>();
         //StringBuilder stringBuilder = new StringBuilder();
         SpannableStringBuilder stringBuilder = new SpannableStringBuilder();
         Matcher matcher = Pattern.compile("\\n\\r|\\r\\n|\\r|\\n|\\Z").matcher(spannableString);
+        View view = LayoutInflater.from(this).inflate(R.layout.my_custom_textview,null);
+        TextView textView = (TextView)view.findViewById(R.id.my_custom_text);
+        paint.setTypeface(textView.getTypeface());// your preference here
+        paint.setTextSize(textView.getTextSize());// have this the same as your text size
+        int textViewWidth = textView.getWidth();
         int lines = 1;
         int start_position = 0;
+        int text_width = 0;
         /**
          * TODO разобраться с коэфицентами
          */
         while (matcher.find()) {
             if (matcher.start() - start_position >= 1) {
                 // //System.out.println("СТРОКА: " + spannableString.subSequence(start_position, matcher.end()));
-                stringBuilder.append(spannableString.subSequence(start_position, matcher.end()));
+                stringBuilder.append(spannableString.subSequence(start_position, matcher.end()-1));
                 spannableStrings.add(stringBuilder);
                 lines++;
 //            }
@@ -127,13 +168,8 @@ public class StudyPoem extends AppCompatActivity implements View.OnClickListener
                 stringBuilder = new SpannableStringBuilder();
             }
             start_position = matcher.end();
-            //lines++;
-
         }
-        for (SpannableStringBuilder spannableString1 : spannableStrings) {
-            //System.out.println("RESULT_TEST: " +spannableString1.toString());
-        }
-        System.out.println("ПЕРЕНОСОВ: " + spannableStrings.size());
+//
         return spannableStrings;
     }
 
@@ -178,10 +214,15 @@ public class StudyPoem extends AppCompatActivity implements View.OnClickListener
             case R.id.fab:
                 int current_scroll = ((ListView)findViewById(R.id.listView)).getScrollY();
                 ClipboardManager clipboardManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-                tempString = clipboardManager.getPrimaryClip().getItemAt(0).coerceToText(getBaseContext());
                 stringBuilders.clear();
                 System.out.println();
-                stringBuilders.addAll(getArray(getSpannableString(tempString.toString())));
+                if(isPrevDefault) {
+                    stringBuilders.addAll(getArray(getSpannableString(getResources().getStringArray(R.array.poems)[getIntent().getExtras().getInt("newText")])));
+                }
+                else {
+                    tempString = clipboardManager.getPrimaryClip().getItemAt(0).coerceToText(getBaseContext());
+                    stringBuilders.addAll(getArray(getSpannableString(tempString.toString())));
+                }
                 ((ListView) findViewById(R.id.listView)).setScrollY(current_scroll);
                 arrayAdapter.notifyDataSetChanged();
                 map.clear();
