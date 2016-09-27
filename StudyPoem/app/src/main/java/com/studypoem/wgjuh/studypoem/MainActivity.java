@@ -10,8 +10,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+    public static final String TAG = "LearnTextByHeart";
     CardView defaultLibStart;
     CardView myLibStart;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,8 +26,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
     public void onClick(View v) {
         Intent intent;
+        ListPoems.lvl = 0;
         switch (v.getId()) {
             case R.id.defaultLibraryStart:
                  intent = new Intent(this,ListPoems.class);
@@ -37,7 +45,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 intent.putExtra("activity","myLibrary");
                 startActivity(intent);
                 break;
-
             default:
                 break;
         }
