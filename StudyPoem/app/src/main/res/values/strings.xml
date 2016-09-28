@@ -2,26 +2,47 @@
     <string name="app_name">Learn Text By Heart</string>
     <string name="action_settings">Settings</string>
     <string name="mane_text">paste your text by tapping on pink button</string>
+    <string-array name="poets_portraits">
+        <item>@drawable/pushkin</item>
+        <item>@drawable/pushkin</item>
+        <item>@drawable/lermontov_2</item>
+        <item>@drawable/pushkin</item>
+        <item>@drawable/pushkin</item>
+        <item>@drawable/lermontov_2</item>
+        <item>@drawable/esenin</item>
+        <item>@drawable/esenin</item>
+        <item>@drawable/lermontov_2</item>
+        <item>@drawable/lermontov_2</item>
+        <item>@drawable/esenin</item>
+        <item>@drawable/lermontov_2</item>
+        <item>@drawable/esenin</item>
+        <item>@drawable/pushkin</item>
+        <item>@drawable/pushkin</item>
+        <item>@drawable/pushkin</item>
+        <item>@drawable/pushkin</item>
+        <item>@drawable/pushkin</item>
+        <item>@drawable/pushkin</item>
+    </string-array>
     <string-array name="poets">
-        <item>А.С. Пушкин</item>
-        <item>А.С. Пушкин</item>
-        <item>М.Ю. Лермонтов</item>
-        <item>А.С. Пушкин</item>
-        <item>А.С. Пушкин</item>
-        <item>М.Ю. Лермонтов</item>
-        <item>С.А. Есенин</item>
-        <item>С.А. Есенин</item>
-        <item>М.Ю. Лермонтов</item>
-        <item>М.Ю. Лермонтов</item>
-        <item>С.А. Есенин</item>
-        <item>М.Ю. Лермонтов</item>
-        <item>С.А. Есенин</item>
-        <item>А.С. Пушкин</item>
-        <item>А.С. Пушкин</item>
-        <item>А.С. Пушкин</item>
-        <item>А.С. Пушкин</item>
-        <item>А.С. Пушкин</item>
-        <item>А.С. Пушкин</item>
+        <item>Пушкин    А.С.</item>
+        <item>Пушкин    А.С.</item>
+        <item>Лермонтов М.Ю.</item>
+        <item>Пушкин    А.С.</item>
+        <item>Пушкин    А.С.</item>
+        <item>Лермонтов М.Ю.</item>
+        <item>Есенин    С.А.</item>
+        <item>Есенин    С.А.</item>
+        <item>Лермонтов М.Ю.</item>
+        <item>Лермонтов М.Ю.</item>
+        <item>Есенин    С.А.</item>
+        <item>Лермонтов М.Ю.</item>
+        <item>Есенин    С.А.</item>
+        <item>Пушкин    А.С.</item>
+        <item>Пушкин    А.С.</item>
+        <item>Пушкин    А.С.</item>
+        <item>Пушкин    А.С.</item>
+        <item>Пушкин    А.С.</item>
+        <item>Пушкин    А.С.</item>
     </string-array>
     <string-array name="titles">
         <item>Зимнее утро</item>

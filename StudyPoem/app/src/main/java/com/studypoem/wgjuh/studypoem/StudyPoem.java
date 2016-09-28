@@ -68,6 +68,7 @@ public class StudyPoem extends AppCompatActivity implements View.OnClickListener
     private boolean isPrevDefault = false;
     private ListPoems listPoems = new ListPoems();
     Bundle bundle;
+    SQLWorker sqlWorker;
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -85,13 +86,14 @@ public class StudyPoem extends AppCompatActivity implements View.OnClickListener
         fab_random_hide = (FloatingActionButton) findViewById(R.id.fab_text_hide);
         fab_random_show = (FloatingActionButton) findViewById(R.id.fab_text_show);
         bundle = getIntent().getExtras();
-
+        sqlWorker = new SQLWorker(this);
         /**
          * TODO check and chaneg this strange logic
          */
         if (bundle != null) {
             isPrevDefault = getIntent().getExtras().getBoolean("defaultPoems", false);
-            String temp = listPoems.getStringsFromDB(this,bundle.getString("regex")).get(0).toString();
+            new SQLWorker(this);
+            String temp = sqlWorker.getStringsFromDB(bundle.getString("regex")).getStrings().get(0);
             System.out.println("STRING_STUDY: " + temp);
             if (isPrevDefault) {
                 fab.setImageResource(R.drawable.ic_settings_backup_restore_white_48dp);
@@ -216,7 +218,7 @@ public class StudyPoem extends AppCompatActivity implements View.OnClickListener
                 stringBuilders.clear();
                 //Log.d(MainActivity.TAG,);
                 if (isPrevDefault) {
-                    stringBuilders.addAll(getArray(getSpannableString(listPoems.getStringsFromDB(this,bundle.getString("regex")).get(0).toString())));
+                    stringBuilders.addAll(getArray(getSpannableString(sqlWorker.getStringsFromDB(bundle.getString("regex")).getStrings().get(0))));
                 } else {
                     tempString = clipboardManager.getPrimaryClip().getItemAt(0).coerceToText(getBaseContext());
                     stringBuilders.addAll(getArray(getSpannableString(tempString.toString())));
