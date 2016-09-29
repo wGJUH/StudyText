@@ -7,12 +7,14 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -27,7 +29,6 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     private ArrayList<Integer> ids;
     private Map<Integer,Map<String,Integer>> map;
     private String[] titles;
-    private int[] progress;
     private Context context;
     private static boolean isFromDefaultLib = true;
     static int last_position = -1;
@@ -35,31 +36,62 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     MyRecyclerViewAdapter(ArrayList<String> strings,/* String[] titles,*/ int[] progress, Context context, Boolean isFromDefaultLib) {
         this.strings = strings;
         //this.titles = titles;
-        this.progress = progress;
         this.context = context;
         this.isFromDefaultLib = isFromDefaultLib;
     }
     MyRecyclerViewAdapter(Values values, int[] progress, Context context, Boolean isFromDefaultLib) {
         this.strings = values.getStrings();
         this.ids = values.getIds();
-        this.progress = progress;
         this.context = context;
         this.isFromDefaultLib = isFromDefaultLib;
     }
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_poems_single_element, parent, false);
-        ViewHolder viewHolder = new ViewHolder((CardView) v);
+        ViewHolder viewHolder = new ViewHolder( v);
         return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        if (ListPoems.lvl >= 1)
+        if (ListPoems.lvl >= 1) {
             ((ImageView) holder.mLayout.findViewById(R.id.poem_author_portrait)).setVisibility(View.GONE);
-        else
-            ((ImageView) holder.mLayout.findViewById(R.id.poem_author_portrait)).setImageResource(ids.get(position));
-            ((TextView) holder.mLayout.findViewById(R.id.poem_author)).setText(strings.get(position));
+            ((TextView) holder.mLayout.findViewById(R.id.poem_author)).setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 200));
+            ((TextView) holder.mLayout.findViewById(R.id.poem_author)).setGravity(Gravity.CENTER);
+            ((TextView) holder.mLayout.findViewById(R.id.poem_author)).setMaxLines(2);
+        }
+        else {
+            int idPortrait;
+            switch (strings.get(position)){
+                case "Пушкин А.С.":
+                    idPortrait = context.getResources().getIdentifier("pushkin","drawable",BuildConfig.APPLICATION_ID);
+                    break;
+                case "Фет А.":
+                    idPortrait = context.getResources().getIdentifier("fet","drawable",BuildConfig.APPLICATION_ID);
+                    break;
+                case "Федор Т.":
+                    idPortrait = context.getResources().getIdentifier("tyutchev","drawable",BuildConfig.APPLICATION_ID);
+                    break;
+                case "Некрасов Н.":
+                    idPortrait = context.getResources().getIdentifier("nekrasov","drawable",BuildConfig.APPLICATION_ID);
+                    break;
+                case "Лермонтов М.Ю.":
+                    idPortrait = context.getResources().getIdentifier("lermontov_2","drawable",BuildConfig.APPLICATION_ID);
+                    break;
+                case "Иоганн Вольфганг фон Гёте":
+                    idPortrait = context.getResources().getIdentifier("goethe","drawable",BuildConfig.APPLICATION_ID);
+                    break;
+                case "Есенин С.А.":
+                    idPortrait = context.getResources().getIdentifier("esenin","drawable",BuildConfig.APPLICATION_ID);
+                    break;
+                default:
+                    idPortrait = -1;
+                    break;
+            }
+            if (idPortrait != -1)
+            ((ImageView) holder.mLayout.findViewById(R.id.poem_author_portrait)).setImageResource(R.mipmap.ic_launcher);
+        }
+        ((TextView) holder.mLayout.findViewById(R.id.poem_author)).setText(strings.get(position));
 
     }
 
@@ -69,9 +101,9 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public CardView mLayout;
+        public View mLayout;
 
-        public ViewHolder(CardView v) {
+        public ViewHolder(View v) {
             super(v);
             v.setOnClickListener(this);
             mLayout = v;

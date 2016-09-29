@@ -21,7 +21,7 @@ import java.util.Arrays;
  * Created by WGJUH on 20.09.2016.
  */
 public class SQLWorker extends SQLiteOpenHelper {
-    public static final String DB_NAME = "PoemsTable.sqlite";
+    public static final String DB_NAME = "PoemsTable";
     public static final String DB_LOCATION = "/data/data/"+BuildConfig.APPLICATION_ID+"/databases/";
     Context context;
     SQLiteDatabase database;
@@ -32,7 +32,7 @@ public class SQLWorker extends SQLiteOpenHelper {
         boolean dbexist = checkdatabase();
         if (dbexist) {
             System.out.println(MainActivity.TAG + "Database exists");
-            opendatabase();
+            //opendatabase();
         } else {
             System.out.println(MainActivity.TAG + "Database doesn't exist");
             try {
@@ -40,6 +40,7 @@ public class SQLWorker extends SQLiteOpenHelper {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
         }
     }
 
@@ -75,9 +76,16 @@ public class SQLWorker extends SQLiteOpenHelper {
      * TODO error with assets file
      * @throws IOException
      */
-    private void copydatabase() throws IOException {
+    private void copydatabase() throws IOException{
         //Open your local db as the input stream
-        InputStream myinput = context.getAssets().open(DB_NAME);
+        System.out.println(MainActivity.TAG + " START COPYING");
+        InputStream myinput = null;
+        try {
+            myinput = context.getAssets().open(DB_NAME);
+        } catch (IOException e) {
+            System.out.println(MainActivity.TAG + " get from assets failed ");
+            e.printStackTrace();
+        }
         System.out.println(MainActivity.TAG + " assets: " + myinput.available());
         // Path to the just created empty db
         String outfilename = DB_LOCATION + DB_NAME;
@@ -87,6 +95,7 @@ public class SQLWorker extends SQLiteOpenHelper {
 
         // transfer byte to inputfile to outputfile
         byte[] buffer = new byte[myinput.available()];
+        System.out.println(MainActivity.TAG + " BUFFER: " + buffer.length);
         int length;
         while ((length = myinput.read(buffer))>0) {
             myoutput.write(buffer,0,length);
@@ -111,50 +120,6 @@ public class SQLWorker extends SQLiteOpenHelper {
         super.close();
     }
 
-   /*     super(context, DB_NAME, null, 1);
-        this.context = context;
-        checkDatabse();
-    }
-
-    private void checkDatabse(){
-        File databse = new File(DB_LOCATION+DB_NAME);
-        if(!databse.exists()){
-            if(!copyDatabse()){
-                System.out.println(MainActivity.TAG + MainActivity.TAG + " FAILED COPY DB");
-            }
-        }
-    }
-    private boolean copyDatabse(){
-        try{
-            InputStream inputStream = context.getAssets().open(DB_NAME);
-            String outFilename = DB_LOCATION + DB_NAME;
-            OutputStream outputStream = new FileOutputStream(outFilename);
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = inputStream.read(buffer))>0) {
-                outputStream.write(buffer,0,length);
-            }            outputStream.flush();
-            outputStream.close();
-            inputStream.close();
-            return true;
-        }catch (Exception e){
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-
-    public void openDatabse(){
-        String myPath =DB_LOCATION + DB_NAME; //DB_LOCATION + DB_NAME;
-        if(database != null && database.isOpen()){
-            return;
-        }else
-            database = SQLiteDatabase.openDatabase(myPath,null,SQLiteDatabase.OPEN_READWRITE);
-    }
-    public void closeDatabase(){
-        if(database != null)
-            database.close();
-    }*/
     public Values getStringsFromDB(String regex) {
         opendatabase();
         String column = "author_name";
@@ -174,13 +139,13 @@ public class SQLWorker extends SQLiteOpenHelper {
                 default:
                     break;
             }
-            cursor = database.query(null, new String[]{column}, "(author_name LIKE ? OR title LIKE ?)", new String[]{"%" + regex + "%", "%" + regex + "%"}, column, null, column);
+            cursor = database.query(DB_NAME, new String[]{column}, "(author_name LIKE ? OR title LIKE ?)", new String[]{"%" + regex + "%", "%" + regex + "%"}, column, null, column);
         } else {
-            cursor = database.query(null, new String[]{column,"author_portrait_id"}, null, null, column, null, column);
+            cursor = database.query(DB_NAME, new String[]{column,"author_portrait_id"}, null, null, column, null, column);
         }
         System.out.println(MainActivity.TAG + MainActivity.TAG + " " + cursor.getCount() + " names " + Arrays.toString(cursor.getColumnNames()));
         ArrayList<String> adapterStrings = new ArrayList<>();
-        ArrayList<Integer> ids = new ArrayList<>();
+        ArrayList<Integer>ids = new ArrayList<>();
         if (cursor.moveToFirst()) {
             do {
                 String temp = cursor.getString(0);

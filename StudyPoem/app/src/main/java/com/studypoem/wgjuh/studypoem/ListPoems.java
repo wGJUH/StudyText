@@ -63,7 +63,10 @@ public class ListPoems extends AppCompatActivity implements View.OnClickListener
                 int[] progress = {0};
                 myRecyclerViewAdapter = new MyRecyclerViewAdapter(sqlWorker.getStringsFromDB(bundle.getString("regex", null)), progress, this, true);
                 recyclerView.setAdapter(myRecyclerViewAdapter);
+                if(bundle.getString("regex", null) == null)
                 ((Toolbar) findViewById(R.id.toolbar_list_poems)).setTitle("Default Library");
+                else
+                    ((Toolbar) findViewById(R.id.toolbar_list_poems)).setTitle(bundle.getString("regex", null));
                 fab.setVisibility(View.INVISIBLE);
             } else {
                 ((Toolbar) findViewById(R.id.toolbar_list_poems)).setTitle("My Library");

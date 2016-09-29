@@ -99,13 +99,13 @@ public class StudyPoem extends AppCompatActivity implements View.OnClickListener
                 fab.setImageResource(R.drawable.ic_settings_backup_restore_white_48dp);
                 stringBuilders.clear();
                 map.clear();
-                Log.d(MainActivity.TAG,"TEXT: " + getResources().getStringArray(R.array.poems)[getIntent().getExtras().getInt("newText")]);
+//                Log.d(MainActivity.TAG,"TEXT: " + getResources().getStringArray(R.array.poems)[getIntent().getExtras().getInt("newText")]);
                 stringBuilders.addAll(getArray(getSpannableString(temp)));
             } else {
                 fab.setImageResource(R.drawable.ic_content_paste_white_48dp);
                 stringBuilders.clear();
                 map.clear();
-                Log.d(MainActivity.TAG,"TEXT: " + getResources().getStringArray(R.array.poems)[getIntent().getExtras().getInt("newText")]);
+  //              Log.d(MainActivity.TAG,"TEXT: " + getResources().getStringArray(R.array.poems)[getIntent().getExtras().getInt("newText")]);
                 stringBuilders.addAll(getArray(getSpannableString(temp)));
             }
         }
@@ -119,7 +119,8 @@ public class StudyPoem extends AppCompatActivity implements View.OnClickListener
         fab_random_hide.setOnClickListener(this);
         fab_random_show.setOnClickListener(this);
         fab.setOnClickListener(this);
-    }
+
+            }
 
     @Override
     protected void onPause() {
