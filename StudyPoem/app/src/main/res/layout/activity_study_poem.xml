@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.studypoem.wgjuh.studypoem.StudyPoem">
+    tools:context="com.studypoem.wgjuh.byheart.StudyPoem">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -13,16 +13,15 @@
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+            android:id="@+id/study_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
     </android.support.design.widget.AppBarLayout>
-
-    <include layout="@layout/content_study_poem" />
-
+    <include android:id="@+id/poem_text"
+        layout="@layout/content_study_poem" />
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"

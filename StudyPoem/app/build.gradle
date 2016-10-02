@@ -1,11 +1,11 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 23
+    compileSdkVersion 24
     buildToolsVersion "24.0.2"
 
     defaultConfig {
-        applicationId "com.studypoem.wgjuh.studypoem"
+        applicationId "com.studypoem.wgjuh.byheart"
         minSdkVersion 15
         targetSdkVersion 21
         versionCode 1

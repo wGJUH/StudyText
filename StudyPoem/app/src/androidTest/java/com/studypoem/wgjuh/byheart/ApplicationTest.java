@@ -1,4 +1,4 @@
-package com.studypoem.wgjuh.studypoem;
+package com.studypoem.wgjuh.byheart;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

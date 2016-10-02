@@ -1,6 +1,4 @@
-package com.studypoem.wgjuh.studypoem;
-
-import android.content.res.TypedArray;
+package com.studypoem.wgjuh.byheart;
 
 import java.util.ArrayList;
 
@@ -20,5 +18,10 @@ final class Values{
 
     public ArrayList<Integer> getIds() {
         return ids;
+    }
+    public void setStrings(ArrayList<String> strings){
+        ArrayList<String> temp = (ArrayList<String>) strings.clone();
+        this.strings.clear();
+        this.strings.addAll(temp);
     }
 }

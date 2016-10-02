@@ -6,6 +6,10 @@
     android:layout_height="match_parent"
     android:padding = "@dimen/activity_horizontal_margin"
     >
+    <ViewSwitcher
+        android:id="@+id/switcher"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <ListView
         android:id="@+id/listView"
         android:layout_width="match_parent"
@@ -16,4 +20,10 @@
         android:dividerHeight="2dp"
         >
     </ListView>
+        <EditText
+            android:id="@+id/new_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="start" />
+    </ViewSwitcher>
 </LinearLayout>
