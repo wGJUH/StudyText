@@ -43,7 +43,7 @@ public class MyTextAdapter extends ArrayAdapter {
 //        System.out.println("Position: " + spannableString.subSequence(spannableString.getSpanStart(loremIpsumSpan),spannableString.getSpanEnd(loremIpsumSpan)));
         LayoutInflater mLayoutInflator = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         TextView textView = (TextView) mLayoutInflator.inflate(R.layout.my_custom_textview,null);
-        System.out.println("BUILDER: " + getItem(position).toString());
+       // System.out.println("BUILDER: " + getItem(position).toString());
         textView.setText((SpannableStringBuilder)getItem(position));
         textView.setMovementMethod(LinkMovementMethod.getInstance());
         if(setTextSize != 0)

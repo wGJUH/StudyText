@@ -44,8 +44,7 @@ import java.util.regex.Pattern;
 
 import javax.xml.datatype.Duration;
 
-public class StudyPoem extends AppCompatActivity implements View.OnClickListener, AbsListView.OnScrollListener {
-    public static final String TAG = "STUDY_POEM";
+public class StudyPoem extends AppCompatActivity implements View.OnClickListener, AbsListView.OnScrollListener,Data {
     public static Object tempString;
     //TODO подумать надо ли все время держать в памяти масив строк
     public static ArrayList<SpannableStringBuilder> stringBuilders = new ArrayList<>();
@@ -69,11 +68,17 @@ public class StudyPoem extends AppCompatActivity implements View.OnClickListener
     public static final int SAVE_TEXT = 1;
     public static final int OLD_TEXT = 2;
     private EditText editText;
-
+    private Toolbar toolbar;
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        ListPoems.lvl--;
+        if((mainFabState == NEW_TEXT
+                || mainFabState == SAVE_TEXT)
+                && toolbar.getTitle().equals(FAVORITES)){
+            setResult(666);
+        }else {
+            ListPoems.lvl--;
+        }
+        finish();
     }
 
     @Override
@@ -81,44 +86,47 @@ public class StudyPoem extends AppCompatActivity implements View.OnClickListener
         super.onCreate(savedInstanceState);
         this.context = this;
         setContentView(R.layout.activity_study_poem);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.study_toolbar);
+        toolbar = (Toolbar) findViewById(R.id.study_toolbar);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab_random_hide = (FloatingActionButton) findViewById(R.id.fab_text_hide);
         fab_random_show = (FloatingActionButton) findViewById(R.id.fab_text_show);
         bundle = getIntent().getExtras();
         sqlWorker = new SQLWorker(this);
         editText = ((EditText) findViewById(R.id.new_text));
-        editText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-            }
+            editText.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
+                }
 
-            @Override
-            public void afterTextChanged(Editable s) {
-               if(s.length() != 0) {
-                   final OvershootInterpolator interpolator = new OvershootInterpolator();
-                   ViewCompat.animate(fab).rotation(360f).withLayer().setDuration(2000).setInterpolator(interpolator).start();
-                   fab.setImageResource(android.R.drawable.ic_menu_save);
-                   mainFabState = SAVE_TEXT;
-               }else {
-                   final OvershootInterpolator interpolator = new OvershootInterpolator();
-                   ViewCompat.animate(fab).rotation(-360f).withLayer().setDuration(2000).setInterpolator(interpolator).start();
-                   fab.setImageResource(R.drawable.ic_content_paste_white_48dp);
-                   mainFabState = NEW_TEXT;
-               }
-            }
-        });
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    if (s.length() != 0) {
+                        final OvershootInterpolator interpolator = new OvershootInterpolator();
+                        ViewCompat.animate(fab).rotation(360f).withLayer().setDuration(2000).setInterpolator(interpolator).start();
+                        fab.setImageResource(android.R.drawable.ic_menu_save);
+                        mainFabState = SAVE_TEXT;
+                    } else {
+                        System.out.println(MainActivity.TAG + " NEW TEXT from TextWatcher ");
+                        final OvershootInterpolator interpolator = new OvershootInterpolator();
+                        ViewCompat.animate(fab).rotation(-360f).withLayer().setDuration(2000).setInterpolator(interpolator).start();
+                        fab.setImageResource(R.drawable.ic_content_paste_white_48dp);
+                        mainFabState = NEW_TEXT;
+                    }
+                }
+            });
+
         /**
          * TODO check and chaneg this strange logic
          */
         if (bundle != null) {
             //isPrevDefault = getIntent().getExtras().getBoolean("defaultPoems", false);
-            isNewText = getIntent().getExtras().getBoolean("new_text", false);
+            isNewText = getIntent().getExtras().getBoolean(KEY_NEW_TEXT, false);
             if(isNewText)
                 mainFabState = NEW_TEXT;
             else mainFabState = OLD_TEXT;
@@ -127,9 +135,10 @@ public class StudyPoem extends AppCompatActivity implements View.OnClickListener
              * TODO поправить код получения строки
              */
             if (isNewText) {
+                System.out.println(MainActivity.TAG + " NEW TEXT");
                 fab_random_hide.setVisibility(View.INVISIBLE);
                 fab_random_show.setVisibility(View.INVISIBLE);
-                String s = bundle.getString("regex");
+                String s = bundle.getString(KEY_REGEX);
                 toolbar.setTitle(s);
                 fab.setImageResource(R.drawable.ic_content_paste_white_48dp);
                 ViewSwitcher viewSwitcher = (ViewSwitcher) findViewById(R.id.switcher);
@@ -138,7 +147,8 @@ public class StudyPoem extends AppCompatActivity implements View.OnClickListener
                 fab.setImageResource(R.drawable.ic_settings_backup_restore_white_48dp);
                 stringBuilders.clear();
                 map.clear();
-                String temp = sqlWorker.getStringsFromDB(bundle.getString("regex")).getStrings().get(0);
+                System.out.println(MainActivity.TAG + " regex string: " + bundle.getString(KEY_REGEX));
+                String temp = sqlWorker.getStringsFromDB(bundle.getString(KEY_REGEX)).getStrings().get(0);
                 stringBuilders.addAll(getArray(getSpannableString(temp)));
             }
         }
@@ -164,7 +174,7 @@ public class StudyPoem extends AppCompatActivity implements View.OnClickListener
     @NonNull
     private SpannableString getSpannableString(String s) {
         SpannableString text = new SpannableString(s);
-        Matcher matcher = Pattern.compile("[A-zA-Z0-9а-яА-ЯёЁ]+").matcher(s);
+        Matcher matcher = Pattern.compile(PATTERN_WORD).matcher(s);
         while (matcher.find()) {
             text.setSpan(new LoremIpsumSpan(), matcher.start(), matcher.end(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
@@ -177,7 +187,7 @@ public class StudyPoem extends AppCompatActivity implements View.OnClickListener
         ArrayList<SpannableStringBuilder> spannableStrings = new ArrayList<>();
         //StringBuilder stringBuilder = new StringBuilder();
         SpannableStringBuilder stringBuilder = new SpannableStringBuilder();
-        Matcher matcher = Pattern.compile("\\n\\r|\\r\\n|\\r|\\n|\\Z").matcher(spannableString);
+        Matcher matcher = Pattern.compile(PATTERN_STRING).matcher(spannableString);
         View view = LayoutInflater.from(this).inflate(R.layout.my_custom_textview, null);
         TextView textView = (TextView) view.findViewById(R.id.my_custom_text);
         paint.setTypeface(textView.getTypeface());// your preference here
@@ -191,35 +201,26 @@ public class StudyPoem extends AppCompatActivity implements View.OnClickListener
          */
         while (matcher.find()) {
             if (matcher.start() - start_position >= 1) {
-                // //Log.d(MainActivity.TAG,"СТРОКА: " + spannableString.subSequence(start_position, matcher.end()));
                 stringBuilder.append(spannableString.subSequence(start_position, matcher.end() - 1));
                 spannableStrings.add(stringBuilder);
                 lines++;
-//            }
-//            if (lines >= 6) {
                 Log.d(MainActivity.TAG, "BUILDER: STRING_TEST " + stringBuilder);
-                //spannableStrings.add(stringBuilder);
                 lines = 1;
                 stringBuilder = new SpannableStringBuilder();
             }
             start_position = matcher.end();
         }
-//
         return spannableStrings;
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_study_poem, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         float currentSize = 0;
         switch (item.getItemId()) {
             case R.id.action_settings:
@@ -262,7 +263,7 @@ public class StudyPoem extends AppCompatActivity implements View.OnClickListener
     }
     private void saveText(){
         final View view = LayoutInflater.from(this).inflate(R.layout.new_author, null, false);
-        final String poem = ((EditText)findViewById(R.id.new_text)).getText().toString();
+        final String poem = ((EditText)findViewById(R.id.new_text)).getText().toString()+"\n";
         new AlertDialog.Builder(this).setView(view)
                 .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
                     @Override
@@ -271,20 +272,20 @@ public class StudyPoem extends AppCompatActivity implements View.OnClickListener
                         String poem_title = ((EditText)view.findViewById(R.id.author_name)).getText().toString();
                         System.out.println(MainActivity.TAG+ " author: " + author_name + " title: " + poem_title);
                         if(!poem_title.equals("")) {
-                            if (author_name.equals("Starred")){
+                            if (author_name.equals(FAVORITES)){
                             sqlWorker.addStringToDB(null, poem_title, poem,true);
                                 setResult(666);
                                 finish();
-                            }
+                            }else{
                             sqlWorker.addStringToDB(author_name, poem_title, poem,false);
                             ListPoems.lvl--;
                             setResult(777);
-                            finish();
+                            finish();}
                         }else{
-                            Toast.makeText(getBaseContext(),"Input title",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getBaseContext(),R.string.input_title,Toast.LENGTH_SHORT).show();
                         }
                     }
-                }).setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
@@ -294,7 +295,7 @@ public class StudyPoem extends AppCompatActivity implements View.OnClickListener
     private void formateView(){
         int current_scroll = ((ListView) findViewById(R.id.listView)).getScrollY();
         ClipboardManager clipboardManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-        stringBuilders.addAll(getArray(getSpannableString(sqlWorker.getStringsFromDB(bundle.getString("regex")).getStrings().get(0))));
+        stringBuilders.addAll(getArray(getSpannableString(sqlWorker.getStringsFromDB(bundle.getString(KEY_REGEX)).getStrings().get(0))));
         ((ListView) findViewById(R.id.listView)).setScrollY(current_scroll);
         arrayAdapter.notifyDataSetChanged();
         map.clear();
@@ -326,7 +327,7 @@ public class StudyPoem extends AppCompatActivity implements View.OnClickListener
                 if (stringBuilders.size() != 0) {
                     for (int i = 0; i < stringBuilders.size(); i++) {
                         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(stringBuilders.get(i));
-                        Matcher matcher = Pattern.compile("[A-zA-Z0-9а-яА-ЯёЁ]+").matcher(spannableStringBuilder);
+                        Matcher matcher = Pattern.compile(PATTERN_WORD).matcher(spannableStringBuilder);
                         int count = 0;
                         while (matcher.find()) count++;
                         Log.d(MainActivity.TAG, "TEST_COUNT " + count + " string: " + i);
@@ -370,7 +371,7 @@ public class StudyPoem extends AppCompatActivity implements View.OnClickListener
             case R.id.fab_text_show:
                 for (int i = 0; i < map.keySet().size(); i++) {
                     if (map.get(i) != null) {
-                        Matcher matcher = Pattern.compile("[A-zA-Z0-9а-яА-ЯёЁ]+").matcher(stringBuilders.get(i));
+                        Matcher matcher = Pattern.compile(PATTERN_WORD).matcher(stringBuilders.get(i));
                         int j = 0;
                         Log.d(MainActivity.TAG, "j_remove: " + j + " map: " + map.get(i) + " key: " + i);
                         Log.d(MainActivity.TAG, "j_remove: " + j + " map: " + map.get(i).toString() + " key: " + i);

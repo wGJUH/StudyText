@@ -19,14 +19,14 @@ import java.util.Arrays;
 /**
  * Created by WGJUH on 20.09.2016.
  */
-public class SQLWorker extends SQLiteOpenHelper {
-    public static final String DB_NAME = "PoemsTable";
-    public static final String DB_LOCATION = "/data/data/"+BuildConfig.APPLICATION_ID+"/databases/";
+public class SQLWorker extends SQLiteOpenHelper implements Data {
+
     Context context;
     SQLiteDatabase database;
+
     public SQLWorker(Context context) {
-        super(context,DB_NAME,null,1);
-        this.context=context;
+        super(context, DB_NAME, null, 1);
+        this.context = context;
         System.out.println(MainActivity.TAG + "Context: " + context);
         boolean dbexist = checkdatabase();
         if (dbexist) {
@@ -45,13 +45,13 @@ public class SQLWorker extends SQLiteOpenHelper {
 
     public void createdatabase() throws IOException {
         boolean dbexist = checkdatabase();
-        if(dbexist) {
+        if (dbexist) {
             System.out.println(MainActivity.TAG + " Database exists.");
         } else {
             this.getReadableDatabase();
             try {
                 copydatabase();
-            } catch(IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
                 throw new Error("Error copying database");
             }
@@ -65,7 +65,7 @@ public class SQLWorker extends SQLiteOpenHelper {
             String myPath = DB_LOCATION + DB_NAME;
             File dbfile = new File(myPath);
             checkdb = dbfile.exists();
-        } catch(SQLiteException e) {
+        } catch (SQLiteException e) {
             System.out.println(MainActivity.TAG + "Database doesn't exist");
         }
         return checkdb;
@@ -73,9 +73,10 @@ public class SQLWorker extends SQLiteOpenHelper {
 
     /**
      * TODO error with assets file
+     *
      * @throws IOException
      */
-    private void copydatabase() throws IOException{
+    private void copydatabase() throws IOException {
         //Open your local db as the input stream
         System.out.println(MainActivity.TAG + " START COPYING");
         InputStream myinput = null;
@@ -96,8 +97,8 @@ public class SQLWorker extends SQLiteOpenHelper {
         byte[] buffer = new byte[myinput.available()];
         System.out.println(MainActivity.TAG + " BUFFER: " + buffer.length);
         int length;
-        while ((length = myinput.read(buffer))>0) {
-            myoutput.write(buffer,0,length);
+        while ((length = myinput.read(buffer)) > 0) {
+            myoutput.write(buffer, 0, length);
         }
 
         //Close the streams
@@ -114,7 +115,7 @@ public class SQLWorker extends SQLiteOpenHelper {
     }
 
     public synchronized void close() {
-        if(database != null) {
+        if (database != null) {
             database.close();
         }
         super.close();
@@ -122,34 +123,34 @@ public class SQLWorker extends SQLiteOpenHelper {
 
     public Values getStringsFromDB(String regex) {
         opendatabase();
-        String column = "author_name";
+        String column = COLUMN_AUTHOR_NAME;
         Cursor cursor;
         Integer currentLvl = ListPoems.lvl;
         if (currentLvl != 0 && regex != null) {
             switch (currentLvl) {
                 case 0:
-                    column = "author_name";
+                    column = COLUMN_AUTHOR_NAME;
                     break;
                 case 1:
-                    column = "title";
+                    column = COLUMN_POEM_TITLE;
                     break;
                 case 2:
-                    column = "poem";
+                    column = COLUMN_POEM;
                     break;
                 default:
                     break;
             }
-            cursor = database.query(DB_NAME, new String[]{column}, "author_name LIKE ? OR title LIKE ?", new String[]{"%" + regex + "%", "%" + regex + "%"}, column, null, column);
+            cursor = database.query(DB_NAME, new String[]{column}, COLUMN_AUTHOR_NAME + " = ? OR " + COLUMN_POEM_TITLE + " = ?", new String[]{regex, regex}, column, null, column);
         } else {
-            cursor = database.query(DB_NAME, new String[]{column,"author_portrait_id"}, null, null, column, null, column);
+            cursor = database.query(DB_NAME, new String[]{column, COLUMN_ID}, null,null /*COLUMN_AUTHOR_NAME + " != ?", new String[]{FAVORITES}*/, column, null, column);
         }
         System.out.println(MainActivity.TAG + " " + cursor.getCount() + " names " + Arrays.toString(cursor.getColumnNames()));
         ArrayList<String> adapterStrings = new ArrayList<>();
-        ArrayList<Integer>ids = new ArrayList<>();
+        ArrayList<Integer> ids = new ArrayList<>();
         if (cursor.moveToFirst()) {
             do {
                 String temp = cursor.getString(0);
-                if(temp != null) {
+                if (temp != null) {
                     System.out.println(MainActivity.TAG + "STRING: " + temp);
                     adapterStrings.add(temp);
                     if (currentLvl == 0)
@@ -157,129 +158,125 @@ public class SQLWorker extends SQLiteOpenHelper {
                 }
             } while (cursor.moveToNext());
         } else System.out.println(MainActivity.TAG + MainActivity.TAG + " 0 elements");
-//        System.out.println(MainActivity.TAG + MainActivity.TAG + adapterStrings.get(0).toString());
         close();
-        return new Values(adapterStrings,ids);
+        return new Values(adapterStrings, ids);
     }
-    public Values getStarred(){
+
+    public Values getStarred() {
         opendatabase();
-        Cursor cursor = database.query(DB_NAME,new String[]{"title"},"favorite = ?",new String[]{""+1},null,null,null);
+        Cursor cursor = database.query(DB_NAME, new String[]{COLUMN_POEM_TITLE}, COLUMN_FAVORITE + " = ?", new String[]{"" + 1}, null, null, COLUMN_POEM_TITLE);
         ArrayList<String> adapterStrings = new ArrayList<>();
         if (cursor.moveToFirst()) {
             do {
                 String temp = cursor.getString(0);
-                if(temp != null) {
+                if (temp != null) {
                     System.out.println(MainActivity.TAG + "STRING: " + temp);
                     adapterStrings.add(temp);
                 }
             } while (cursor.moveToNext());
         } else System.out.println(MainActivity.TAG + MainActivity.TAG + " 0 elements");
         close();
-        return new Values(adapterStrings,null);
+        return new Values(adapterStrings, null);
     }
-    public boolean isStarred(String author, String title){
+
+    public boolean isStarred(String author, String title) {
         boolean starred = false;
         opendatabase();
         System.out.println(MainActivity.TAG + " author: " + author + " title: " + title);
-        if(!author.equals("Starred")){
-        if(author != null){
-            Cursor cursor = database.query(DB_NAME, new String[]{"id_author","favorite"}, "author_name LIKE ? AND title LIKE ?", new String[]{"%" + author + "%", "%" + title + "%"}, null, null, null);
-            if(cursor.moveToFirst()){
-                System.out.println(MainActivity.TAG + " current state: " + cursor.getInt(cursor.getColumnIndex("favorite")));
-                if(cursor.getInt(cursor.getColumnIndex("favorite")) == 1){
-                    starred = true;
-                }else starred = false;
-            }else {
-                System.out.println(MainActivity.TAG + " NOT found");
+        if (!author.equals(FAVORITES)) {
+            if (author != null) {
+                Cursor cursor = database.query(DB_NAME, new String[]{COLUMN_ID, COLUMN_FAVORITE}, COLUMN_AUTHOR_NAME + " = ? AND " + COLUMN_POEM_TITLE + " = ?", new String[]{author, title}, null, null, null);
+                if (cursor.moveToFirst()) {
+                    System.out.println(MainActivity.TAG + " current state: " + cursor.getInt(cursor.getColumnIndex(COLUMN_FAVORITE)));
+                    if (cursor.getInt(cursor.getColumnIndex(COLUMN_FAVORITE)) == 1) {
+                        starred = true;
+                    } else starred = false;
+                } else {
+                    System.out.println(MainActivity.TAG + " NOT found");
+                }
             }
-        }
-        }else{
+        } else {
             System.out.println(MainActivity.TAG + " STARRED ");
-            Cursor cursor = database.query(DB_NAME, new String[]{"id_author","favorite"}, "title LIKE ?", new String[]{"%" + title + "%"}, null, null, null);
-            if(cursor.moveToFirst()){
-                System.out.println(MainActivity.TAG + " current state: " + cursor.getInt(cursor.getColumnIndex("favorite")));
-                if(cursor.getInt(cursor.getColumnIndex("favorite")) == 1){
+            Cursor cursor = database.query(DB_NAME, new String[]{COLUMN_ID, COLUMN_FAVORITE}, COLUMN_FAVORITE + " = ?", new String[]{""+1}, null, null, null);
+            if (cursor.moveToFirst()) {
+                System.out.println(MainActivity.TAG + " current state: " + cursor.getInt(cursor.getColumnIndex(COLUMN_FAVORITE)));
+                if (cursor.getInt(cursor.getColumnIndex(COLUMN_FAVORITE)) == 1) {
                     starred = true;
-                }else starred = false;
-            }else {
+                } else starred = false;
+            } else {
                 System.out.println(MainActivity.TAG + " NOT found");
             }
         }
         close();
         return starred;
     }
-    public int setStar(String author, String title){
+
+    public int setStar(String toolbar, String title) {
         int newState = 0;
         opendatabase();
-        System.out.println(MainActivity.TAG + " author: " + author + " title: " + title);
-        if(!author.equals("Starred")){
-            if(author != null){
-            Cursor cursor = database.query(DB_NAME, new String[]{"id_author","favorite"}, "author_name LIKE ? AND title LIKE ?", new String[]{"%" + author + "%", "%" + title + "%"}, null, null, null);
+        System.out.println(MainActivity.TAG + " setStar "+ " author: " + toolbar + " title: " + title);
+            if (toolbar != null) {
+                Cursor cursor;
+                if (!toolbar.equals(FAVORITES)) {
+                     cursor = database.query(DB_NAME, new String[]{COLUMN_ID,   COLUMN_AUTHOR_NAME ,COLUMN_FAVORITE}, COLUMN_AUTHOR_NAME + " = ? AND " + COLUMN_POEM_TITLE + " = ?", new String[]{toolbar, title}, null, null, null);
+                }else {
+                     cursor = database.query(DB_NAME, new String[]{COLUMN_ID,  COLUMN_AUTHOR_NAME,COLUMN_FAVORITE}, COLUMN_POEM_TITLE + " = ?", new String[]{title}, null, null, null);
+                }
+                ContentValues contentValues = new ContentValues();
+                if (cursor.moveToFirst()) {
+                    System.out.println(MainActivity.TAG + " current state: " + cursor.getInt(cursor.getColumnIndex(COLUMN_FAVORITE)) + " new state: " + (cursor.getInt(cursor.getColumnIndex(COLUMN_FAVORITE)) ^ 1));
+                    newState = cursor.getInt(cursor.getColumnIndex(COLUMN_FAVORITE)) ^ 1;
+                    contentValues.put(COLUMN_FAVORITE, newState);
+                    int updated;
+                    if(cursor.getString(cursor.getColumnIndex(COLUMN_AUTHOR_NAME)) == null){
+                        System.out.println(MainActivity.TAG + " need delete");
+                        updated = database.delete(DB_NAME,COLUMN_ID+" = ?",new String[]{cursor.getString(0)});
+                    }else {
+                        updated = database.update(DB_NAME, contentValues, COLUMN_ID + " = ?", new String[]{cursor.getString(0)});
+                    }
+                    System.out.println(MainActivity.TAG + " upadated: " + updated );
+                } else {
+                    System.out.println(MainActivity.TAG + " NOT found");
+                }
 
-            ContentValues contentValues = new ContentValues();
-
-            if(cursor.moveToFirst()){
-                System.out.println(MainActivity.TAG + " current state: " + cursor.getInt(cursor.getColumnIndex("favorite")) + " new state: " + (cursor.getInt(cursor.getColumnIndex("favorite"))^1));
-                newState = cursor.getInt(cursor.getColumnIndex("favorite"))^1;
-                contentValues.put("favorite",newState);
-                System.out.println(MainActivity.TAG + " upadated: " + database.update(DB_NAME,contentValues,"id_author = ?", new String[]{cursor.getString(0)}));
-            }else {
-                System.out.println(MainActivity.TAG + " NOT found");
             }
 
-        }
-        }else{
-            Cursor cursor = database.query(DB_NAME, new String[]{"id_author","favorite"}, "title LIKE ?", new String[]{"%" + title + "%"}, null, null, null);
-            ContentValues contentValues = new ContentValues();
-            if(cursor.moveToFirst()){
-                System.out.println(MainActivity.TAG + " current state: " + cursor.getInt(cursor.getColumnIndex("favorite")) + " new state: " + (cursor.getInt(cursor.getColumnIndex("favorite"))^1));
-                newState = cursor.getInt(cursor.getColumnIndex("favorite"))^1;
-                contentValues.put("favorite",newState);
-                System.out.println(MainActivity.TAG + " upadated: " + database.update(DB_NAME,contentValues,"id_author = ?", new String[]{cursor.getString(0)}));
-            }else {
-                System.out.println(MainActivity.TAG + " NOT found");
-            }
-        }
         close();
         return newState;
     }
-    public void addStringToDB(String authorName, String poemTitle, String text, Boolean starred){
-        //opendatabase();
-        database = getWritableDatabase();
-        Cursor cursor = database.query(DB_NAME,null,"(poem LIKE ? OR title LIKE ?)",new String[]{"%" + text + "%", "%" + poemTitle + "%"},null,null,null);
+
+    public void addStringToDB(String authorName, String poemTitle, String text, Boolean starred) {
+        System.out.println(MainActivity.TAG+" SAVE: a:" + authorName + " t: " +poemTitle + " s: " + starred);
+        opendatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put("author_name",authorName);
-        contentValues.put("title",poemTitle);
-        contentValues.put("poem",text);
-        if(starred)contentValues.put("favorite",1);
-        if(cursor.moveToFirst()){
-            for(int i = 0; i < cursor.getColumnCount(); i++)
-            System.out.println(MainActivity.TAG + " "+cursor.getColumnName(i)+" " + cursor.getString(i));
-            database.update(DB_NAME,contentValues, "id_author = ?", new String[]{cursor.getString(0)});
-        }else
-            database.insert(DB_NAME,null,contentValues);
+        contentValues.put(COLUMN_AUTHOR_NAME, authorName);
+        contentValues.put(COLUMN_POEM_TITLE, poemTitle);
+        contentValues.put(COLUMN_POEM, text);
+        if (starred) contentValues.put(COLUMN_FAVORITE, 1);
+            database.insert(DB_NAME, null, contentValues);
         close();
     }
 
-    public int removeRow(String author, String title){
+    public int removeRow(String author, String title) {
         int deleted = -1;
         Cursor cursor;
         opendatabase();
         System.out.println(MainActivity.TAG + " author: " + author + " title: " + title);
-        if(author.equals("Library")){
-            cursor = database.query(DB_NAME, new String[]{"id_author","favorite"}, "author_name = ?", new String[]{ title}, null, null, null);
-        }else {
-            cursor = database.query(DB_NAME, new String[]{"id_author","favorite"}, "author_name = ? AND title = ?", new String[]{ author,title}, null, null, null);
+        if (author.equals(LIBRARY)) {
+            cursor = database.query(DB_NAME, new String[]{COLUMN_ID, COLUMN_FAVORITE},COLUMN_AUTHOR_NAME+ " = ?", new String[]{title}, null, null, null);
+        } else {
+            cursor = database.query(DB_NAME, new String[]{COLUMN_ID, COLUMN_FAVORITE},COLUMN_AUTHOR_NAME+ " = ? AND "+COLUMN_POEM_TITLE+" = ?", new String[]{author, title}, null, null, null);
         }
-        if(cursor.moveToFirst()) {
+        if (cursor.moveToFirst()) {
             do {
-                deleted = database.delete(DB_NAME, "id_author = ?", new String[]{cursor.getString(0)});
-            }while (cursor.moveToNext());
-        }else System.out.println(MainActivity.TAG + " NOT FOUND");
+                deleted = database.delete(DB_NAME,COLUMN_ID+ " = ?", new String[]{cursor.getString(0)});
+            } while (cursor.moveToNext());
+        } else System.out.println(MainActivity.TAG + " NOT FOUND");
         System.out.println(MainActivity.TAG + " deleted: " + deleted);
         close();
         return deleted;
     }
+
     @Override
     public void onCreate(SQLiteDatabase db) {
         System.out.println(MainActivity.TAG + MainActivity.TAG + " CREATE db");
@@ -305,19 +302,21 @@ public class SQLWorker extends SQLiteOpenHelper {
             System.out.println(MainActivity.TAG + MainActivity.TAG+ " put into: " +  db.insert(DB_NAME,null,contentValues));
         }*/
     }
-    public int getRowNumber(String s){
+
+    public int getRowNumber(String s) {
         System.out.println(MainActivity.TAG + " take rowNumber");
         opendatabase();
-        Cursor cursor = database.query(DB_NAME,null,null,null,"author_name",null,"author_name");
+        Cursor cursor = database.query(DB_NAME, null, null, null, COLUMN_AUTHOR_NAME, null, COLUMN_AUTHOR_NAME);
         int i = 0;
-        if(cursor.moveToFirst())
+        if (cursor.moveToFirst())
             do {
                 i++;
-                if(cursor.getString(cursor.getColumnIndex("author_name")).equals(s)) break;
-            }while (cursor.moveToNext());
-            close();
+                if (cursor.getString(cursor.getColumnIndex(COLUMN_AUTHOR_NAME)).equals(s)) break;
+            } while (cursor.moveToNext());
+        close();
         return i;
     }
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 

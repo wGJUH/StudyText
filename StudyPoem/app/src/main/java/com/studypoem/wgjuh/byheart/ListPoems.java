@@ -22,7 +22,7 @@ import java.util.Objects;
 /**
  * Created by WGJUH on 20.09.2016.
  */
-public class ListPoems extends AppCompatActivity implements View.OnClickListener {
+public class ListPoems extends AppCompatActivity implements View.OnClickListener, Data {
     public static final String TAG = "SQL_test";
     private RecyclerView recyclerView;
     private MyRecyclerViewAdapter myRecyclerViewAdapter;
@@ -57,24 +57,24 @@ public class ListPoems extends AppCompatActivity implements View.OnClickListener
         fab.setOnClickListener(this);
 
         if (bundle != null) {
-            if (bundle.getString("activity").equals("defaulLibrary")) {
+            if (bundle.getString(KEY_ACTIVITY).equals(LIBRARY)) {
                 int[] progress = {0};
                 values = getValues();
                 myRecyclerViewAdapter = new MyRecyclerViewAdapter(values, progress, this, true);
                 recyclerView.setAdapter(myRecyclerViewAdapter);
-                if(bundle.getString("regex", null) == null)
-                toolbar.setTitle("Library");
+                if(bundle.getString(KEY_REGEX, null) == null)
+                toolbar.setTitle(R.string.title_library);
                 else
-                    toolbar.setTitle(bundle.getString("regex", null));
+                    toolbar.setTitle(bundle.getString(KEY_REGEX, null));
             } else {
                 int[] progress = {0};
                 values = sqlWorker.getStarred();
                 myRecyclerViewAdapter = new MyRecyclerViewAdapter(values, progress, this, false);
                 recyclerView.setAdapter(myRecyclerViewAdapter);
-                if(bundle.getString("regex", null) == null)
-                    toolbar.setTitle("Starred");
+                if(bundle.getString(KEY_REGEX, null) == null)
+                    toolbar.setTitle(R.string.title_favorites);
                 else
-                    toolbar.setTitle(bundle.getString("regex", null));
+                    toolbar.setTitle(bundle.getString(KEY_REGEX, null));
 
             }
         }
@@ -82,8 +82,8 @@ public class ListPoems extends AppCompatActivity implements View.OnClickListener
     }
 
     private  Values getValues(){
-        System.out.println(MainActivity.TAG + " BUNDLE: " +bundle.getString("regex", null));
-        return sqlWorker.getStringsFromDB(bundle.getString("regex", null));
+        System.out.println(MainActivity.TAG + " BUNDLE: " +bundle.getString(KEY_REGEX, null));
+        return sqlWorker.getStringsFromDB(bundle.getString(KEY_REGEX, null));
     }
 
     @Override
@@ -97,14 +97,14 @@ public class ListPoems extends AppCompatActivity implements View.OnClickListener
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     String author_name = ((EditText)view.findViewById(R.id.author_name)).getText().toString();
-                    if(!author_name.equals("")) {
+                    if(!author_name.equals("") ) {
                         sqlWorker.addStringToDB(author_name, null, null,false);
                         values.setStrings(getValues().getStrings());
                         System.out.println(MainActivity.TAG + " ITEMS: " + myRecyclerViewAdapter.getItemCount() + " VALUES: " + values.getStrings().toString());
                         myRecyclerViewAdapter.notifyItemInserted(sqlWorker.getRowNumber(author_name) - 1);
                     }
                 }
-            }).setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+            }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.cancel();
@@ -114,20 +114,18 @@ public class ListPoems extends AppCompatActivity implements View.OnClickListener
         }else{
             lvl++;
                 Intent intent = new Intent(this,StudyPoem.class);
-                intent.putExtra("regex", toolbar.getTitle());
-                intent.putExtra("new_text", true);
+                intent.putExtra(KEY_REGEX, toolbar.getTitle());
+                intent.putExtra(KEY_NEW_TEXT, true);
                 startActivityForResult(intent,777);
 
         }
     }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         System.out.println(MainActivity.TAG + " code: " + resultCode);
         if(resultCode == 666) values.setStrings(sqlWorker.getStarred().getStrings());
         else values.setStrings(getValues().getStrings());
-
         myRecyclerViewAdapter.notifyDataSetChanged();
     }
 }

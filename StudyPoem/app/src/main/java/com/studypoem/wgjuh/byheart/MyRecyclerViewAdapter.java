@@ -28,7 +28,7 @@ import java.util.Map;
 /**
  * Created by WGJUH on 20.09.2016.
  */
-public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.ViewHolder> implements View.OnClickListener {
+public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.ViewHolder> implements View.OnClickListener,Data {
     private ArrayList<String> strings;
     private ArrayList<Integer> ids;
     private Map<Integer,Map<String,Integer>> map;
@@ -126,7 +126,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
        }else {
            System.out.println(MainActivity.TAG+ " button OFF" );
            ((ImageButton) v).setImageResource(android.R.drawable.btn_star_big_off);
-           if(author.equals("Starred")) {
+           if(author.equals(FAVORITES)) {
                strings.clear();
                strings.addAll(new SQLWorker(context).getStarred().getStrings());
                notifyItemRemoved(parent.indexOfChild((View) v.getParent().getParent().getParent()));
@@ -153,11 +153,11 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
                 intent = getIntentStudyPoem(v);
             } else {
                 intent = new Intent(v.getContext(), ListPoems.class);
-                intent.putExtra("regex", ((TextView) v.findViewById(R.id.poem_author)).getText().toString());
+                intent.putExtra(KEY_REGEX, ((TextView) v.findViewById(R.id.poem_author)).getText().toString());
                 if (isFromDefaultLib)
-                    intent.putExtra("activity", "defaulLibrary");
+                    intent.putExtra(KEY_ACTIVITY, LIBRARY);
                 else
-                    intent.putExtra("activity", "myLibrary");
+                    intent.putExtra(KEY_ACTIVITY, FAVORITES);
 
 
             }
@@ -170,7 +170,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
             final View temp = v;
             System.out.println(MainActivity.TAG + " LONG PRESS");
             new AlertDialog.Builder(context).setTitle("Удалить запись?")
-                    .setPositiveButton("Удалить", new DialogInterface.OnClickListener() {
+                    .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             System.out.println(MainActivity.TAG + " DELETE");
@@ -181,7 +181,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
                             strings.clear();
                             strings.addAll(new SQLWorker(context).getStringsFromDB(author).getStrings());
                             notifyItemRemoved(getAdapterPosition());                        }
-                    }).setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
+                    }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.cancel();
@@ -206,11 +206,11 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         System.out.println("Clicked and Position isViewHolder " + itemPosition + " last position" + last_position);
         Intent intent = new Intent(v.getContext(), StudyPoem.class);
         if (last_position != itemPosition) {
-            intent.putExtra("newText", positionInMass);
+            intent.putExtra(KEY_LAST_POSITION, positionInMass);
         }
-        intent.putExtra("lastposition", last_position);
-        intent.putExtra("regex", ((TextView) v.findViewById(R.id.poem_author)).getText().toString());
-        intent.putExtra("defaultPoems", isFromDefaultLib);
+        intent.putExtra(KEY_LAST_POSITION, last_position);
+        intent.putExtra(KEY_REGEX, ((TextView) v.findViewById(R.id.poem_author)).getText().toString());
+        intent.putExtra(KEY_FROM_LIBRARY, isFromDefaultLib);
         last_position = itemPosition;
         return intent;
     }
