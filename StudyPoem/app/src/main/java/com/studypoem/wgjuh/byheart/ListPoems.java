@@ -1,27 +1,28 @@
 package com.studypoem.wgjuh.byheart;
 
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.ViewSwitcher;
+        import android.content.DialogInterface;
+        import android.content.Intent;
+        import android.os.Bundle;
+        import android.support.annotation.Nullable;
+        import android.support.design.widget.FloatingActionButton;
+        import android.support.v7.app.AlertDialog;
+        import android.support.v7.app.AppCompatActivity;
+        import android.support.v7.widget.LinearLayoutManager;
+        import android.support.v7.widget.RecyclerView;
+        import android.support.v7.widget.Toolbar;
+        import android.util.DisplayMetrics;
+        import android.view.LayoutInflater;
+        import android.view.View;
+        import android.widget.EditText;
+        import android.widget.ViewSwitcher;
 
-import java.util.ArrayList;
-import java.util.Objects;
+        import java.util.ArrayList;
+        import java.util.Objects;
 
-/**
- * Created by WGJUH on 20.09.2016.
- */
+      /**  *
+        * Created by WGJUH on 20.09.2016.*/
+
+
 public class ListPoems extends AppCompatActivity implements View.OnClickListener, Data {
     public static final String TAG = "SQL_test";
     private RecyclerView recyclerView;
@@ -33,6 +34,7 @@ public class ListPoems extends AppCompatActivity implements View.OnClickListener
     Values values;
     Bundle bundle;
     Toolbar toolbar;
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -62,8 +64,8 @@ public class ListPoems extends AppCompatActivity implements View.OnClickListener
                 values = getValues();
                 myRecyclerViewAdapter = new MyRecyclerViewAdapter(values, progress, this, true);
                 recyclerView.setAdapter(myRecyclerViewAdapter);
-                if(bundle.getString(KEY_REGEX, null) == null)
-                toolbar.setTitle(R.string.title_library);
+                if (bundle.getString(KEY_REGEX, null) == null)
+                    toolbar.setTitle(R.string.title_library);
                 else
                     toolbar.setTitle(bundle.getString(KEY_REGEX, null));
             } else {
@@ -71,7 +73,7 @@ public class ListPoems extends AppCompatActivity implements View.OnClickListener
                 values = sqlWorker.getStarred();
                 myRecyclerViewAdapter = new MyRecyclerViewAdapter(values, progress, this, false);
                 recyclerView.setAdapter(myRecyclerViewAdapter);
-                if(bundle.getString(KEY_REGEX, null) == null)
+                if (bundle.getString(KEY_REGEX, null) == null)
                     toolbar.setTitle(R.string.title_favorites);
                 else
                     toolbar.setTitle(bundle.getString(KEY_REGEX, null));
@@ -81,14 +83,14 @@ public class ListPoems extends AppCompatActivity implements View.OnClickListener
         setSupportActionBar(toolbar);
     }
 
-    private  Values getValues(){
-        System.out.println(MainActivity.TAG + " BUNDLE: " +bundle.getString(KEY_REGEX, null));
+    private Values getValues() {
+        System.out.println(MainActivity.TAG + " BUNDLE: " + bundle.getString(KEY_REGEX, null));
         return sqlWorker.getStringsFromDB(bundle.getString(KEY_REGEX, null));
     }
 
     @Override
     public void onClick(View v) {
-        if(lvl < 1) {
+        if (lvl < 1) {
             System.out.println("STRING_TEST01");
             final View view = LayoutInflater.from(this).inflate(R.layout.new_author, null, false);
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
@@ -96,9 +98,9 @@ public class ListPoems extends AppCompatActivity implements View.OnClickListener
             alertDialogBuilder.setCancelable(true).setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    String author_name = ((EditText)view.findViewById(R.id.author_name)).getText().toString();
-                    if(!author_name.equals("") ) {
-                        sqlWorker.addStringToDB(author_name, null, null,false);
+                    String author_name = ((EditText) view.findViewById(R.id.author_name)).getText().toString();
+                    if (!author_name.equals("")) {
+                        sqlWorker.addStringToDB(author_name, null, null, false);
                         values.setStrings(getValues().getStrings());
                         System.out.println(MainActivity.TAG + " ITEMS: " + myRecyclerViewAdapter.getItemCount() + " VALUES: " + values.getStrings().toString());
                         myRecyclerViewAdapter.notifyItemInserted(sqlWorker.getRowNumber(author_name) - 1);
@@ -111,20 +113,21 @@ public class ListPoems extends AppCompatActivity implements View.OnClickListener
                 }
             });
             alertDialogBuilder.create().show();
-        }else{
+        } else {
             lvl++;
-                Intent intent = new Intent(this,StudyPoem.class);
-                intent.putExtra(KEY_REGEX, toolbar.getTitle());
-                intent.putExtra(KEY_NEW_TEXT, true);
-                startActivityForResult(intent,777);
+            Intent intent = new Intent(this, StudyPoem.class);
+            intent.putExtra(KEY_REGEX, toolbar.getTitle());
+            intent.putExtra(KEY_NEW_TEXT, true);
+            startActivityForResult(intent, 777);
 
         }
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         System.out.println(MainActivity.TAG + " code: " + resultCode);
-        if(resultCode == 666) values.setStrings(sqlWorker.getStarred().getStrings());
+        if (resultCode == 666) values.setStrings(sqlWorker.getStarred().getStrings());
         else values.setStrings(getValues().getStrings());
         myRecyclerViewAdapter.notifyDataSetChanged();
     }

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Learn Text By Heart</string>
+    <string name="app_name">By Heart</string>
     <string name="action_settings">Settings</string>
     <string name="mane_text">paste your text by tapping on pink button</string>
     <string name="title_activity_main">MainActivity</string>

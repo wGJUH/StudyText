@@ -11,9 +11,9 @@ import android.text.style.ClickableSpan;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
-/**
- * Created by WGJUH on 16.09.2016.
- */
+
+
+
 public class LoremIpsumSpan extends ClickableSpan {
     LoremIpsumSpan(){
     }
@@ -58,9 +58,12 @@ public class LoremIpsumSpan extends ClickableSpan {
         }else
         spannable.setSpan(new BackgroundColorSpan(Color.BLACK),start,end,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         tv.setText(spannable,TextView.BufferType.SPANNABLE);
-        /**
-         * TODO Найти более хороший и красивый способ изменить текущий массив
-         */
+/**
+ *         TODO Найти более хороший и красивый способ изменить текущий массив
+
+ */
+
+
         StudyPoem.stringBuilders.set(listView.getPositionForView(widget),new SpannableStringBuilder(spannable));
     }
 }

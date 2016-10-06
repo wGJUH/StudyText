@@ -16,9 +16,9 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-/**
- * Created by WGJUH on 20.09.2016.
- */
+/*Created by WGJUH on 20.09.2016.*/
+
+
 public class SQLWorker extends SQLiteOpenHelper implements Data {
 
     Context context;
@@ -44,6 +44,7 @@ public class SQLWorker extends SQLiteOpenHelper implements Data {
     }
 
     public void createdatabase() throws IOException {
+        long start = System.currentTimeMillis();
         boolean dbexist = checkdatabase();
         if (dbexist) {
             System.out.println(MainActivity.TAG + " Database exists.");
@@ -56,6 +57,7 @@ public class SQLWorker extends SQLiteOpenHelper implements Data {
                 throw new Error("Error copying database");
             }
         }
+        System.out.println(MainActivity.TAG + " createDB method finished: " + (System.currentTimeMillis()-start));
     }
 
     private boolean checkdatabase() {
@@ -71,11 +73,10 @@ public class SQLWorker extends SQLiteOpenHelper implements Data {
         return checkdb;
     }
 
-    /**
-     * TODO error with assets file
-     *
-     * @throws IOException
-     */
+/*TODO error with assets file*/
+
+
+
     private void copydatabase() throws IOException {
         //Open your local db as the input stream
         System.out.println(MainActivity.TAG + " START COPYING");
@@ -142,7 +143,7 @@ public class SQLWorker extends SQLiteOpenHelper implements Data {
             }
             cursor = database.query(DB_NAME, new String[]{column}, COLUMN_AUTHOR_NAME + " = ? OR " + COLUMN_POEM_TITLE + " = ?", new String[]{regex, regex}, column, null, column);
         } else {
-            cursor = database.query(DB_NAME, new String[]{column, COLUMN_ID}, null,null /*COLUMN_AUTHOR_NAME + " != ?", new String[]{FAVORITES}*/, column, null, column);
+            cursor = database.query(DB_NAME, new String[]{column, COLUMN_ID}, null,null, column, null, column);
         }
         System.out.println(MainActivity.TAG + " " + cursor.getCount() + " names " + Arrays.toString(cursor.getColumnNames()));
         ArrayList<String> adapterStrings = new ArrayList<>();
@@ -280,7 +281,7 @@ public class SQLWorker extends SQLiteOpenHelper implements Data {
     @Override
     public void onCreate(SQLiteDatabase db) {
         System.out.println(MainActivity.TAG + MainActivity.TAG + " CREATE db");
-/*        db.execSQL("create table "+ DB_NAME+" ("
+       /* db.execSQL("create table "+ DB_NAME+" ("
                 +   "id_author integer primary key,"
                 +   "author_name text,"
                 +   "author_portrait_id integer,"
@@ -301,6 +302,7 @@ public class SQLWorker extends SQLiteOpenHelper implements Data {
             contentValues.put("poem",poems[i]);
             System.out.println(MainActivity.TAG + MainActivity.TAG+ " put into: " +  db.insert(DB_NAME,null,contentValues));
         }*/
+
     }
 
     public int getRowNumber(String s) {

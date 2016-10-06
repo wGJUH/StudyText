@@ -25,9 +25,9 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Map;
 
-/**
- * Created by WGJUH on 20.09.2016.
- */
+/*Created by WGJUH on 20.09.2016.*/
+
+
 public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.ViewHolder> implements View.OnClickListener,Data {
     private ArrayList<String> strings;
     private ArrayList<Integer> ids;
@@ -77,7 +77,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         else {
             int idPortrait;
             ((ImageButton)holder.mLayout.findViewById(R.id.button_favorite)).setVisibility(View.GONE);
-            switch (strings.get(position)){
+          switch (strings.get(position)){
                 case "Пушкин А.С.":
                     idPortrait = context.getResources().getIdentifier("pushkin","drawable",BuildConfig.APPLICATION_ID);
                     break;
@@ -104,6 +104,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
                     break;
             }
             if (idPortrait != -1)
+
             ((ImageView) holder.mLayout.findViewById(R.id.poem_author_portrait)).setImageResource(R.mipmap.ic_launcher);
         }
         ((TextView) holder.mLayout.findViewById(R.id.poem_author)).setText(strings.get(position));

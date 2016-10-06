@@ -13,16 +13,11 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-/**
- * Created by WGJUH on 18.09.2016.
- */
-public class MyTextAdapter extends ArrayAdapter {
-/*
+/* Created by WGJUH on 18.09.2016.*/
 
-    public MyTextAdapter(Context context, List<? extends Map<String, ?>> data, int resource, String[] from, int[] to) {
-        super(context, data, resource, from, to);
-    }
-*/
+
+public class MyTextAdapter extends ArrayAdapter {
+
     LoremIpsumSpan[] loremIpsumSpen;
     SpannableString spannableString;
     Context context;

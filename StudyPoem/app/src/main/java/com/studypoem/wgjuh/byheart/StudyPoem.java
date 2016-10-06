@@ -121,9 +121,9 @@ public class StudyPoem extends AppCompatActivity implements View.OnClickListener
                 }
             });
 
-        /**
-         * TODO check and chaneg this strange logic
-         */
+/* TODO check and chaneg this strange logic*/
+
+
         if (bundle != null) {
             //isPrevDefault = getIntent().getExtras().getBoolean("defaultPoems", false);
             isNewText = getIntent().getExtras().getBoolean(KEY_NEW_TEXT, false);
@@ -131,9 +131,9 @@ public class StudyPoem extends AppCompatActivity implements View.OnClickListener
                 mainFabState = NEW_TEXT;
             else mainFabState = OLD_TEXT;
             new SQLWorker(this);
-            /**
-             * TODO поправить код получения строки
-             */
+/*TODO поправить код получения строки*/
+
+
             if (isNewText) {
                 System.out.println(MainActivity.TAG + " NEW TEXT");
                 fab_random_hide.setVisibility(View.INVISIBLE);
@@ -156,9 +156,9 @@ public class StudyPoem extends AppCompatActivity implements View.OnClickListener
         arrayAdapter = new MyTextAdapter((StudyPoem) context, R.layout.list_view_test, R.id.my_custom_text, stringBuilders);
         ((ListView) findViewById(R.id.listView)).setAdapter(arrayAdapter);
         ((ListView) findViewById(R.id.listView)).setOnScrollListener(this);
-        /**
-         *TODO поправить баг с выбором рандомных слов
-         */
+/*TODO поправить баг с выбором рандомных слов*/
+
+
         fab_random_hide.setOnClickListener(this);
         fab_random_show.setOnClickListener(this);
         fab.setOnClickListener(this);
@@ -196,9 +196,9 @@ public class StudyPoem extends AppCompatActivity implements View.OnClickListener
         int lines = 1;
         int start_position = 0;
         int text_width = 0;
-        /**
-         * TODO разобраться с коэфицентами
-         */
+/* TODO разобраться с коэфицентами*/
+
+
         while (matcher.find()) {
             if (matcher.start() - start_position >= 1) {
                 stringBuilder.append(spannableString.subSequence(start_position, matcher.end() - 1));
@@ -226,9 +226,9 @@ public class StudyPoem extends AppCompatActivity implements View.OnClickListener
             case R.id.action_settings:
                 break;
             case R.id.action_text_bigger:
-                /**
-                 * TODO поправить условия
-                 */
+/*TODO поправить условия*/
+
+
                 if (((TextView) ((ListView) findViewById(R.id.listView)).getChildAt(0)) != null) {
                     MyTextAdapter.updateSize(this, 2, ((TextView) ((ListView) findViewById(R.id.listView)).getChildAt(0)).getTextSize());
                     arrayAdapter.notifyDataSetChanged();
@@ -320,9 +320,9 @@ public class StudyPoem extends AppCompatActivity implements View.OnClickListener
                         break;
                 }
                 break;
-            /**
-             * TODO доработать логику автоматического скрывания объектов
-             */
+/* TODO доработать логику автоматического скрывания объектов*/
+
+
             case R.id.fab_text_hide:
                 if (stringBuilders.size() != 0) {
                     for (int i = 0; i < stringBuilders.size(); i++) {
@@ -344,16 +344,11 @@ public class StudyPoem extends AppCompatActivity implements View.OnClickListener
                                 map.put(i, new ArrayList<Integer>());
                                 map.get(i).add(test);
                             }
-
                             Log.d(MainActivity.TAG, "StartRandom: " + test + " string: " + i + " MAP: " + map.get(i).toString());
-
                             int j = 0;
                             while (matcher.find()) {
                                 Log.d(MainActivity.TAG, "j: " + j);
-
                                 if (j == test) {
-                               /* if(((Spannable)stringBuilders.get(i)).getSpans(0,stringBuilders.get(i).length(),BackgroundColorSpan.class).length != 0)
-                                stringBuilders.get(i).removeSpan( ((Spannable)stringBuilders.get(i)).getSpans(0,stringBuilders.get(i).length(),BackgroundColorSpan.class)[test]);*/
                                     BackgroundColorSpan[] colorSpen = ((Spannable) stringBuilders.get(i)).getSpans(matcher.start(), matcher.end(), BackgroundColorSpan.class);
                                     Log.d(MainActivity.TAG, "SPANS_HIDe: " + colorSpen.length + " word: " + matcher.group());
                                     if (colorSpen.length != 0)
