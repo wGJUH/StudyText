@@ -121,7 +121,44 @@ public class SQLWorker extends SQLiteOpenHelper implements Data {
         }
         super.close();
     }
-
+    public Values getPoemsTitlesFromDB(String author){
+        opendatabase();
+        Cursor cursor;
+        ArrayList<String> strings = new ArrayList<String>();
+        cursor = database.query(DB_NAME, new String[]{COLUMN_POEM_TITLE}, COLUMN_AUTHOR_NAME + " = ? AND " + COLUMN_POEM_TITLE + " IS NOT NULL", new String[]{author}, null, null, COLUMN_POEM_TITLE);
+        if(cursor.moveToFirst()){
+            do{
+                strings.add(cursor.getString(0));
+            }while (cursor.moveToNext());
+        }
+        close();
+        return new Values(strings,null);
+    }
+    public Values getPoemsAuthorsFromDB(){
+        opendatabase();
+        Cursor cursor;
+        ArrayList<String> strings = new ArrayList<String>();
+        cursor = database.query(DB_NAME, new String[]{COLUMN_AUTHOR_NAME}, null, null, COLUMN_AUTHOR_NAME, null, COLUMN_AUTHOR_NAME);
+        if(cursor.moveToFirst()){
+            do{
+                strings.add(cursor.getString(0));
+            }while (cursor.moveToNext());
+        }
+        close();
+        return new Values(strings,null);
+    }
+    public String getPoemTextFromDB(String author, String title){
+        opendatabase();
+        Cursor cursor;
+        ArrayList<String> strings = new ArrayList<String>();
+        cursor = database.query(DB_NAME, new String[]{COLUMN_POEM}, COLUMN_AUTHOR_NAME + " = ? AND " + COLUMN_POEM_TITLE + " = ?", new String[]{author,title}, null, null, null);
+        if(cursor.moveToFirst()){
+            close();
+            return cursor.getString(0);
+        }else
+            close();
+        return null;
+    }
     public Values getStringsFromDB(String regex) {
         opendatabase();
         String column = COLUMN_AUTHOR_NAME;

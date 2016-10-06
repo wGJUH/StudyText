@@ -17,6 +17,16 @@
             android:name=".ListPoems"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
+        <activity android:name=".ListPoets"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity android:name=".ListFavorites"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity android:name=".NewText"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+
         <activity
             android:name=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar">

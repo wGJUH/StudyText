@@ -12,7 +12,6 @@ public interface Data {
      */
     public static final String LIBRARY = "Library";
     public static final String FAVORITES = "Favorites";
-
     /**
      * KEYS
      */
@@ -24,8 +23,11 @@ public interface Data {
      * TODO проверить и по возмодности убрать лишние ключи
      */
     public static final String KEY_FROM_LIBRARY = "library";
-
-
+    /**
+     * LVL
+     */
+        public static final int LVL_POETS = 0;
+        public static final int LVL_POEMS = 1;
     /**
      * Patterns
      */
@@ -39,5 +41,9 @@ public interface Data {
     public static final String COLUMN_POEM= "poem";
     public static final String COLUMN_FAVORITE= "favorite";
     public static final String COLUMN_ID= "id_author";
-
+    /**
+     * NewTextStates
+     */
+    public static final int NEW_TEXT = 0;
+    public static final int SAVE_TEXT = 1;
 }

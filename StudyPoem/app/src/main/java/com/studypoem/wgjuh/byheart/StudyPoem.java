@@ -51,14 +51,11 @@ public class StudyPoem extends AppCompatActivity implements View.OnClickListener
     public static Map<Integer, ArrayList<Integer>> map = new HashMap<>();
     private Context context;
     private ArrayAdapter arrayAdapter;
-    private int HideLevel = 0;
     public static Random random = new Random();
     private int first_visible = 0;
     private FloatingActionButton fab;
     private FloatingActionButton fab_random_hide;
     private FloatingActionButton fab_random_show;
-    private boolean isPrevDefault = false;
-    private ListPoems listPoems = new ListPoems();
     Bundle bundle;
     SQLWorker sqlWorker;
     private boolean isNewText;
@@ -86,46 +83,12 @@ public class StudyPoem extends AppCompatActivity implements View.OnClickListener
         super.onCreate(savedInstanceState);
         this.context = this;
         setContentView(R.layout.activity_study_poem);
-        toolbar = (Toolbar) findViewById(R.id.study_toolbar);
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab_random_hide = (FloatingActionButton) findViewById(R.id.fab_text_hide);
-        fab_random_show = (FloatingActionButton) findViewById(R.id.fab_text_show);
-        bundle = getIntent().getExtras();
-        sqlWorker = new SQLWorker(this);
-        editText = ((EditText) findViewById(R.id.new_text));
+        init();
 
-            editText.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-                    if (s.length() != 0) {
-                        final OvershootInterpolator interpolator = new OvershootInterpolator();
-                        ViewCompat.animate(fab).rotation(360f).withLayer().setDuration(2000).setInterpolator(interpolator).start();
-                        fab.setImageResource(android.R.drawable.ic_menu_save);
-                        mainFabState = SAVE_TEXT;
-                    } else {
-                        System.out.println(MainActivity.TAG + " NEW TEXT from TextWatcher ");
-                        final OvershootInterpolator interpolator = new OvershootInterpolator();
-                        ViewCompat.animate(fab).rotation(-360f).withLayer().setDuration(2000).setInterpolator(interpolator).start();
-                        fab.setImageResource(R.drawable.ic_content_paste_white_48dp);
-                        mainFabState = NEW_TEXT;
-                    }
-                }
-            });
-
-/* TODO check and chaneg this strange logic*/
+/* TODO check and change this strange logic*/
 
 
         if (bundle != null) {
-            //isPrevDefault = getIntent().getExtras().getBoolean("defaultPoems", false);
             isNewText = getIntent().getExtras().getBoolean(KEY_NEW_TEXT, false);
             if(isNewText)
                 mainFabState = NEW_TEXT;
@@ -164,6 +127,51 @@ public class StudyPoem extends AppCompatActivity implements View.OnClickListener
         fab.setOnClickListener(this);
         setSupportActionBar(toolbar);
     }
+
+    private void initViews(){
+        toolbar = (Toolbar) findViewById(R.id.study_toolbar);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab_random_hide = (FloatingActionButton) findViewById(R.id.fab_text_hide);
+        fab_random_show = (FloatingActionButton) findViewById(R.id.fab_text_show);
+        editText = ((EditText) findViewById(R.id.new_text));
+
+    }
+    private void addChangeTextListner(){
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() != 0) {
+                    final OvershootInterpolator interpolator = new OvershootInterpolator();
+                    ViewCompat.animate(fab).rotation(360f).withLayer().setDuration(2000).setInterpolator(interpolator).start();
+                    fab.setImageResource(android.R.drawable.ic_menu_save);
+                    mainFabState = SAVE_TEXT;
+                } else {
+                    System.out.println(MainActivity.TAG + " NEW TEXT from TextWatcher ");
+                    final OvershootInterpolator interpolator = new OvershootInterpolator();
+                    ViewCompat.animate(fab).rotation(-360f).withLayer().setDuration(2000).setInterpolator(interpolator).start();
+                    fab.setImageResource(R.drawable.ic_content_paste_white_48dp);
+                    mainFabState = NEW_TEXT;
+                }
+            }
+        });
+    }
+    private void init(){
+        initViews();
+        bundle = getIntent().getExtras();
+        sqlWorker = new SQLWorker(this);
+        addChangeTextListner();
+    }
+
+
 
     @Override
     protected void onPause() {
