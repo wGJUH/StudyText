@@ -119,8 +119,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         public ViewHolder(View v) {
             super(v);
             v.setOnClickListener(this);
-            if (isFromDefaultLib)
-                v.setOnLongClickListener(this);
+            if (!(context instanceof ListFavorites)) v.setOnLongClickListener(this);
             mLayout = v;
         }
 
@@ -148,7 +147,6 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             System.out.println(MainActivity.TAG + " DELETE");
-
                             String author = ((Toolbar) temp.getRootView().findViewById(R.id.toolbar_list_poems)).getTitle().toString();
                             String title = ((TextView) temp.findViewById(R.id.poem_author)).getText().toString();
                             new SQLWorker(context).removeRow(author, title);
@@ -183,6 +181,8 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         }
         intent.putExtra(KEY_LAST_POSITION, last_position);
         intent.putExtra(KEY_REGEX, ((TextView) v.findViewById(R.id.poem_author)).getText().toString());
+        intent.putExtra(KEY_AUTHOR,((Toolbar) parent.getRootView().findViewById(R.id.toolbar_list_poems)).getTitle().toString());
+
         intent.putExtra(KEY_FROM_LIBRARY, isFromDefaultLib);
         last_position = itemPosition;
         return intent;

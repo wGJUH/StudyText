@@ -151,7 +151,7 @@ public class SQLWorker extends SQLiteOpenHelper implements Data {
         opendatabase();
         Cursor cursor;
         ArrayList<String> strings = new ArrayList<String>();
-        cursor = database.query(DB_NAME, new String[]{COLUMN_POEM}, COLUMN_AUTHOR_NAME + " = ? AND " + COLUMN_POEM_TITLE + " = ?", new String[]{author,title}, null, null, null);
+        cursor = database.query(DB_NAME, new String[]{COLUMN_POEM}, "( "+COLUMN_AUTHOR_NAME + " = ? AND " + COLUMN_POEM_TITLE + " = ? ) OR "+ COLUMN_POEM_TITLE + " = ?", new String[]{author,title,title}, null, null, null);
         if(cursor.moveToFirst()){
             close();
             return cursor.getString(0);
@@ -189,7 +189,7 @@ public class SQLWorker extends SQLiteOpenHelper implements Data {
             do {
                 String temp = cursor.getString(0);
                 if (temp != null) {
-                    System.out.println(MainActivity.TAG + "STRING: " + temp);
+                    //System.out.println(MainActivity.TAG + "STRING: " + temp);
                     adapterStrings.add(temp);
                     if (currentLvl == 0)
                         ids.add(cursor.getInt(1));
@@ -208,7 +208,7 @@ public class SQLWorker extends SQLiteOpenHelper implements Data {
             do {
                 String temp = cursor.getString(0);
                 if (temp != null) {
-                    System.out.println(MainActivity.TAG + "STRING: " + temp);
+                    //System.out.println(MainActivity.TAG + "STRING: " + temp);
                     adapterStrings.add(temp);
                 }
             } while (cursor.moveToNext());

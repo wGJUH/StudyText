@@ -19,6 +19,8 @@ public interface Data {
     public static final String KEY_REGEX = "regex";
     public static final String KEY_NEW_TEXT = "new_text";
     public static final String KEY_LAST_POSITION = "last_position";
+    public static final String KEY_AUTHOR = "author";
+
     /**
      * TODO проверить и по возмодности убрать лишние ключи
      */

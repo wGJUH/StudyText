@@ -55,7 +55,7 @@ public class ListPoets extends CustomList {
         recyclerView.setLayoutManager(mLayoutManager);
         fab.setOnClickListener(this);
         recyclerView.setAdapter(myRecyclerViewAdapter);
-        toolbar.setTitle(bundle.getString(KEY_REGEX, null));
+        toolbar.setTitle(getResources().getString(R.string.title_library));
         setSupportActionBar(toolbar);
     }
     @Override
