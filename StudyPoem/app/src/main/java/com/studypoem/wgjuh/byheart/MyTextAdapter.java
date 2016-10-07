@@ -1,4 +1,4 @@
-package com.studypoem.wgjuh.studypoem;
+package com.studypoem.wgjuh.byheart;
 
 import android.content.Context;
 import android.text.SpannableString;
@@ -9,25 +9,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.zip.Inflater;
 
-/**
- * Created by WGJUH on 18.09.2016.
- */
+/* Created by WGJUH on 18.09.2016.*/
+
+
 public class MyTextAdapter extends ArrayAdapter {
-/*
 
-    public MyTextAdapter(Context context, List<? extends Map<String, ?>> data, int resource, String[] from, int[] to) {
-        super(context, data, resource, from, to);
-    }
-*/
     LoremIpsumSpan[] loremIpsumSpen;
     SpannableString spannableString;
     Context context;
@@ -48,7 +38,7 @@ public class MyTextAdapter extends ArrayAdapter {
 //        System.out.println("Position: " + spannableString.subSequence(spannableString.getSpanStart(loremIpsumSpan),spannableString.getSpanEnd(loremIpsumSpan)));
         LayoutInflater mLayoutInflator = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         TextView textView = (TextView) mLayoutInflator.inflate(R.layout.my_custom_textview,null);
-        System.out.println("BUILDER: " + getItem(position).toString());
+       // System.out.println("BUILDER: " + getItem(position).toString());
         textView.setText((SpannableStringBuilder)getItem(position));
         textView.setMovementMethod(LinkMovementMethod.getInstance());
         if(setTextSize != 0)
