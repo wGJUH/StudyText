@@ -1,9 +1,16 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'ByHeart'
+            keyPassword 'WGJUH19111992wgjuh'
+            storeFile file('C:/Users/wGJUH/Documents/keys/wgjuh_development.jks')
+            storePassword 'WGJUH19111992wgjuh'
+        }
+    }
     compileSdkVersion 24
     buildToolsVersion "24.0.2"
-
     defaultConfig {
         applicationId "com.studypoem.wgjuh.byheart"
         minSdkVersion 15

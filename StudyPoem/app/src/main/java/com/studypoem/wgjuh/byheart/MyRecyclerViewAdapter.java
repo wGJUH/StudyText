@@ -3,6 +3,12 @@ package com.studypoem.wgjuh.byheart;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ScaleDrawable;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -16,8 +22,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Map;
+
+import static android.R.attr.bitmap;
 
 /*Created by WGJUH on 20.09.2016.*/
 
@@ -25,7 +36,7 @@ import java.util.Map;
 public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAdapter.ViewHolder> implements View.OnClickListener, Data {
     private ArrayList<String> strings;
     private ArrayList<Integer> ids;
-    private Map<Integer, Map<String, Integer>> map;
+    private ArrayList<String> portrait_ids;
     private String[] titles;
     private Context context;
     private static boolean isFromDefaultLib = true;
@@ -37,6 +48,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     MyRecyclerViewAdapter(Values values, Context context, Boolean isFromDefaultLib) {
         this.strings = values.getStrings();
         this.ids = values.getIds();
+        this.portrait_ids = values.getPortraitIds();
         this.context = context;
         this.isFromDefaultLib = isFromDefaultLib;
     }
@@ -48,10 +60,12 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         this.parent = parent;
         return viewHolder;
     }
-    private void hidePhoto(ViewHolder holder){
-         holder.mLayout.findViewById(R.id.poem_author_portrait).setVisibility(View.GONE);
+
+    private void hidePhoto(ViewHolder holder) {
+        holder.mLayout.findViewById(R.id.poem_author_portrait).setVisibility(View.GONE);
     }
-    private void changeTextView(ViewHolder holder){
+
+    private void changeTextView(ViewHolder holder) {
         TextView view = (TextView) holder.mLayout.findViewById(R.id.poem_author);
         LinearLayout.LayoutParams layoutParams;
         layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 200);
@@ -60,10 +74,11 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         view.setGravity(Gravity.CENTER);
         view.setMaxLines(2);
     }
+
     private void setStar(ViewHolder holder, int position) {
         String author = ((Toolbar) parent.getRootView().findViewById(R.id.toolbar_list_poems)).getTitle().toString();
         String title = strings.get(position);
-        System.out.println(MainActivity.TAG +" SetStar "+ " author: " + author + " title: " + title);
+        System.out.println(MainActivity.TAG + " SetStar " + " author: " + author + " title: " + title);
         if (new SQLWorker(context).isStarred(author, title)) {
             System.out.println(MainActivity.TAG + " button ON");
             ((ImageButton) holder.mLayout.findViewById(R.id.button_favorite)).setImageResource(android.R.drawable.btn_star_big_on);
@@ -72,8 +87,12 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
             ((ImageButton) holder.mLayout.findViewById(R.id.button_favorite)).setImageResource(android.R.drawable.btn_star_big_off);
         }
     }
+
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        Drawable drawable;
+        Bitmap bitmap;
+        int id = 0;
         if (context instanceof ListPoems) {
             ((ImageButton) holder.mLayout.findViewById(R.id.button_favorite)).setOnClickListener(this);
             hidePhoto(holder);
@@ -81,13 +100,38 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
             setStar(holder, position);
         } else {
             ((ImageButton) holder.mLayout.findViewById(R.id.button_favorite)).setVisibility(View.GONE);
-            ((ImageView) holder.mLayout.findViewById(R.id.poem_author_portrait)).setImageResource(R.mipmap.ic_launcher);
+            if (portrait_ids.get(position) != null) {
+                id = context.getResources().getIdentifier(portrait_ids.get(position), "drawable", BuildConfig.APPLICATION_ID);
+                if (id != 0) {
+                    int value;
+                    drawable = context.getResources().getDrawable(id);
+                    /**
+                     * todo for future if i will need resize my drawables
+                     */
+                    ((ImageView) holder.mLayout.findViewById(R.id.poem_author_portrait)).setImageDrawable(drawable);
+                } else if ((bitmap = loadImageFromStorage(portrait_ids.get(position))) != null) {
+                    ((ImageView) holder.mLayout.findViewById(R.id.poem_author_portrait)).setImageBitmap(bitmap);
+                } else
+                    ((ImageView) holder.mLayout.findViewById(R.id.poem_author_portrait)).setImageResource(R.mipmap.ic_launcher_app);
+            } else
+                ((ImageView) holder.mLayout.findViewById(R.id.poem_author_portrait)).setImageResource(R.mipmap.ic_launcher_app);
         }
         ((TextView) holder.mLayout.findViewById(R.id.poem_author)).setText(strings.get(position));
         current_position = position;
     }
 
+    private Bitmap loadImageFromStorage(String path) {
+        Bitmap b;
+        try {
+            File f = new File(path);
+            b = BitmapFactory.decodeStream(new FileInputStream(f));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return b;
 
+    }
 
     @Override
     public int getItemCount() {
@@ -150,8 +194,18 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
                             String author = ((Toolbar) temp.getRootView().findViewById(R.id.toolbar_list_poems)).getTitle().toString();
                             String title = ((TextView) temp.findViewById(R.id.poem_author)).getText().toString();
                             new SQLWorker(context).removeRow(author, title);
-                            strings.clear();
-                            strings.addAll(new SQLWorker(context).getStringsFromDB(author).getStrings());
+                            if (context instanceof ListPoems) {
+                                strings.clear();
+                                strings.addAll(new SQLWorker(context).getStringsFromDB(author).getStrings());
+                            } else {
+                                Values values = new SQLWorker(context).getPoemsAuthorsFromDB();
+                                strings.clear();
+                                strings.addAll(values.getStrings());
+                                ids.clear();
+                                ids.addAll(values.getIds());
+                                portrait_ids.clear();
+                                portrait_ids.addAll(values.getPortraitIds());
+                            }
                             notifyItemRemoved(getAdapterPosition());
                         }
                     }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -181,7 +235,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         }
         intent.putExtra(KEY_LAST_POSITION, last_position);
         intent.putExtra(KEY_REGEX, ((TextView) v.findViewById(R.id.poem_author)).getText().toString());
-        intent.putExtra(KEY_AUTHOR,((Toolbar) parent.getRootView().findViewById(R.id.toolbar_list_poems)).getTitle().toString());
+        intent.putExtra(KEY_AUTHOR, ((Toolbar) parent.getRootView().findViewById(R.id.toolbar_list_poems)).getTitle().toString());
 
         intent.putExtra(KEY_FROM_LIBRARY, isFromDefaultLib);
         last_position = itemPosition;

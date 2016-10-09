@@ -43,8 +43,8 @@ public class NewText extends AppCompatActivity implements Data, View.OnClickList
 
     private void changeViews() {
         System.out.println(MainActivity.TAG + " NEW TEXT");
-        fab_random_hide.setVisibility(View.INVISIBLE);
-        fab_random_show.setVisibility(View.INVISIBLE);
+        fab_random_hide.setVisibility(View.GONE);
+        fab_random_show.setVisibility(View.GONE);
         String s = bundle.getString(KEY_REGEX);
         toolbar.setTitle(s);
         fab.setImageResource(R.drawable.ic_content_paste_white_48dp);
@@ -110,6 +110,7 @@ public class NewText extends AppCompatActivity implements Data, View.OnClickList
     private void saveText(){
         final View view = LayoutInflater.from(this).inflate(R.layout.new_author, null, false);
         final String poem = ((EditText)findViewById(R.id.new_text)).getText().toString()+"\n";
+        view.findViewById(R.id.photo_layout).setVisibility(View.GONE);
         new AlertDialog.Builder(this).setView(view)
                 .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
                     @Override

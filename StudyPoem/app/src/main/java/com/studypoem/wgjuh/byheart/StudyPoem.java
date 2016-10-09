@@ -64,7 +64,7 @@ public class StudyPoem extends AppCompatActivity implements View.OnClickListener
     private EditText editText;
     private Toolbar toolbar;
 
-    StudyPoem(){}
+    public StudyPoem(){}
     public void setSpannableString(int positionForView, SpannableStringBuilder spannableStringBuilder){
         stringBuilders.set(positionForView,spannableStringBuilder);
     }
@@ -253,7 +253,7 @@ public class StudyPoem extends AppCompatActivity implements View.OnClickListener
                         System.out.println(MainActivity.TAG + " author: " + author_name + " title: " + poem_title);
                         if (!poem_title.equals("")) {
                             if (author_name.equals(FAVORITES)) {
-                                sqlWorker.addStringToDB(null, poem_title, poem, true);
+                                sqlWorker.addStringToDB(null,poem_title, poem, true);
                                 setResult(666);
                                 finish();
                             } else {

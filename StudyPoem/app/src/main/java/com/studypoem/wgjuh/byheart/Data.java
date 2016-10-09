@@ -43,9 +43,20 @@ public interface Data {
     public static final String COLUMN_POEM= "poem";
     public static final String COLUMN_FAVORITE= "favorite";
     public static final String COLUMN_ID= "id_author";
+    public static final String COLUMN_PORTRAIT_ID= "author_portrait_id";
     /**
      * NewTextStates
      */
     public static final int NEW_TEXT = 0;
     public static final int SAVE_TEXT = 1;
+    /**
+     * Request codes
+     */
+    public static final int LOAD_IMAGE = 1;
+
+    /**
+     * Result Codes
+     */
+   // public static final int LOAD_IMAGE = 1;
+
 }
