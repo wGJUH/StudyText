@@ -46,7 +46,14 @@ public class ListPoems extends ListPoets {
         myRecyclerViewAdapter = new MyRecyclerViewAdapter(values, this, true);
         runSetters();
     }
-
+    @Override
+    public void runSetters() {
+        recyclerView.setLayoutManager(mLayoutManager);
+        fab.setOnClickListener(this);
+        recyclerView.setAdapter(myRecyclerViewAdapter);
+        toolbar.setTitle(bundle.getString(KEY_REGEX,null));
+        setSupportActionBar(toolbar);
+    }
     @Override
     public void onClick(View v) {
         lvl++;

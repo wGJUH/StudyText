@@ -7,6 +7,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.net.Uri;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -138,14 +139,19 @@ public class SQLWorker extends SQLiteOpenHelper implements Data {
         opendatabase();
         Cursor cursor;
         ArrayList<String> strings = new ArrayList<String>();
-        cursor = database.query(DB_NAME, new String[]{COLUMN_AUTHOR_NAME}, null, null, COLUMN_AUTHOR_NAME, null, COLUMN_AUTHOR_NAME);
+        ArrayList<Integer> id = new ArrayList<Integer>();
+        ArrayList<String> portrait_ids = new ArrayList<String>();
+        cursor = database.query(DB_NAME, new String[]{COLUMN_AUTHOR_NAME,COLUMN_ID,COLUMN_PORTRAIT_ID}, null, null, COLUMN_AUTHOR_NAME, null, COLUMN_AUTHOR_NAME);
         if(cursor.moveToFirst()){
             do{
-                strings.add(cursor.getString(0));
+                strings.add(cursor.getString(cursor.getColumnIndex(COLUMN_AUTHOR_NAME)));
+                id.add(cursor.getInt(cursor.getColumnIndex(COLUMN_ID)));
+                portrait_ids.add(cursor.getString(cursor.getColumnIndex(COLUMN_PORTRAIT_ID)));
+
             }while (cursor.moveToNext());
         }
         close();
-        return new Values(strings,null);
+        return new Values(strings,id,portrait_ids);
     }
     public String getPoemTextFromDB(String author, String title){
         opendatabase();
@@ -283,7 +289,19 @@ public class SQLWorker extends SQLiteOpenHelper implements Data {
         return newState;
     }
 
-    public void addStringToDB(String authorName, String poemTitle, String text, Boolean starred) {
+    public void addStringToDB(String authorName, String authorImagePath ,String poemTitle, String text, Boolean starred) {
+        System.out.println(MainActivity.TAG+" SAVE: a:" + authorName + " t: " +poemTitle + " s: " + starred);
+        opendatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COLUMN_AUTHOR_NAME, authorName);
+        contentValues.put(COLUMN_POEM_TITLE, poemTitle);
+        contentValues.put(COLUMN_POEM, text);
+        contentValues.put(COLUMN_PORTRAIT_ID,authorImagePath);
+        if (starred) contentValues.put(COLUMN_FAVORITE, 1);
+            database.insert(DB_NAME, null, contentValues);
+        close();
+    }
+    public void addStringToDB(String authorName,String poemTitle, String text, Boolean starred) {
         System.out.println(MainActivity.TAG+" SAVE: a:" + authorName + " t: " +poemTitle + " s: " + starred);
         opendatabase();
         ContentValues contentValues = new ContentValues();
@@ -291,10 +309,9 @@ public class SQLWorker extends SQLiteOpenHelper implements Data {
         contentValues.put(COLUMN_POEM_TITLE, poemTitle);
         contentValues.put(COLUMN_POEM, text);
         if (starred) contentValues.put(COLUMN_FAVORITE, 1);
-            database.insert(DB_NAME, null, contentValues);
+        database.insert(DB_NAME, null, contentValues);
         close();
     }
-
     public int removeRow(String author, String title) {
         int deleted = -1;
         Cursor cursor;
