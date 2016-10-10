@@ -82,7 +82,7 @@ public class StudyPoem extends AppCompatActivity implements View.OnClickListener
         map.clear();
         if ((mainFabState == NEW_TEXT
                 || mainFabState == SAVE_TEXT)
-                && toolbar.getTitle().equals(FAVORITES)) {
+                && toolbar.getTitle().equals(R.string.title_favorites)) {
             setResult(666);
         } else {
             ListPoems.lvl--;
@@ -252,7 +252,7 @@ public class StudyPoem extends AppCompatActivity implements View.OnClickListener
                         String poem_title = ((EditText) view.findViewById(R.id.author_name)).getText().toString();
                         System.out.println(MainActivity.TAG + " author: " + author_name + " title: " + poem_title);
                         if (!poem_title.equals("")) {
-                            if (author_name.equals(FAVORITES)) {
+                            if (author_name.equals(getString(R.string.title_favorites))) {
                                 sqlWorker.addStringToDB(null,poem_title, poem, true);
                                 setResult(666);
                                 finish();

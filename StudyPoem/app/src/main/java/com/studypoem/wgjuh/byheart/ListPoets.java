@@ -7,22 +7,21 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -30,7 +29,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Array;
 
 /**
  * Created by WGJUH on 20.09.2016.
@@ -75,14 +73,19 @@ public class ListPoets extends CustomList {
         recyclerView.setLayoutManager(mLayoutManager);
         fab.setOnClickListener(this);
         recyclerView.setAdapter(myRecyclerViewAdapter);
-        toolbar.setTitle(getResources().getString(R.string.title_library));
+       // toolbar.setTitle(getResources().getString(R.string.title_library));
+        ((TextView)toolbar.findViewById(R.id.toolbar_title)).setText(getResources().getString(R.string.title_library));
+        Typeface khandBold = Typeface.createFromAsset(getAssets(), "robotoslab_regular.ttf");
+        ((TextView)toolbar.findViewById(R.id.toolbar_title)).setTypeface(khandBold);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
     }
     @Override
     public void init(){
         initViews();
         sqlWorker = new SQLWorker(this);
-        mLayoutManager = new AuthorsGrid(this, 150 * getMetrics().densityDpi / 160);
+        mLayoutManager = new AuthorsGrid(this, 172 * getMetrics().densityDpi / 160);
         bundle = getIntent().getExtras();
         values = getValues();
         myRecyclerViewAdapter = new MyRecyclerViewAdapter(values, this, true);
@@ -146,9 +149,6 @@ public class ListPoets extends CustomList {
         Toast.makeText(this,"clicked",Toast.LENGTH_SHORT).show();
         Intent i = new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(i, LOAD_IMAGE);
-
-
-
     }
     private Bitmap decodeFile(File f) {
         try {
@@ -192,9 +192,6 @@ public class ListPoets extends CustomList {
             System.out.println(MainActivity.TAG + " width :" + bitmap.getWidth() + " height: " + bitmap.getHeight());
             imageButton.setImageBitmap(bitmap);
             dialogView.findViewById(R.id.photo_hint).setVisibility(View.GONE);
-        }else {
-            values.setStrings(getValues().getStrings());
-            myRecyclerViewAdapter.notifyDataSetChanged();
         }
     }
 }

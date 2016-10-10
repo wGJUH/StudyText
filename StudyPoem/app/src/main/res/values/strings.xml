@@ -13,6 +13,10 @@
     <string name="title_favorites">Favorites</string>
     <string name="cancel">Cancel</string>
     <string name="input_title">Input title</string>
-    <string name="delete">delete</string>
+    <string name="delete">Delete</string>
     <string name="select_photo">Click to select photo</string>
+    <string name="toast_input_text">Please input or copy some text</string>
+    <string name="input_title_hint">Title</string>
+    <string name="input_author_hint">Author</string>
+
 </resources>
