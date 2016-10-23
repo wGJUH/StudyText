@@ -31,6 +31,7 @@ public class PoetsFragment extends Fragment {
     private SqlWorker sqlWorker;
     private Context context;
     private PoetsRecyclerView myPoetsRecyclerView;
+    private Values values;
     //Конструктор должен быть пустым
     public PoetsFragment() {
     //    super();
@@ -44,7 +45,8 @@ public class PoetsFragment extends Fragment {
         frameView = LayoutInflater.from(context).inflate(R.layout.fragment_poets, null, false);
         recyclerView = (RecyclerView)frameView.findViewById(R.id.recyler_list_poets);
         recyclerView.setLayoutManager(getGridManager());
-        myPoetsRecyclerView = new PoetsRecyclerView(getValues());
+        setValues();
+        myPoetsRecyclerView = new PoetsRecyclerView(context, values);
         recyclerView.setAdapter(myPoetsRecyclerView);
     }
     private DisplayMetrics getMetrics(){
@@ -62,12 +64,20 @@ public class PoetsFragment extends Fragment {
     public Values getValues() {
         return sqlWorker.getPoemsAuthorsFromDB();
     }
+    private void setValues(){
+        values = getValues();
+    }
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return frameView;
     }
 
-
+    public void updateValues(int position){
+        Values values = getValues();
+        this.values.setStrings(values.getStrings());
+        this.values.setPortraitIds(values.getPortraitIds());
+        myPoetsRecyclerView.notifyItemInserted(position);
+    }
 
 }

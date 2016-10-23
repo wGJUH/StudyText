@@ -7,15 +7,30 @@ import com.wgjuh.byheart.myapplication.BuildConfig;
  */
 
 public interface Data {
-    public static final String DB_NAME = "PoemsTable";
-    public static final String DB_LOCATION = "/data/data/"+ BuildConfig.APPLICATION_ID+"/databases/";
+    String DB_NAME = "PoemsTable";
+    String DB_LOCATION = "/data/data/" + BuildConfig.APPLICATION_ID + "/databases/";
     /**
      * Columns
      */
-    public static final String COLUMN_AUTHOR_NAME = "author_name";
-    public static final String COLUMN_POEM_TITLE = "title";
-    public static final String COLUMN_POEM= "poem";
-    public static final String COLUMN_FAVORITE= "favorite";
-    public static final String COLUMN_ID= "id_author";
-    public static final String COLUMN_PORTRAIT_ID= "author_portrait_id";
+    String COLUMN_AUTHOR_NAME = "author_name";
+    String COLUMN_POEM_TITLE = "title";
+    String COLUMN_POEM = "poem";
+    String COLUMN_FAVORITE = "favorite";
+    String COLUMN_ID = "id_author";
+    String COLUMN_PORTRAIT_ID = "author_portrait_id";
+    /**
+     * Keys
+     */
+    String KEY_AUTHOR = "author";
+
+    /**
+     * request codes
+     */
+    Integer REQUEST_LOAD_IMAGE = 1;
+    Integer REQUEST_ADD_NEW_AUTHOR = 2;
+
+    /**
+     * result codes
+     */
+    Integer ERROR = -1;
 }

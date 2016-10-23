@@ -1,5 +1,6 @@
 package com.wgjuh.byheart;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -22,7 +23,7 @@ public class SqlWorker extends SQLiteOpenHelper implements Data {
     private Context context;
     SQLiteDatabase database;
 
-    public  SqlWorker(Context context){
+    public SqlWorker(Context context) {
         super(context, DB_NAME, null, 1);
         this.context = context;
         if (isDatabaseExists()) {
@@ -51,7 +52,7 @@ public class SqlWorker extends SQLiteOpenHelper implements Data {
                 throw new Error("Error copying database");
             }
         }
-        System.out.println(" createDB method finished: " + (System.currentTimeMillis()-start));
+        System.out.println(" createDB method finished: " + (System.currentTimeMillis() - start));
     }
 
     private void copydatabase() throws IOException {
@@ -84,29 +85,77 @@ public class SqlWorker extends SQLiteOpenHelper implements Data {
         myoutput.close();
         myinput.close();
     }
-    public Values getPoemsAuthorsFromDB(){
+
+    public Values getPoemsAuthorsFromDB() {
         opendatabase();
         Cursor cursor;
         ArrayList<String> strings = new ArrayList<String>();
         ArrayList<Integer> id = new ArrayList<Integer>();
         ArrayList<String> portrait_ids = new ArrayList<String>();
-        cursor = database.query(DB_NAME, new String[]{COLUMN_AUTHOR_NAME,COLUMN_ID,COLUMN_PORTRAIT_ID}, COLUMN_AUTHOR_NAME + " IS NOT NULL", null, COLUMN_AUTHOR_NAME, null, COLUMN_AUTHOR_NAME);
-        if(cursor.moveToFirst()){
-            do{
+        cursor = database.query(DB_NAME, new String[]{COLUMN_AUTHOR_NAME, COLUMN_ID, COLUMN_PORTRAIT_ID}, COLUMN_AUTHOR_NAME + " IS NOT NULL", null, COLUMN_AUTHOR_NAME, null, COLUMN_AUTHOR_NAME);
+        if (cursor.moveToFirst()) {
+            do {
                 strings.add(cursor.getString(cursor.getColumnIndex(COLUMN_AUTHOR_NAME)));
                 id.add(cursor.getInt(cursor.getColumnIndex(COLUMN_ID)));
                 portrait_ids.add(cursor.getString(cursor.getColumnIndex(COLUMN_PORTRAIT_ID)));
 
-            }while (cursor.moveToNext());
+            } while (cursor.moveToNext());
         }
         close();
-        return new Values(strings,id,portrait_ids);
+        return new Values(strings, portrait_ids);
     }
+
+    public Values getPoemsTitlesFromDB(String author) {
+        opendatabase();
+        Cursor cursor;
+        ArrayList<String> titles = new ArrayList<String>();
+        ArrayList<Boolean> starrs = new ArrayList<Boolean>();
+        cursor = database.query(DB_NAME, new String[]{COLUMN_ID, COLUMN_POEM_TITLE, COLUMN_FAVORITE}, COLUMN_AUTHOR_NAME + " = ? AND " + COLUMN_POEM_TITLE + " IS NOT NULL", new String[]{author}, null, null, COLUMN_POEM_TITLE);
+        ArrayList<Integer> ids = new ArrayList<>();
+        if (cursor.moveToFirst()) {
+            do {
+                titles.add(cursor.getString(cursor.getColumnIndex(COLUMN_POEM_TITLE)));
+                starrs.add(cursor.getInt(cursor.getColumnIndex(COLUMN_FAVORITE)) != 0);
+                ids.add(cursor.getInt(cursor.getColumnIndex(COLUMN_ID)));
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        close();
+        return new Values(titles, starrs, ids);
+    }
+
+    public Values getStarred() {
+        opendatabase();
+        Cursor cursor = database.query(DB_NAME, new String[]{COLUMN_ID, COLUMN_POEM_TITLE}, COLUMN_FAVORITE + " = ?", new String[]{"" + 1}, null, null, COLUMN_POEM_TITLE);
+        ArrayList<String> adapterStrings = new ArrayList<>();
+        ArrayList<Boolean> starrs = new ArrayList<Boolean>();
+        ArrayList<Integer> ids = new ArrayList<>();
+        if (cursor.moveToFirst()) {
+            do {
+                String temp = cursor.getString(cursor.getColumnIndex(COLUMN_POEM_TITLE));
+                if (temp != null) {
+                    //System.out.println(MainActivity.TAG + "STRING: " + temp);
+                    adapterStrings.add(temp);
+                    starrs.add(true);
+                    ids.add(cursor.getInt(cursor.getColumnIndex(COLUMN_ID)));
+                }
+            } while (cursor.moveToNext());
+            cursor.close();
+        } else System.out.println(" 0 elements");
+        close();
+        System.out.println("Add " + adapterStrings.size() + " rows");
+        return new Values(adapterStrings, starrs, ids);
+    }
+
     public void opendatabase() throws SQLException {
         //Open the database
         String mypath = DB_LOCATION + DB_NAME;
         database = SQLiteDatabase.openDatabase(mypath, null, SQLiteDatabase.OPEN_READWRITE);
 
+    }
+
+    public int getStarredSize() {
+        return getStarred().getStrings().size();
     }
 
     public synchronized void close() {
@@ -115,7 +164,8 @@ public class SqlWorker extends SQLiteOpenHelper implements Data {
         }
         super.close();
     }
-    private boolean isDatabaseExists(){
+
+    private boolean isDatabaseExists() {
         boolean checkdb = false;
         try {
             String myPath = DB_LOCATION + DB_NAME;
@@ -127,6 +177,31 @@ public class SqlWorker extends SQLiteOpenHelper implements Data {
         return checkdb;
     }
 
+    public boolean setStar(int id) {
+        opendatabase();
+        Cursor cursor = database.query(DB_NAME, new String[]{COLUMN_ID, COLUMN_FAVORITE}, COLUMN_ID + " =?", new String[]{"" + id}, null, null, null);
+        if (cursor.moveToFirst()) {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(COLUMN_FAVORITE, (cursor.getInt(cursor.getColumnIndex(COLUMN_FAVORITE)) ^ 1));
+            int updated = database.update(DB_NAME, contentValues, COLUMN_ID + " =? ", new String[]{"" + id});
+            System.out.println("Udpated: " + updated + " starred: " + getStarred().getStrings().size());
+            cursor.close();
+        } else {
+            cursor.close();
+            close();
+            return false;
+        }
+        return true;
+    }
+
+    public void addNewAuthor(String authorName, String authorPhoto) {
+        opendatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COLUMN_AUTHOR_NAME, authorName);
+        contentValues.put(COLUMN_PORTRAIT_ID, authorPhoto);
+        database.insert(DB_NAME, null, contentValues);
+        close();
+    }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -136,5 +211,25 @@ public class SqlWorker extends SQLiteOpenHelper implements Data {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+    }
+
+    public int getRowNumber(String s) {
+        System.out.println(" take rowNumber");
+        opendatabase();
+        Cursor cursor = database.query(DB_NAME, null, null, null, COLUMN_AUTHOR_NAME, null, COLUMN_AUTHOR_NAME);
+        int i = -1;
+        String author;
+        if (cursor.moveToFirst())
+            do {
+                i++;
+                author = cursor.getString(cursor.getColumnIndex(COLUMN_AUTHOR_NAME));
+                if (author.equals(s)) {
+                    System.out.println(" break");
+                    break;
+                }
+            } while (cursor.moveToNext());
+        close();
+        System.out.println(" i : " + i);
+        return i;
     }
 }

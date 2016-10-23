@@ -1,5 +1,6 @@
 package com.wgjuh.byheart;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
@@ -23,9 +24,10 @@ import com.wgjuh.byheart.adapters.FragmentAdapter;
 import com.wgjuh.byheart.fragments.FavoriteFragment;
 import com.wgjuh.byheart.fragments.PoemsFragment;
 import com.wgjuh.byheart.fragments.PoetsFragment;
+import com.wgjuh.byheart.fragments.RootFragment;
 import com.wgjuh.byheart.myapplication.R;
 
-public class TabbedActivity extends AppCompatActivity {
+public class TabbedActivity extends AppCompatActivity implements View.OnClickListener, Data {
 
     /**
      * The {@link ViewPager} that will host the section contents.
@@ -33,35 +35,45 @@ public class TabbedActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     private TabLayout tabLayout;
     private SqlWorker sqlWorker;
+    private RootFragment rootFragment;
+    private FavoriteFragment favoriteFragment;
+    public static boolean isShouldBeUpdated = false;
+    private FragmentAdapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tabbed_activity);
         sqlWorker = new SqlWorker(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        rootFragment = new RootFragment();
+        favoriteFragment = new FavoriteFragment();
         setSupportActionBar(toolbar);
-       getSupportActionBar().setDisplayShowTitleEnabled(false);
-       setViewpagerTitle();
-        if(this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
-        setupPortraitOrientation();
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        setViewpagerTitle();
+        if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
+            setupPortraitOrientation();
         else setupLandscapeOrientation();
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_add);
+        fab.setOnClickListener(this);
     }
 
-    private void setupLandscapeOrientation(){
+    public static boolean isShouldUpdate() {
+        return isShouldBeUpdated;
+    }
+
+    // public static void setShouldUpdate(boolean b){isShouldBeUpdated = b;}
+    public static void setShouldUpdate(boolean b) {
+        isShouldBeUpdated = b;
+    }
+
+    private void setupLandscapeOrientation() {
         System.out.println("setupLandscapeOrientation");
-        FrameLayout poetsFrame = (FrameLayout)findViewById(R.id.frame_poets);
-        FrameLayout poemsFrame = (FrameLayout)findViewById(R.id.frame_poems);
-        FragmentTransaction fragmentTransaction = (FragmentTransaction)getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.frame_poets,new PoetsFragment());
-        fragmentTransaction.replace(R.id.frame_poems,new PoemsFragment());
+        FrameLayout poetsFrame = (FrameLayout) findViewById(R.id.frame_poets);
+        FrameLayout poemsFrame = (FrameLayout) findViewById(R.id.frame_poems);
+        FragmentTransaction fragmentTransaction = (FragmentTransaction) getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.frame_poets, new PoetsFragment());
+        fragmentTransaction.replace(R.id.frame_poems, new FavoriteFragment());
         fragmentTransaction.commit();
     }
 
@@ -69,36 +81,64 @@ public class TabbedActivity extends AppCompatActivity {
         System.out.println("setupPortraitOrientation");
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(mViewPager);
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {/*
+                System.out.println("Selected " + position);
+                if (isShouldBeUpdated && position == 1) {
+                    favoriteFragment.updateValues(-1,false);
+                    adapter.notifyDataSetChanged();
+                    setShouldUpdate(false);
+                } else if (isShouldBeUpdated && position == 0) {
+                    rootFragment.setShouldUpadated(isShouldBeUpdated);
+                }
+                // adapter.notifyDataSetChanged();*/
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
         setTabsTitles();
     }
 
-    private void setViewpagerTitle(){
-        TextView viewTitle = (TextView)findViewById(R.id.toolbar_title);
+    private void setViewpagerTitle() {
+        TextView viewTitle = (TextView) findViewById(R.id.toolbar_title);
         viewTitle.setText(getString(R.string.app_name));
         setTypeFace(viewTitle);
     }
-    private void setTabsTitles(){
-        TextView libTab = (TextView)LayoutInflater.from(this).inflate(R.layout.custom_tab_title,null);
+
+    private void setTabsTitles() {
+        TextView libTab = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_tab_title, null);
         libTab.setText(getString(R.string.title_lib));
         tabLayout.getTabAt(0).setCustomView(libTab);
-        TextView favoriteTab = (TextView)LayoutInflater.from(this).inflate(R.layout.custom_tab_title,null);
+        TextView favoriteTab = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_tab_title, null);
         favoriteTab.setText(getString(R.string.title_favorite));
         tabLayout.getTabAt(1).setCustomView(favoriteTab);
         setTypeFace(libTab);
         setTypeFace(favoriteTab);
     }
-    private void setTypeFace(TextView textView){
+
+    private void setTypeFace(TextView textView) {
         Typeface robotoslab = Typeface.createFromAsset(getAssets(), "robotoslab_regular.ttf");
         textView.setTypeface(robotoslab);
     }
-    private  void setupViewPager(ViewPager mViewPager){
-        FragmentAdapter adapter = new FragmentAdapter(getSupportFragmentManager());
-        adapter.addFragment(new PoetsFragment(),getString(R.string.title_lib));
-        adapter.addFragment(new FavoriteFragment(),getString(R.string.title_favorite));
+
+    private void setupViewPager(ViewPager mViewPager) {
+        adapter = new FragmentAdapter(getSupportFragmentManager());
+        adapter.addFragment(rootFragment, getString(R.string.title_lib));
+        adapter.addFragment(favoriteFragment, getString(R.string.title_favorite));
         mViewPager.setAdapter(adapter);
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -119,5 +159,44 @@ public class TabbedActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onClick(View v) {
+        Intent intent;
+        switch (v.getId()) {
+            case R.id.fab_add:
+
+                System.out.println(adapter.getItem(mViewPager.getCurrentItem()));
+                if (adapter.getItem(mViewPager.getCurrentItem()) instanceof RootFragment) {
+                    if (rootFragment.getFragmentManager().findFragmentById(R.id.frame_root) instanceof PoetsFragment) {
+                        System.out.println("New Author");
+                        intent = new Intent(this, NewAuthorActivity.class);
+                        startActivityForResult(intent, REQUEST_ADD_NEW_AUTHOR);
+                    } else {
+                        System.out.println("new Poems");
+                        intent = new Intent(this, NewPoemActivity.class);
+                        startActivity(intent);
+                    }
+                } else {
+                    System.out.println("new Favorite");
+                    intent = new Intent(this, NewPoemActivity.class);
+                    startActivity(intent);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_ADD_NEW_AUTHOR && resultCode == RESULT_OK) {
+            String s = data.getStringExtra(KEY_AUTHOR);
+            System.out.println("name: " + s);
+            int n = sqlWorker.getRowNumber(s);
+            ((PoetsFragment) rootFragment.getFragmentManager().findFragmentById(R.id.frame_root)).updateValues(n);
+        }
     }
 }

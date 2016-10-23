@@ -20,7 +20,6 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/AppTheme.PopupOverlay">
             <!-- <ImageButton
                  android:id = "@+id/btn_back"
@@ -54,7 +53,6 @@
                   android:layout_width="match_parent"
                   android:layout_height="match_parent"
                   android:background="@color/white"
-                  android:text="Frame"
                   android:textSize="@dimen/titles_size"/>
           </FrameLayout>
           <FrameLayout
@@ -66,7 +64,6 @@
                   android:layout_width="match_parent"
                   android:layout_height="match_parent"
                   android:background="@color/white"
-                  android:text="Frame"
                   android:textSize="@dimen/titles_size"/>
           </FrameLayout>
 </LinearLayout>
@@ -77,6 +74,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@android:drawable/ic_dialog_email" />
+        app:backgroundTint="@color/colorPrimary"
+        app:srcCompat="@drawable/ic_add_white_48dp" />
 
 </android.support.design.widget.CoordinatorLayout>

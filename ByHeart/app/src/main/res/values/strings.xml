@@ -4,4 +4,7 @@
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="title_lib">Library</string>
     <string name="title_favorite">Favorite</string>
+    <string name="title_activity_new_author">NewAuthorActivity</string>
+    <string name="title_activity_new_poem">NewPoemActivity</string>
+    <string name="hint_input_author_name">Input author name</string>
 </resources>

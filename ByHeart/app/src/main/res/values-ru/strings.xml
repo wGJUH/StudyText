@@ -5,4 +5,6 @@
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="title_lib">Библиотека</string>
     <string name="title_favorite">Избранное</string>
+    <string name="hint_input_author_name">Введите имя автора</string>
+
 </resources>

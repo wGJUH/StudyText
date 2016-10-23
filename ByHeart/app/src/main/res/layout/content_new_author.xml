@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content_new_author"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    android:background="@color/white"
+    tools:showIn="@layout/activity_new_author">
+
+    <ImageView
+        android:id="@+id/author_photo"
+        android:layout_width="match_parent"
+        android:layout_height="256dp"
+        android:scaleType="centerCrop"
+        android:clickable="true"
+        android:background="@drawable/border"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <EditText
+        android:id="@+id/new_author_name"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/new_title_field"
+        android:gravity="start"
+        android:hint="@string/hint_input_author_name"
+        android:layout_below="@+id/author_photo"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        style="@style/myedittext"/>
+
+</RelativeLayout>
