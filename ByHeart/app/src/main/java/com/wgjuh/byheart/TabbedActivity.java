@@ -39,13 +39,21 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
     private FavoriteFragment favoriteFragment;
     public static boolean isShouldBeUpdated = false;
     private FragmentAdapter adapter;
+    private Toolbar toolbar;
+
+    @Override
+    public void onBackPressed() {
+        if(mViewPager.getCurrentItem() != 0){
+            mViewPager.setCurrentItem(mViewPager.getCurrentItem()-1);
+        }else super.onBackPressed();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tabbed_activity);
         sqlWorker = new SqlWorker(this);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         rootFragment = new RootFragment();
         favoriteFragment = new FavoriteFragment();
         setSupportActionBar(toolbar);
@@ -88,16 +96,7 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
             }
 
             @Override
-            public void onPageSelected(int position) {/*
-                System.out.println("Selected " + position);
-                if (isShouldBeUpdated && position == 1) {
-                    favoriteFragment.updateValues(-1,false);
-                    adapter.notifyDataSetChanged();
-                    setShouldUpdate(false);
-                } else if (isShouldBeUpdated && position == 0) {
-                    rootFragment.setShouldUpadated(isShouldBeUpdated);
-                }
-                // adapter.notifyDataSetChanged();*/
+            public void onPageSelected(int position) {
             }
 
             @Override
@@ -115,7 +114,10 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
         viewTitle.setText(getString(R.string.app_name));
         setTypeFace(viewTitle);
     }
-
+    private String getViewPagerTitle(){
+        TextView viewTitle = (TextView) findViewById(R.id.toolbar_title);
+        return viewTitle.getText().toString();
+    }
     private void setTabsTitles() {
         TextView libTab = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_tab_title, null);
         libTab.setText(getString(R.string.title_lib));
@@ -176,12 +178,14 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
                     } else {
                         System.out.println("new Poems");
                         intent = new Intent(this, NewPoemActivity.class);
-                        startActivity(intent);
+                        intent.putExtra(KEY_AUTHOR,getViewPagerTitle());
+                        startActivityForResult(intent,REQUEST_ADD_NEW_POEM);
                     }
                 } else {
                     System.out.println("new Favorite");
                     intent = new Intent(this, NewPoemActivity.class);
-                    startActivity(intent);
+                    intent.putExtra(KEY_AUTHOR,getString(R.string.app_name));
+                    startActivityForResult(intent,REQUEST_ADD_NEW_FAVORITE);
                 }
                 break;
             default:
@@ -197,6 +201,12 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
             System.out.println("name: " + s);
             int n = sqlWorker.getRowNumber(s);
             ((PoetsFragment) rootFragment.getFragmentManager().findFragmentById(R.id.frame_root)).updateValues(n);
+        }else if(requestCode == REQUEST_ADD_NEW_FAVORITE && resultCode == RESULT_OK){
+            String s = data.getStringExtra(KEY_TITLE);
+            System.out.println("title: " + s);
+            int n = sqlWorker.getRowPoemNumber(null,s);
+            System.out.println("number: " + n);
+            ((FavoriteFragment) adapter.getItem(mViewPager.getCurrentItem())).updateValues(n,true);
         }
     }
 }

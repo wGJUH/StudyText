@@ -63,6 +63,7 @@ public class FavoriteFragment extends Fragment{
         this.values.setStarrs(values.getStarrs());
         this.values.setIds(values.getIds());
         System.out.println(values.getStrings());
+        System.out.println("position: " + position + " size: " + myPoemsRecyclerView.getItemCount());
         if(position != -1 && favorite)
         myPoemsRecyclerView.notifyItemRemoved(position);
         else myPoemsRecyclerView.notifyDataSetChanged();

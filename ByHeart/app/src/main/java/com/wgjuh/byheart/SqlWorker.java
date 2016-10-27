@@ -7,6 +7,9 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.text.Editable;
+
+import com.wgjuh.byheart.myapplication.R;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -178,19 +181,26 @@ public class SqlWorker extends SQLiteOpenHelper implements Data {
     }
 
     public boolean setStar(int id) {
+        int updated;
         opendatabase();
-        Cursor cursor = database.query(DB_NAME, new String[]{COLUMN_ID, COLUMN_FAVORITE}, COLUMN_ID + " =?", new String[]{"" + id}, null, null, null);
+        Cursor cursor = database.query(DB_NAME, new String[]{COLUMN_ID, COLUMN_AUTHOR_NAME, COLUMN_FAVORITE}, COLUMN_ID + " =?", new String[]{"" + id}, null, null, null);
         if (cursor.moveToFirst()) {
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(COLUMN_FAVORITE, (cursor.getInt(cursor.getColumnIndex(COLUMN_FAVORITE)) ^ 1));
-            int updated = database.update(DB_NAME, contentValues, COLUMN_ID + " =? ", new String[]{"" + id});
-            System.out.println("Udpated: " + updated + " starred: " + getStarred().getStrings().size());
+            if(cursor.getString(cursor.getColumnIndex(COLUMN_AUTHOR_NAME)) == null){
+                System.out.println("DELETED");
+                updated = database.delete(DB_NAME,COLUMN_ID + " =? ", new String[]{""+id});
+            }else {
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(COLUMN_FAVORITE, (cursor.getInt(cursor.getColumnIndex(COLUMN_FAVORITE)) ^ 1));
+                updated = database.update(DB_NAME, contentValues, COLUMN_ID + " =? ", new String[]{"" + id});
+            }
+            System.out.println("Udpated: " + updated);
             cursor.close();
         } else {
             cursor.close();
             close();
             return false;
         }
+        close();
         return true;
     }
 
@@ -200,6 +210,23 @@ public class SqlWorker extends SQLiteOpenHelper implements Data {
         contentValues.put(COLUMN_AUTHOR_NAME, authorName);
         contentValues.put(COLUMN_PORTRAIT_ID, authorPhoto);
         database.insert(DB_NAME, null, contentValues);
+        close();
+    }
+    public void addNewText(String authorName, String title, String poem){
+        opendatabase();
+        ContentValues contentValues = new ContentValues();
+
+
+        if(!authorName.equals(context.getString(R.string.app_name))){
+            System.out.println("authorName: " + authorName + " poem Title: " + context.getString(R.string.app_name));
+            contentValues.put(COLUMN_AUTHOR_NAME, authorName);
+        }
+        else{
+            contentValues.put(COLUMN_FAVORITE,1);
+        }
+        contentValues.put(COLUMN_POEM_TITLE,title);
+        contentValues.put(COLUMN_POEM,poem);
+        database.insert(DB_NAME,null,contentValues);
         close();
     }
 
@@ -218,18 +245,47 @@ public class SqlWorker extends SQLiteOpenHelper implements Data {
         opendatabase();
         Cursor cursor = database.query(DB_NAME, null, null, null, COLUMN_AUTHOR_NAME, null, COLUMN_AUTHOR_NAME);
         int i = -1;
-        String author;
+        String author, title;
         if (cursor.moveToFirst())
             do {
                 i++;
                 author = cursor.getString(cursor.getColumnIndex(COLUMN_AUTHOR_NAME));
-                if (author.equals(s)) {
+                title = cursor.getString(cursor.getColumnIndex(COLUMN_POEM_TITLE));
+                if (author.equals(s) || title.equals(s)) {
                     System.out.println(" break");
                     break;
                 }
             } while (cursor.moveToNext());
+        cursor.close();
         close();
         System.out.println(" i : " + i);
         return i;
+    }
+
+    public int getRowPoemNumber(String author, String title) {
+        System.out.println(" take rowNumber");
+        opendatabase();
+        Cursor cursor;
+        String tempTitle;
+        if(author != null)
+        cursor= database.query(DB_NAME, null, COLUMN_AUTHOR_NAME + " =?", new String[]{author}, null, null, COLUMN_POEM_TITLE);
+        else cursor= database.query(DB_NAME, null, COLUMN_FAVORITE + " =? ", new String[]{""+1}, null, null, COLUMN_POEM_TITLE);
+        int i = -1;
+        if (cursor.moveToFirst())
+            do {
+                i++;
+                tempTitle = cursor.getString(cursor.getColumnIndex(COLUMN_POEM_TITLE));
+                if (tempTitle.equals(title)) {
+                    System.out.println(" break");
+                    break;
+                }
+            } while (cursor.moveToNext());
+        cursor.close();
+        close();
+        System.out.println(" i : " + i);
+        /**
+         * todo не уверен в правильности этого i-1
+         */
+        return i-1;
     }
 }

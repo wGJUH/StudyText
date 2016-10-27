@@ -2,6 +2,7 @@ package com.wgjuh.byheart.fragments;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.Typeface;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,6 +12,7 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.wgjuh.byheart.AuthorsGrid;
 import com.wgjuh.byheart.SqlWorker;
@@ -55,6 +57,21 @@ public class PoetsFragment extends Fragment {
         return metrics;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        System.out.println("ON_RESUME");
+        setViewpagerTitle();
+    }
+    private void setViewpagerTitle() {
+        TextView viewTitle = (TextView)getActivity().findViewById(R.id.toolbar_title);
+        viewTitle.setText(getString(R.string.app_name));
+        setTypeFace(viewTitle);
+    }
+    private void setTypeFace(TextView textView) {
+        Typeface robotoslab = Typeface.createFromAsset(context.getAssets(), "robotoslab_regular.ttf");
+        textView.setTypeface(robotoslab);
+    }
     private LayoutManager getGridManager(){
         System.out.println("Get grid Manager");
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){

@@ -1,6 +1,7 @@
 package com.wgjuh.byheart.fragments;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.wgjuh.byheart.Data;
 import com.wgjuh.byheart.SqlWorker;
@@ -47,10 +49,19 @@ public class PoemsFragment extends Fragment implements Data{
         recyclerView.setLayoutManager(new LinearLayoutManager(context, OrientationHelper.VERTICAL,false));
         bundle = getArguments();
         setValues();
+        setViewpagerTitle();
         myPoemsRecyclerView = new PoemsRecyclerView(context, getAuthorName(),values, this);
         recyclerView.setAdapter(myPoemsRecyclerView);
     }
-
+    private void setViewpagerTitle() {
+        TextView viewTitle = (TextView)getActivity().findViewById(R.id.toolbar_title);
+        viewTitle.setText(getAuthorName());
+        setTypeFace(viewTitle);
+    }
+    private void setTypeFace(TextView textView) {
+        Typeface robotoslab = Typeface.createFromAsset(context.getAssets(), "robotoslab_regular.ttf");
+        textView.setTypeface(robotoslab);
+    }
     private String getAuthorName(){
         return bundle.getString(KEY_AUTHOR);
     }
@@ -74,5 +85,4 @@ public class PoemsFragment extends Fragment implements Data{
         if(position != -1)
             myPoemsRecyclerView.notifyDataSetChanged();
     }
-
 }

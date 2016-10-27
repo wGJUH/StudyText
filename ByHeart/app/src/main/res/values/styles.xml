@@ -6,7 +6,6 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorPrimary</item>
-        <item name="android:editTextStyle">@style/myedittext</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -21,5 +20,13 @@
         <item name="android:textSize">@dimen/titles_size</item>
         <item name="android:textColor">@color/colorPrimaryDark</item>
         <item name="android:textAppearance">@style/Base.TextAppearance.AppCompat.Large</item>
+    </style>
+    <style name="new_edit_text" parent="Base.Widget.AppCompat.EditText">
+        <item name="android:textSize">@dimen/edit_text_field_size</item>
+        <item name="android:textColor">@color/colorPrimaryDark</item>
+        <item name="android:textAppearance">@style/Base.TextAppearance.AppCompat.Large</item>
+        <item name="android:padding">@dimen/new_title_field_padding</item>
+        <item name="android:gravity">top</item>
+        <item name="android:background">@color/white</item>
     </style>
 </resources>

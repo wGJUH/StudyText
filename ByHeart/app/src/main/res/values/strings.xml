@@ -7,4 +7,5 @@
     <string name="title_activity_new_author">NewAuthorActivity</string>
     <string name="title_activity_new_poem">NewPoemActivity</string>
     <string name="hint_input_author_name">Input author name</string>
+    <string name="hint_input_title">Input title</string>
 </resources>

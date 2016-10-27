@@ -10,15 +10,19 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
 import com.wgjuh.byheart.Data;
 import com.wgjuh.byheart.Values;
 import com.wgjuh.byheart.fragments.FavoriteFragment;
 import com.wgjuh.byheart.fragments.PoemsFragment;
 import com.wgjuh.byheart.fragments.PoetsFragment;
+import com.wgjuh.byheart.myapplication.BuildConfig;
 import com.wgjuh.byheart.myapplication.R;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -45,12 +49,25 @@ public class PoetsRecyclerView extends RecyclerView.Adapter<PoetsRecyclerView.Vi
         viewHolder = new ViewHolder(singleElement);
         return viewHolder;
     }
-
+    private int getId(int position) {
+        return context.getResources().getIdentifier(photos.get(position), "drawable", BuildConfig.APPLICATION_ID);
+    }
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         TextView authorName = (TextView) holder.mLayout.findViewById(R.id.poem_author);
+        ImageView imageView = ((ImageView) holder.mLayout.findViewById(R.id.poem_author_portrait));
+
         setTypeFace(authorName);
         authorName.setText(names.get(position));
+        int id = getId(position);
+        /**
+         * todo вынести в отдельный поток
+         *
+         */
+        if (id != 0)
+            Picasso.with(context).load(id).into(imageView);
+        else
+            Picasso.with(context).load(new File(photos.get(position))).into(imageView);
     }
     private void setTypeFace(TextView textView){
         Typeface robotoslab = Typeface.createFromAsset(context.getAssets(), "robotoslab_regular.ttf");

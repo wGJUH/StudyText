@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -34,7 +35,8 @@ public class PoemsRecyclerView extends RecyclerView.Adapter<PoemsRecyclerView.Vi
     private String authorName;
     private ArrayList<Integer> ids;
     private Fragment fragment;
-
+    private SqlWorker sqlWorker;
+    private FragmentManager fragmentManager;
     public PoemsRecyclerView(Context context, String authorName , Values values, Fragment fragment) {
         this.context = context;
         titles = values.getStrings();
@@ -42,6 +44,8 @@ public class PoemsRecyclerView extends RecyclerView.Adapter<PoemsRecyclerView.Vi
         this.authorName = authorName;
         this.ids = values.getIds();
         this.fragment = fragment;
+        sqlWorker = new SqlWorker(context);
+        fragmentManager = fragment.getFragmentManager();
     }
 
     @Override
@@ -58,16 +62,18 @@ public class PoemsRecyclerView extends RecyclerView.Adapter<PoemsRecyclerView.Vi
         setImageButton(imageButton,position);
         title.setText(titles.get(position));
         setTypeFace(title);
-        imageButton.setSelected(starrs.get(position));
     }
     private void setTypeFace(TextView textView){
         Typeface robotoslab = Typeface.createFromAsset(context.getAssets(), "robotoslab_regular.ttf");
         textView.setTypeface(robotoslab);
     }
     public void setImageButton(ImageButton imageButton, int position){
+        System.out.println(" pre finish");
         if(starrs.get((position))){
             imageButton.setImageResource(R.drawable.favorite_active);
         }else imageButton.setImageResource(R.drawable.favorite_disabled);
+        imageButton.setSelected(starrs.get(position));
+
     }
     @Override
     public int getItemCount() {
@@ -90,15 +96,12 @@ public class PoemsRecyclerView extends RecyclerView.Adapter<PoemsRecyclerView.Vi
             Intent intent;
             switch (v.getId()){
                 case R.id.button_favorite:
-                    System.out.println("Button favorite");
+                    System.out.println("Button favorite ");
                     int adapterPosition = getAdapterPosition();
-                    System.out.println("ids: " + ids.get(adapterPosition));
-                    new SqlWorker(context).setStar(ids.get(adapterPosition));
-                    boolean currentState  = starrs.get(adapterPosition);
-                    starrs.remove(adapterPosition);
-                    starrs.add(adapterPosition, !currentState);
-                    setImageButton((ImageButton) v,adapterPosition);
-                    updateValues(adapterPosition);
+                    if(adapterPosition != -1) {
+                        sqlWorker.setStar(ids.get(adapterPosition));
+                        updateValues(adapterPosition);
+                    }
                     break;
                 default:
                     System.out.println("Button other");
@@ -106,9 +109,10 @@ public class PoemsRecyclerView extends RecyclerView.Adapter<PoemsRecyclerView.Vi
             }
         }
         private void updateValues(int position){
+            long start = System.currentTimeMillis();
             if(fragment instanceof FavoriteFragment){
                 ((FavoriteFragment)fragment).updateValues(position,true);
-                Fragment tempFragment = fragment.getFragmentManager().findFragmentById(R.id.frame_root);
+                Fragment tempFragment = fragmentManager.findFragmentById(R.id.frame_root);
                 if( tempFragment instanceof PoemsFragment){
                     ((PoemsFragment)tempFragment).updateValues(position);
                 }
@@ -117,8 +121,9 @@ public class PoemsRecyclerView extends RecyclerView.Adapter<PoemsRecyclerView.Vi
                 /***
                  * todo убрать костыль с номером объекта из viewpager
                  */
-                ((FavoriteFragment)(fragment.getFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":" + 1))).updateValues(position,false);
+                ((FavoriteFragment)(fragmentManager.findFragmentByTag("android:switcher:" + R.id.viewpager + ":" + 1))).updateValues(position,false);
             }
+            System.out.println("finish: " + (System.currentTimeMillis() - start));
         }
         @Override
         public boolean onLongClick(View v) {

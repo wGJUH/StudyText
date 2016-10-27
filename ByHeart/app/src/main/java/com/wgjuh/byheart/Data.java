@@ -22,12 +22,15 @@ public interface Data {
      * Keys
      */
     String KEY_AUTHOR = "author";
+    String KEY_TITLE = "title";
 
     /**
      * request codes
      */
     Integer REQUEST_LOAD_IMAGE = 1;
     Integer REQUEST_ADD_NEW_AUTHOR = 2;
+    Integer REQUEST_ADD_NEW_POEM = 3;
+    Integer REQUEST_ADD_NEW_FAVORITE = 4;
 
     /**
      * result codes
