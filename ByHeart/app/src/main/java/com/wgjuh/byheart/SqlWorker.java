@@ -185,10 +185,10 @@ public class SqlWorker extends SQLiteOpenHelper implements Data {
         opendatabase();
         Cursor cursor = database.query(DB_NAME, new String[]{COLUMN_ID, COLUMN_AUTHOR_NAME, COLUMN_FAVORITE}, COLUMN_ID + " =?", new String[]{"" + id}, null, null, null);
         if (cursor.moveToFirst()) {
-            if(cursor.getString(cursor.getColumnIndex(COLUMN_AUTHOR_NAME)) == null){
+            if (cursor.getString(cursor.getColumnIndex(COLUMN_AUTHOR_NAME)) == null) {
                 System.out.println("DELETED");
-                updated = database.delete(DB_NAME,COLUMN_ID + " =? ", new String[]{""+id});
-            }else {
+                updated = database.delete(DB_NAME, COLUMN_ID + " =? ", new String[]{"" + id});
+            } else {
                 ContentValues contentValues = new ContentValues();
                 contentValues.put(COLUMN_FAVORITE, (cursor.getInt(cursor.getColumnIndex(COLUMN_FAVORITE)) ^ 1));
                 updated = database.update(DB_NAME, contentValues, COLUMN_ID + " =? ", new String[]{"" + id});
@@ -212,21 +212,29 @@ public class SqlWorker extends SQLiteOpenHelper implements Data {
         database.insert(DB_NAME, null, contentValues);
         close();
     }
-    public void addNewText(String authorName, String title, String poem){
+
+    public void addNewText(String authorName, String title, String poem) {
         opendatabase();
+        Cursor cursor;
         ContentValues contentValues = new ContentValues();
 
 
-        if(!authorName.equals(context.getString(R.string.app_name))){
+        if (!authorName.equals(context.getString(R.string.app_name))) {
             System.out.println("authorName: " + authorName + " poem Title: " + context.getString(R.string.app_name));
             contentValues.put(COLUMN_AUTHOR_NAME, authorName);
+            String portraitID = "";
+            cursor = database.query(DB_NAME, new String[]{COLUMN_PORTRAIT_ID}, COLUMN_AUTHOR_NAME + " =?", new String[]{authorName}, null, null, null);
+            if (cursor.moveToFirst()) {
+                portraitID = cursor.getString(cursor.getColumnIndex(COLUMN_PORTRAIT_ID));
+            }
+            cursor.close();
+            contentValues.put(COLUMN_PORTRAIT_ID, portraitID);
+        } else {
+            contentValues.put(COLUMN_FAVORITE, 1);
         }
-        else{
-            contentValues.put(COLUMN_FAVORITE,1);
-        }
-        contentValues.put(COLUMN_POEM_TITLE,title);
-        contentValues.put(COLUMN_POEM,poem);
-        database.insert(DB_NAME,null,contentValues);
+        contentValues.put(COLUMN_POEM_TITLE, title);
+        contentValues.put(COLUMN_POEM, poem);
+        database.insert(DB_NAME, null, contentValues);
         close();
     }
 
@@ -251,7 +259,7 @@ public class SqlWorker extends SQLiteOpenHelper implements Data {
                 i++;
                 author = cursor.getString(cursor.getColumnIndex(COLUMN_AUTHOR_NAME));
                 title = cursor.getString(cursor.getColumnIndex(COLUMN_POEM_TITLE));
-                if (author.equals(s) || title.equals(s)) {
+                if (author.equals(s)) {
                     System.out.println(" break");
                     break;
                 }
@@ -267,9 +275,10 @@ public class SqlWorker extends SQLiteOpenHelper implements Data {
         opendatabase();
         Cursor cursor;
         String tempTitle;
-        if(author != null)
-        cursor= database.query(DB_NAME, null, COLUMN_AUTHOR_NAME + " =?", new String[]{author}, null, null, COLUMN_POEM_TITLE);
-        else cursor= database.query(DB_NAME, null, COLUMN_FAVORITE + " =? ", new String[]{""+1}, null, null, COLUMN_POEM_TITLE);
+        if (author != null)
+            cursor = database.query(DB_NAME, null, COLUMN_AUTHOR_NAME + " =?", new String[]{author}, null, null, COLUMN_POEM_TITLE);
+        else
+            cursor = database.query(DB_NAME, null, COLUMN_FAVORITE + " =? ", new String[]{"" + 1}, null, null, COLUMN_POEM_TITLE);
         int i = -1;
         if (cursor.moveToFirst())
             do {
@@ -286,6 +295,32 @@ public class SqlWorker extends SQLiteOpenHelper implements Data {
         /**
          * todo не уверен в правильности этого i-1
          */
-        return i-1;
+        return i - 1;
+    }
+    public String getTextFromDB(int id) {
+        opendatabase();
+        Cursor cursor;
+        ArrayList<String> strings = new ArrayList<String>();
+        String text;
+        cursor = database.query(DB_NAME, new String[]{COLUMN_POEM}, COLUMN_ID + " =? ", new String[]{""+id}, null, null, null);
+        if (cursor.moveToFirst()) {
+            text = cursor.getString(0);
+        } else text = null;
+        cursor.close();
+        close();
+        return text;
+    }
+    public String getTextFromDB(String author, String title) {
+        opendatabase();
+        Cursor cursor;
+        ArrayList<String> strings = new ArrayList<String>();
+        String text;
+        cursor = database.query(DB_NAME, new String[]{COLUMN_POEM}, "( " + COLUMN_AUTHOR_NAME + " = ? AND " + COLUMN_POEM_TITLE + " = ? ) OR " + COLUMN_POEM_TITLE + " = ?", new String[]{author, title, title}, null, null, null);
+        if (cursor.moveToFirst()) {
+            text = cursor.getString(0);
+        } else text = null;
+        cursor.close();
+        close();
+        return text;
     }
 }

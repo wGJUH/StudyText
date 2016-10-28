@@ -2,6 +2,7 @@ package com.wgjuh.byheart.adapters;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
@@ -35,12 +36,20 @@ public class PoetsRecyclerView extends RecyclerView.Adapter<PoetsRecyclerView.Vi
     private ArrayList<Integer> ids;
     private ViewHolder viewHolder;
     private Context context;
-
+    private Picasso picasso;
     public PoetsRecyclerView(Context context, Values values) {
         this.context = context;
         this.photos = values.getPortraitIds();
         this.names = values.getStrings();
         this.ids = values.getIds();
+        Picasso.Builder builder = new Picasso.Builder(context);
+        builder.listener(new Picasso.Listener() {
+            @Override
+            public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
+                exception.printStackTrace();
+            }
+        });
+        picasso = builder.build();
     }
 
     @Override
@@ -54,20 +63,22 @@ public class PoetsRecyclerView extends RecyclerView.Adapter<PoetsRecyclerView.Vi
     }
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        TextView authorName = (TextView) holder.mLayout.findViewById(R.id.poem_author);
-        ImageView imageView = ((ImageView) holder.mLayout.findViewById(R.id.poem_author_portrait));
-
+        TextView authorName = holder.authorName;
         setTypeFace(authorName);
         authorName.setText(names.get(position));
         int id = getId(position);
         /**
-         * todo вынести в отдельный поток
+         * todo разобраться с пикасо и проверить размеры
          *
          */
         if (id != 0)
-            Picasso.with(context).load(id).into(imageView);
+            picasso.load(id)/*.fit()*/.resize(256, 250).centerCrop().into(holder.imageView);
         else
-            Picasso.with(context).load(new File(photos.get(position))).into(imageView);
+            picasso.load(new File(photos.get(position))).resize(256, 250)./*fit().*/centerCrop() // resizes the image to these dimensions (in pixel)
+                    .into(holder.imageView);
+       /* System.out.println("ImageView: " + holder.imageView.getWidth() + " height: " + holder.imageView.getHeight());
+        if(holder.imageView.getDrawable() != null)
+        System.out.println("width: " +  holder.imageView.getDrawable().getBounds().width() + " height: " + holder.imageView.getDrawable().getBounds().height());*/
     }
     private void setTypeFace(TextView textView){
         Typeface robotoslab = Typeface.createFromAsset(context.getAssets(), "robotoslab_regular.ttf");
@@ -80,9 +91,13 @@ public class PoetsRecyclerView extends RecyclerView.Adapter<PoetsRecyclerView.Vi
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         public View mLayout;
+        public ImageView imageView;
+        public TextView authorName;
         public Toolbar toolbar;
         public ViewHolder(View v) {
             super(v);
+            imageView = (ImageView)v.findViewById(R.id.poem_author_portrait);
+            authorName = (TextView)v.findViewById(R.id.poem_author);
             v.setOnClickListener(this);
             mLayout = v;
         }

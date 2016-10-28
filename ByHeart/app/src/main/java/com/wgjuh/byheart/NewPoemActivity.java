@@ -86,6 +86,7 @@ public class NewPoemActivity extends AppCompatActivity implements View.OnClickLi
     private String getPoem() {
         return editTextPoem.getText().toString();
     }
+
     private void saveNewText(){
         new SqlWorker(this).addNewText(getViewPagerTitle(),getPoemTitle(), getPoem());
     }

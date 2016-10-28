@@ -14,13 +14,17 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-
-import com.wgjuh.byheart.fragments.PoetsFragment;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Transformation;
 import com.wgjuh.byheart.myapplication.R;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+
+import static android.graphics.Bitmap.createBitmap;
+import static android.graphics.Bitmap.createScaledBitmap;
 
 public class NewAuthorActivity extends AppCompatActivity implements View.OnClickListener, Data {
     ImageView imageView;
@@ -86,9 +90,16 @@ public class NewAuthorActivity extends AppCompatActivity implements View.OnClick
     }
 
     private String getAuthorImagePath() {
+        System.out.println("author path: " + authorImagePath);
         return authorImagePath;
     }
 
+    /**
+     * TODO сделать проверку на null !!!
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -99,37 +110,33 @@ public class NewAuthorActivity extends AppCompatActivity implements View.OnClick
             cursor.moveToFirst();
             int columnIndex = cursor.getColumnIndex(projection[0]);
             authorImagePath = cursor.getString(columnIndex); // returns null
-            System.out.println(" imagePath: " + authorImagePath);
+            System.out.println("imagePath: " + authorImagePath);
             cursor.close();
-            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            Bitmap bitmap = decodeFile(new File(authorImagePath));
-            System.out.println(" width :" + bitmap.getWidth() + " height: " + bitmap.getHeight());
-            imageView.setImageBitmap(bitmap);
+            Picasso.Builder builder = new Picasso.Builder(this);
+            builder.listener(new Picasso.Listener() {
+                @Override
+                public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
+
+                    System.out.println("ERRRROR: " + exception);
+                    exception.printStackTrace();
+                }
+            });
+
+            Picasso picasso = builder.build();
+            picasso.load(new File(authorImagePath)).error(R.drawable.favorites)
+                    .fit()
+                    .centerCrop()
+                    .into(imageView, new Callback() {
+                        @Override
+                        public void onSuccess() {
+
+                        }
+
+                        @Override
+                        public void onError() {
+                            System.out.println("ERROR");
+                        }
+                    });
         }
     }
-
-    private Bitmap decodeFile(File f) {
-        try {
-            // Decode image size
-            BitmapFactory.Options o = new BitmapFactory.Options();
-            o.inJustDecodeBounds = true;
-            BitmapFactory.decodeStream(new FileInputStream(f), null, o);
-
-            // The new size we want to scale to
-            final int REQUIRED_SIZE = 256;
-
-            // Find the correct scale value. It should be the power of 2.
-            int scale = 1;
-            while (o.outWidth / scale / 2 >= REQUIRED_SIZE ||
-                    o.outHeight / scale / 2 >= REQUIRED_SIZE) {
-                scale *= 2;
-            }
-            BitmapFactory.Options o2 = new BitmapFactory.Options();
-            o2.inSampleSize = scale;
-            return BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
-        } catch (FileNotFoundException e) {
-        }
-        return null;
-    }
-
 }

@@ -207,6 +207,11 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
             int n = sqlWorker.getRowPoemNumber(null,s);
             System.out.println("number: " + n);
             ((FavoriteFragment) adapter.getItem(mViewPager.getCurrentItem())).updateValues(n,true);
-        }
+        }else if(requestCode == REQUEST_ADD_NEW_POEM && resultCode == RESULT_OK){
+            String s = data.getStringExtra(KEY_TITLE);
+            System.out.println("title: " + s);
+            int n = sqlWorker.getRowPoemNumber(null,s);
+            System.out.println("number: " + n);
+            ((PoemsFragment) rootFragment.getFragmentManager().findFragmentById(R.id.frame_root)).updateValues(n);        }
     }
 }

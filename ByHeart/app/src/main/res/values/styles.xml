@@ -16,11 +16,13 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
     <style name="myedittext" parent="Base.Widget.AppCompat.EditText">
         <item name="android:textSize">@dimen/titles_size</item>
         <item name="android:textColor">@color/colorPrimaryDark</item>
         <item name="android:textAppearance">@style/Base.TextAppearance.AppCompat.Large</item>
     </style>
+
     <style name="new_edit_text" parent="Base.Widget.AppCompat.EditText">
         <item name="android:textSize">@dimen/edit_text_field_size</item>
         <item name="android:textColor">@color/colorPrimaryDark</item>

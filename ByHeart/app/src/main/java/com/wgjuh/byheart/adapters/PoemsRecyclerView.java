@@ -14,7 +14,9 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.wgjuh.byheart.Data;
 import com.wgjuh.byheart.SqlWorker;
+import com.wgjuh.byheart.StudyPoem;
 import com.wgjuh.byheart.TabbedActivity;
 import com.wgjuh.byheart.Values;
 import com.wgjuh.byheart.fragments.FavoriteFragment;
@@ -27,7 +29,7 @@ import java.util.ArrayList;
  * Created by wGJUH on 19.10.2016.
  */
 
-public class PoemsRecyclerView extends RecyclerView.Adapter<PoemsRecyclerView.ViewHolder> {
+public class PoemsRecyclerView extends RecyclerView.Adapter<PoemsRecyclerView.ViewHolder> implements Data {
     private ArrayList<String> titles;
     private ArrayList<Boolean> starrs;
     private ViewHolder viewHolder;
@@ -102,6 +104,12 @@ public class PoemsRecyclerView extends RecyclerView.Adapter<PoemsRecyclerView.Vi
                         sqlWorker.setStar(ids.get(adapterPosition));
                         updateValues(adapterPosition);
                     }
+                    break;
+                case R.id.singlePoemElement:
+                    System.out.println(" CLICK ");
+                    intent = new Intent(context, StudyPoem.class);
+                    intent.putExtra(KEY_ID,ids.get(getAdapterPosition()));
+                    context.startActivity(intent);
                     break;
                 default:
                     System.out.println("Button other");

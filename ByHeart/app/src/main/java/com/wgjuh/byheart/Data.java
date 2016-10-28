@@ -23,6 +23,7 @@ public interface Data {
      */
     String KEY_AUTHOR = "author";
     String KEY_TITLE = "title";
+    String KEY_ID = "id";
 
     /**
      * request codes
