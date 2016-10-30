@@ -13,6 +13,7 @@ public class AuthorsGrid extends GridLayoutManager {
     Context context;
     private int mColumnWidth;
     private boolean mColumnWidthChanged = true;
+    private int extraLayoutSpace = 5;
     public AuthorsGrid(Context context, int minItemWidth) {
         super(context, 1);
         this.minItemWidth = minItemWidth;
@@ -65,6 +66,13 @@ public class AuthorsGrid extends GridLayoutManager {
         super.onLayoutChildren(recycler, state);
     }
 
+    @Override
+    protected int getExtraLayoutSpace(RecyclerView.State state) {
+        if (extraLayoutSpace > 0) {
+            return extraLayoutSpace;
+        }
+        return super.getExtraLayoutSpace(state);
+    }
 
 
 /*    @Override

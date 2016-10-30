@@ -204,13 +204,14 @@ public class SqlWorker extends SQLiteOpenHelper implements Data {
         return true;
     }
 
-    public void addNewAuthor(String authorName, String authorPhoto) {
+    public long addNewAuthor(String authorName, String authorPhoto) {
         opendatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(COLUMN_AUTHOR_NAME, authorName);
         contentValues.put(COLUMN_PORTRAIT_ID, authorPhoto);
-        database.insert(DB_NAME, null, contentValues);
+        long inserted = database.insert(DB_NAME, null, contentValues);
         close();
+        return inserted;
     }
 
     public void addNewText(String authorName, String title, String poem) {
@@ -247,6 +248,33 @@ public class SqlWorker extends SQLiteOpenHelper implements Data {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
     }
+    public boolean isAuthorExist(String authorName){
+        opendatabase();
+        Cursor cursor = database.query(DB_NAME,new String[]{COLUMN_AUTHOR_NAME},COLUMN_AUTHOR_NAME + "=? ",new String[]{authorName},null,null,null);
+        if(cursor.moveToFirst()){
+         cursor.close();
+            close();
+            return false;
+        }
+        cursor.close();
+        close();
+        return true;
+    }
+    public int getRowNumber(Long id){
+        opendatabase();
+        Cursor cursor = database.query(DB_NAME,null,null,null,null,null,COLUMN_AUTHOR_NAME);
+        int i = 0;
+        if(cursor.moveToFirst())
+        while (cursor.getLong(cursor.getColumnIndex(COLUMN_ID))!= id){
+            i++;
+            cursor.moveToNext();
+        }
+        cursor.close();
+        close();
+        System.out.println("number: " + i);
+        return i;
+    }
+
 
     public int getRowNumber(String s) {
         System.out.println(" take rowNumber");
@@ -258,8 +286,9 @@ public class SqlWorker extends SQLiteOpenHelper implements Data {
             do {
                 i++;
                 author = cursor.getString(cursor.getColumnIndex(COLUMN_AUTHOR_NAME));
+                System.out.println("need name: " + author);
                 title = cursor.getString(cursor.getColumnIndex(COLUMN_POEM_TITLE));
-                if (author.equals(s)) {
+                if (author != null && author.equals(s)) {
                     System.out.println(" break");
                     break;
                 }

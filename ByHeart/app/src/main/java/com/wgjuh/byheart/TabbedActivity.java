@@ -198,8 +198,14 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_ADD_NEW_AUTHOR && resultCode == RESULT_OK) {
             String s = data.getStringExtra(KEY_AUTHOR);
+            long resultId = data.getLongExtra(KEY_ID,-777L);
+            if(resultId == -777L){
+                System.out.println("FAILE");
+                return;
+            }
             System.out.println("name: " + s);
-            int n = sqlWorker.getRowNumber(s);
+            //int n = sqlWorker.getRowNumber(s);
+            int n = sqlWorker.getRowNumber(resultId);
             ((PoetsFragment) rootFragment.getFragmentManager().findFragmentById(R.id.frame_root)).updateValues(n);
         }else if(requestCode == REQUEST_ADD_NEW_FAVORITE && resultCode == RESULT_OK){
             String s = data.getStringExtra(KEY_TITLE);

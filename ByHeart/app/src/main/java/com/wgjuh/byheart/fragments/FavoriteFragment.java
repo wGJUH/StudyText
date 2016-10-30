@@ -39,8 +39,8 @@ public class FavoriteFragment extends Fragment{
         super.onCreate(savedInstanceState);
         context = getContext();
         sqlWorker = new SqlWorker(context);
-        frameView = LayoutInflater.from(context).inflate(R.layout.fragment_poets, null, false);
-        recyclerView = (RecyclerView)frameView.findViewById(R.id.recyler_list_poets);
+        frameView = LayoutInflater.from(context).inflate(R.layout.fragment_poems, null, false);
+        recyclerView = (RecyclerView)frameView.findViewById(R.id.recyler_list_poems);
         recyclerView.setLayoutManager(new LinearLayoutManager(context, OrientationHelper.VERTICAL,false));
         setValues();
         myPoemsRecyclerView = new PoemsRecyclerView(context, null, values, this);

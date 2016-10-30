@@ -14,6 +14,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
+
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
@@ -64,8 +66,9 @@ public class NewAuthorActivity extends AppCompatActivity implements View.OnClick
                 selectAuthorPortrait();
                 break;
             case R.id.fab_save_author:
-                if (saveNewAuthor()) {
-                    setResult(RESULT_OK,getIntent().putExtra(KEY_AUTHOR,getAuthorName()));
+                long result = saveNewAuthor();
+                if (result != -1L) {
+                    setResult(RESULT_OK,getIntent().putExtra(KEY_AUTHOR,getAuthorName()).putExtra(KEY_ID,result));
                     finish();
                 }
                 break;
@@ -74,15 +77,26 @@ public class NewAuthorActivity extends AppCompatActivity implements View.OnClick
         }
     }
 
-    private boolean saveNewAuthor() {
-        if (isNameNotNull()) {
-            new SqlWorker(this).addNewAuthor(getAuthorName(), getAuthorImagePath());
-            return true;
-        } else return false;
+    private long saveNewAuthor() {
+        if (isNameNotNull() && isAuthorNotExists(getAuthorName())) {
+            return new SqlWorker(this).addNewAuthor(getAuthorName(), getAuthorImagePath());
+        } else return -1L;
+    }
+
+    private boolean isAuthorNotExists(String authorName) {
+        boolean result = new SqlWorker(this).isAuthorExist(authorName);
+        if(!result){
+            Toast.makeText(this,getString(R.string.author_exist),Toast.LENGTH_LONG).show();
+        }
+        return result;
     }
 
     private boolean isNameNotNull() {
-        return !editText.getText().toString().equals("");
+        boolean result = !editText.getText().toString().equals("");
+        if(!result){
+            Toast.makeText(this,getString(R.string.hint_input_author_name),Toast.LENGTH_SHORT).show();
+        }
+        return result;
     }
 
     private String getAuthorName() {

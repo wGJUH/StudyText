@@ -9,4 +9,5 @@
     <string name="hint_input_author_name">Input author name</string>
     <string name="hint_input_title">Input title</string>
     <string name="title_activity_study_poem">StudyPoem</string>
+    <string name="author_exist">Author already Exists, please change name or remove old Author</string>
 </resources>

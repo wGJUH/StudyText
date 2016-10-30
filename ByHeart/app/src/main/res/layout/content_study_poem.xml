@@ -12,11 +12,25 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.wgjuh.byheart.StudyPoem"
     tools:showIn="@layout/activity_study_poem">
-    <TextView
+
+   <!-- <android.support.v7.widget.RecyclerView
+        android:id="@+id/text_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </android.support.v7.widget.RecyclerView>-->
+    <ListView
+        android:id="@+id/text_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </ListView>
+
+    <!--<TextView
         android:id="@+id/study_text"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         style= "@style/new_edit_text"
-        />
+        />-->
 
 </RelativeLayout>

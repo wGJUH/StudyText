@@ -12,6 +12,7 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridView;
 import android.widget.TextView;
 
 import com.wgjuh.byheart.AuthorsGrid;
@@ -47,9 +48,13 @@ public class PoetsFragment extends Fragment {
         frameView = LayoutInflater.from(context).inflate(R.layout.fragment_poets, null, false);
         recyclerView = (RecyclerView)frameView.findViewById(R.id.recyler_list_poets);
         recyclerView.setLayoutManager(getGridManager());
+        //GridView gridView = (GridView)frameView.findViewById(R.id.recyler_list_poets);
+
         setValues();
         myPoetsRecyclerView = new PoetsRecyclerView(context, values);
         recyclerView.setAdapter(myPoetsRecyclerView);
+
+        //gridView.setAdapter(myPoetsRecyclerView);
     }
     private DisplayMetrics getMetrics(){
         DisplayMetrics metrics = new DisplayMetrics();
@@ -94,7 +99,7 @@ public class PoetsFragment extends Fragment {
         Values values = getValues();
         this.values.setStrings(values.getStrings());
         this.values.setPortraitIds(values.getPortraitIds());
-        myPoetsRecyclerView.notifyItemInserted(position);
+       // myPoetsRecyclerView.notifyItemInserted(position);
     }
 
 }

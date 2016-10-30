@@ -37,4 +37,10 @@ public interface Data {
      * result codes
      */
     Integer ERROR = -1;
+    /**
+     * Pattern
+     */
+    public static final String PATTERN_WORD = "[A-zA-Z0-9а-яА-ЯёЁ]+";
+    public static final String PATTERN_STRING = "\\n\\r|\\r\\n|\\r|\\n|\\Z";
+
 }

@@ -10,5 +10,6 @@
     <dimen name="favorite_icon_size">24dp</dimen>
     <dimen name="new_title_field">54dp</dimen>
     <dimen name="new_title_size">16sp</dimen>
+    <dimen name="study_text_size">16sp</dimen>
     <dimen name="new_title_field_padding">16dp</dimen>
 </resources>

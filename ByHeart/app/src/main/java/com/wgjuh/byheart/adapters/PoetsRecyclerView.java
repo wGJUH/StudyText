@@ -1,6 +1,7 @@
 package com.wgjuh.byheart.adapters;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -8,9 +9,14 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.method.LinkMovementMethod;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -29,7 +35,6 @@ import java.util.ArrayList;
 /**
  * Created by wGJUH on 19.10.2016.
  */
-
 public class PoetsRecyclerView extends RecyclerView.Adapter<PoetsRecyclerView.ViewHolder> implements Data {
     private ArrayList<String> photos;
     private ArrayList<String> names;
@@ -59,7 +64,10 @@ public class PoetsRecyclerView extends RecyclerView.Adapter<PoetsRecyclerView.Vi
         return viewHolder;
     }
     private int getId(int position) {
+        String adress = photos.get(position);
+        if(adress != null)
         return context.getResources().getIdentifier(photos.get(position), "drawable", BuildConfig.APPLICATION_ID);
+        else return 0;
     }
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
@@ -67,18 +75,28 @@ public class PoetsRecyclerView extends RecyclerView.Adapter<PoetsRecyclerView.Vi
         setTypeFace(authorName);
         authorName.setText(names.get(position));
         int id = getId(position);
-        /**
+     /*   *
          * todo разобраться с пикасо и проверить размеры
-         *
-         */
-        if (id != 0)
-            picasso.load(id)/*.fit()*/.resize(256, 250).centerCrop().into(holder.imageView);
-        else
-            picasso.load(new File(photos.get(position))).resize(256, 250)./*fit().*/centerCrop() // resizes the image to these dimensions (in pixel)
+         **/
+
+        if (id != 0){
+            picasso.load(id).resize(256, 250).centerCrop().into(holder.imageView);
+        /*    if (position + 1 < photos.size()) {
+                id = getId(position + 1);
+                if(id != 0)
+                picasso.load(id).fetch();
+            }*/
+        }
+        else {
+            String adress = photos.get(position);
+            //todo getDrawable deprecated but i have no other for my api lvl
+            picasso.load("file:///" + adress).resize(256, 250).placeholder(context.getResources().getDrawable(R.drawable.ic_launcher_app)).centerCrop() // resizes the image to these dimensions (in pixel)
                     .into(holder.imageView);
-       /* System.out.println("ImageView: " + holder.imageView.getWidth() + " height: " + holder.imageView.getHeight());
-        if(holder.imageView.getDrawable() != null)
-        System.out.println("width: " +  holder.imageView.getDrawable().getBounds().width() + " height: " + holder.imageView.getDrawable().getBounds().height());*/
+            /*if (position + 1 < photos.size()) {
+                adress = photos.get(position + 1);
+                picasso.load("file:///" + adress).fetch();
+            }*/
+        }
     }
     private void setTypeFace(TextView textView){
         Typeface robotoslab = Typeface.createFromAsset(context.getAssets(), "robotoslab_regular.ttf");
@@ -121,11 +139,71 @@ public class PoetsRecyclerView extends RecyclerView.Adapter<PoetsRecyclerView.Vi
 
         @Override
         public boolean onLongClick(View v) {
-            /**
-             * todo удалить после тестирования
-             */
+           /* *
+             * todo удалить после тестирования*/
+
            // v.setSelected(!v.isSelected());
             return true;
         }
     }
 }
+
+
+/**
+ * TODO it's work perfectly
+ */
+/*
+
+public class PoetsRecyclerView extends ArrayAdapter {
+
+    private ArrayList<String> photos;
+    private ArrayList<String> names;
+    private ArrayList<Integer> ids;
+    private Picasso picasso;
+    private View rootView;
+    SpannableString spannableString;
+    Context context;
+    ArrayList<SpannableStringBuilder> strings;
+    String s;
+    static float setTextSize = 0;
+    public PoetsRecyclerView(Context context, Values values) {
+        super(context,R.layout.list_poet_single_element, values.getStrings());
+        this.context = context;
+        this.photos = values.getPortraitIds();
+        this.names = values.getStrings();
+        this.ids = values.getIds();
+        Picasso.Builder builder = new Picasso.Builder(context);
+        builder.listener(new Picasso.Listener() {
+            @Override
+            public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
+                exception.printStackTrace();
+            }
+        });
+        picasso = builder.build();
+
+    }
+
+    private int getId(int position) {
+        String adress = photos.get(position);
+        if(adress != null)
+            return context.getResources().getIdentifier(photos.get(position), "drawable", BuildConfig.APPLICATION_ID);
+        else return 0;
+    }
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        LayoutInflater mLayoutInflator = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        rootView = mLayoutInflator.inflate(R.layout.list_poet_single_element,null);
+        ((TextView)rootView.findViewById(R.id.poem_author)).setText(names.get(position));
+        ImageView imageView = (ImageView)rootView.findViewById(R.id.poem_author_portrait);
+        int id = getId(position);
+        if (id != 0)
+            picasso.load(id).resize(256, 250).centerCrop().into(imageView);
+        else {
+            String adress = photos.get(position);
+            //todo getDrawable deprecated but i have no other for my api lvl
+            picasso.load("file:///" + adress).resize(256, 250).placeholder(context.getResources().getDrawable(R.drawable.ic_launcher_app)).centerCrop() // resizes the image to these dimensions (in pixel)
+                    .into(imageView);
+        }
+        return rootView;
+    }
+}*/
