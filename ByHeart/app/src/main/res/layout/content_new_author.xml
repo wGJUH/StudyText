@@ -13,7 +13,7 @@
     android:background="@color/white"
     tools:showIn="@layout/activity_new_author">
 
-    <EditText
+    <com.wgjuh.byheart.CustomEditText
         android:id="@+id/new_author_name"
         android:layout_width="match_parent"
         android:layout_height="@dimen/new_title_field"

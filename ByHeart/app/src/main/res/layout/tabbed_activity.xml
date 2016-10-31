@@ -27,7 +27,7 @@ and uncomment coordinator layout-->
                 android:background="?attr/colorPrimary"
                 app:layout_scrollFlags="scroll|enterAlways"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light" >
-                <TextView
+                <com.wgjuh.byheart.CustomTextView
                     android:id="@+id/toolbar_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

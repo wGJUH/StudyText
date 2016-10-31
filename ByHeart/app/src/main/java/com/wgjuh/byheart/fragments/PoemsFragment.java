@@ -56,12 +56,12 @@ public class PoemsFragment extends Fragment implements Data{
     private void setViewpagerTitle() {
         TextView viewTitle = (TextView)getActivity().findViewById(R.id.toolbar_title);
         viewTitle.setText(getAuthorName());
-        setTypeFace(viewTitle);
+        //setTypeFace(viewTitle);
     }
-    private void setTypeFace(TextView textView) {
+   /* private void setTypeFace(TextView textView) {
         Typeface robotoslab = Typeface.createFromAsset(context.getAssets(), "robotoslab_regular.ttf");
         textView.setTypeface(robotoslab);
-    }
+    }*/
     private String getAuthorName(){
         return bundle.getString(KEY_AUTHOR);
     }

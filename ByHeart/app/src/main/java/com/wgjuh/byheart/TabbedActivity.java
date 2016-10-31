@@ -112,7 +112,7 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
     private void setViewpagerTitle() {
         TextView viewTitle = (TextView) findViewById(R.id.toolbar_title);
         viewTitle.setText(getString(R.string.app_name));
-        setTypeFace(viewTitle);
+       // setTypeFace(viewTitle);
     }
     private String getViewPagerTitle(){
         TextView viewTitle = (TextView) findViewById(R.id.toolbar_title);
@@ -125,14 +125,14 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
         TextView favoriteTab = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_tab_title, null);
         favoriteTab.setText(getString(R.string.title_favorite));
         tabLayout.getTabAt(1).setCustomView(favoriteTab);
-        setTypeFace(libTab);
-        setTypeFace(favoriteTab);
+        /*setTypeFace(libTab);
+        setTypeFace(favoriteTab);*/
     }
 
-    private void setTypeFace(TextView textView) {
+    /*private void setTypeFace(TextView textView) {
         Typeface robotoslab = Typeface.createFromAsset(getAssets(), "robotoslab_regular.ttf");
         textView.setTypeface(robotoslab);
-    }
+    }*/
 
     private void setupViewPager(ViewPager mViewPager) {
         adapter = new FragmentAdapter(getSupportFragmentManager());

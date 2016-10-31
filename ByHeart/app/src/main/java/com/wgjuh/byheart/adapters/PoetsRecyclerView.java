@@ -1,35 +1,29 @@
 package com.wgjuh.byheart.adapters;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
-import android.text.method.LinkMovementMethod;
-import android.util.TypedValue;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.squareup.picasso.Picasso;
 import com.wgjuh.byheart.Data;
 import com.wgjuh.byheart.Values;
-import com.wgjuh.byheart.fragments.FavoriteFragment;
 import com.wgjuh.byheart.fragments.PoemsFragment;
-import com.wgjuh.byheart.fragments.PoetsFragment;
 import com.wgjuh.byheart.myapplication.BuildConfig;
 import com.wgjuh.byheart.myapplication.R;
 
-import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -42,23 +36,21 @@ public class PoetsRecyclerView extends RecyclerView.Adapter<PoetsRecyclerView.Vi
     private ViewHolder viewHolder;
     private Context context;
     private Picasso picasso;
+    public PoetsRecyclerView(Context context, Values values, Picasso picasso) {
+        this.context = context;
+        this.photos = values.getPortraitIds();
+        this.names = values.getStrings();
+        this.ids = values.getIds();
+        this.picasso = picasso;
+    }
     public PoetsRecyclerView(Context context, Values values) {
         this.context = context;
         this.photos = values.getPortraitIds();
         this.names = values.getStrings();
         this.ids = values.getIds();
-        Picasso.Builder builder = new Picasso.Builder(context);
-        builder.listener(new Picasso.Listener() {
-            @Override
-            public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
-                exception.printStackTrace();
-            }
-        });
-        picasso = builder.build();
     }
-
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public PoetsRecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View singleElement = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_poet_single_element, parent, false);
         viewHolder = new ViewHolder(singleElement);
         return viewHolder;
@@ -72,15 +64,15 @@ public class PoetsRecyclerView extends RecyclerView.Adapter<PoetsRecyclerView.Vi
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         TextView authorName = holder.authorName;
-        setTypeFace(authorName);
+        //setTypeFace(authorName);
         authorName.setText(names.get(position));
         int id = getId(position);
      /*   *
          * todo разобраться с пикасо и проверить размеры
          **/
-
         if (id != 0){
-            picasso.load(id).resize(256, 250).centerCrop().into(holder.imageView);
+            System.out.println("load image from resources");
+            Glide.with(context).load(id).centerCrop().into(holder.imageView);
         /*    if (position + 1 < photos.size()) {
                 id = getId(position + 1);
                 if(id != 0)
@@ -88,24 +80,46 @@ public class PoetsRecyclerView extends RecyclerView.Adapter<PoetsRecyclerView.Vi
             }*/
         }
         else {
+            System.out.println("load image from sdcard");
             String adress = photos.get(position);
             //todo getDrawable deprecated but i have no other for my api lvl
-            picasso.load("file:///" + adress).resize(256, 250).placeholder(context.getResources().getDrawable(R.drawable.ic_launcher_app)).centerCrop() // resizes the image to these dimensions (in pixel)
+            Glide.with(context).load("file:///" + adress).placeholder(context.getResources().getDrawable(R.drawable.ic_launcher_app)).centerCrop() // resizes the image to these dimensions (in pixel)
                     .into(holder.imageView);
             /*if (position + 1 < photos.size()) {
                 adress = photos.get(position + 1);
                 picasso.load("file:///" + adress).fetch();
             }*/
         }
+        /*if (id != 0){
+            System.out.println("load image from resources");
+            picasso.load(id).fit().centerCrop().noFade().into(holder.imageView);
+        *//*    if (position + 1 < photos.size()) {
+                id = getId(position + 1);
+                if(id != 0)
+                picasso.load(id).fetch();
+            }*//*
+        }
+        else {
+            System.out.println("load image from sdcard");
+            String adress = photos.get(position);
+            //todo getDrawable deprecated but i have no other for my api lvl
+            picasso.load("file:///" + adress).fit().placeholder(context.getResources().getDrawable(R.drawable.ic_launcher_app)).centerCrop() // resizes the image to these dimensions (in pixel)
+                    .noFade().into(holder.imageView);
+            *//*if (position + 1 < photos.size()) {
+                adress = photos.get(position + 1);
+                picasso.load("file:///" + adress).fetch();
+            }*//*
+        }*/
     }
-    private void setTypeFace(TextView textView){
+  /*  private void setTypeFace(TextView textView){
         Typeface robotoslab = Typeface.createFromAsset(context.getAssets(), "robotoslab_regular.ttf");
         textView.setTypeface(robotoslab);
-    }
+    }*/
     @Override
     public int getItemCount() {
         return names.size();
     }
+
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         public View mLayout;

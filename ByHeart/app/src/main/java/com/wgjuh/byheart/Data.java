@@ -42,5 +42,10 @@ public interface Data {
      */
     public static final String PATTERN_WORD = "[A-zA-Z0-9а-яА-ЯёЁ]+";
     public static final String PATTERN_STRING = "\\n\\r|\\r\\n|\\r|\\n|\\Z";
+    /**
+     * Color
+     */
+    public static final int DARK_GREEN = 0xff005948;
+    public static final int DARK_GREEN_BRIGHT = 0x55005948;
 
 }

@@ -326,6 +326,21 @@ public class SqlWorker extends SQLiteOpenHelper implements Data {
          */
         return i - 1;
     }
+
+    public String getTitleFromDB(int id){
+        opendatabase();
+        Cursor cursor;
+        ArrayList<String> strings = new ArrayList<String>();
+        String text;
+        cursor = database.query(DB_NAME, new String[]{COLUMN_POEM_TITLE}, COLUMN_ID + " =? ", new String[]{""+id}, null, null, null);
+        if (cursor.moveToFirst()) {
+            text = cursor.getString(0);
+        } else text = null;
+        cursor.close();
+        close();
+        return text;
+    }
+
     public String getTextFromDB(int id) {
         opendatabase();
         Cursor cursor;

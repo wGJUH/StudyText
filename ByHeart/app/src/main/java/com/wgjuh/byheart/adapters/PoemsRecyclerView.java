@@ -63,12 +63,12 @@ public class PoemsRecyclerView extends RecyclerView.Adapter<PoemsRecyclerView.Vi
         ImageButton imageButton = (ImageButton)holder.mLayout.findViewById(R.id.button_favorite);
         setImageButton(imageButton,position);
         title.setText(titles.get(position));
-        setTypeFace(title);
+        //setTypeFace(title);
     }
-    private void setTypeFace(TextView textView){
+  /*  private void setTypeFace(TextView textView){
         Typeface robotoslab = Typeface.createFromAsset(context.getAssets(), "robotoslab_regular.ttf");
         textView.setTypeface(robotoslab);
-    }
+    }*/
     public void setImageButton(ImageButton imageButton, int position){
         System.out.println(" pre finish");
         if(starrs.get((position))){
