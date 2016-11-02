@@ -1,0 +1,17 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.studypoem.wgjuh.byheart.StudyPoem">
+    <item
+        android:id="@+id/action_delete"
+        android:orderInCategory="101"
+        android:title="@string/action_settings"
+        android:icon="@drawable/delete_hover"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_selection"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+        android:icon="@drawable/select_active"
+        app:showAsAction="ifRoom" />
+</menu>

@@ -2,12 +2,14 @@ package com.wgjuh.byheart.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,8 +21,10 @@ import com.wgjuh.byheart.SqlWorker;
 import com.wgjuh.byheart.StudyPoem;
 import com.wgjuh.byheart.TabbedActivity;
 import com.wgjuh.byheart.Values;
+import com.wgjuh.byheart.fragments.AbstractFragment;
 import com.wgjuh.byheart.fragments.FavoriteFragment;
 import com.wgjuh.byheart.fragments.PoemsFragment;
+import com.wgjuh.byheart.fragments.PoetsFragment;
 import com.wgjuh.byheart.myapplication.R;
 
 import java.util.ArrayList;
@@ -36,10 +40,13 @@ public class PoemsRecyclerView extends RecyclerView.Adapter<PoemsRecyclerView.Vi
     private Context context;
     private String authorName;
     private ArrayList<Integer> ids;
-    private Fragment fragment;
+    private AbstractFragment fragment;
     private SqlWorker sqlWorker;
     private FragmentManager fragmentManager;
-    public PoemsRecyclerView(Context context, String authorName , Values values, Fragment fragment) {
+    private SparseBooleanArray sparseBooleanArray;
+    private PoemsFragment poemsFragment;
+    private FavoriteFragment favoriteFragment;
+    public PoemsRecyclerView(Context context, String authorName , SparseBooleanArray sparseBooleanArray, Values values, AbstractFragment fragment) {
         this.context = context;
         titles = values.getStrings();
         starrs = values.getStarrs();
@@ -47,7 +54,11 @@ public class PoemsRecyclerView extends RecyclerView.Adapter<PoemsRecyclerView.Vi
         this.ids = values.getIds();
         this.fragment = fragment;
         sqlWorker = new SqlWorker(context);
+        this.sparseBooleanArray = sparseBooleanArray;
         fragmentManager = fragment.getFragmentManager();
+        if(fragment instanceof  PoemsFragment)
+            poemsFragment = (PoemsFragment)fragment;
+                    else favoriteFragment = (FavoriteFragment)fragment;
     }
 
     @Override
@@ -63,12 +74,30 @@ public class PoemsRecyclerView extends RecyclerView.Adapter<PoemsRecyclerView.Vi
         ImageButton imageButton = (ImageButton)holder.mLayout.findViewById(R.id.button_favorite);
         setImageButton(imageButton,position);
         title.setText(titles.get(position));
+        setViewSelected(holder, position);
+
         //setTypeFace(title);
     }
   /*  private void setTypeFace(TextView textView){
         Typeface robotoslab = Typeface.createFromAsset(context.getAssets(), "robotoslab_regular.ttf");
         textView.setTypeface(robotoslab);
     }*/
+  private void setViewSelected(ViewHolder viewHolder, int position) {
+      System.out.println("Selected boolean array: " + sparseBooleanArray.toString() + " position: " + position);
+      if (sparseBooleanArray.get(position)) {
+          System.out.println("Make Selected: " + sparseBooleanArray.get(position));
+          viewHolder.mLayout.setBackgroundColor(context.getResources().getColor(R.color.selected));
+      } else {
+          System.out.println("Make Selected: " + sparseBooleanArray.get(position));
+          viewHolder.mLayout.setBackgroundColor(Color.WHITE);
+      }
+  }
+
+    private void setSelection(int position) {
+        if(poemsFragment != null)
+        poemsFragment.updateSelection(position);
+        else favoriteFragment.updateSelection(position);
+    }
     public void setImageButton(ImageButton imageButton, int position){
         System.out.println(" pre finish");
         if(starrs.get((position))){
@@ -87,15 +116,23 @@ public class PoemsRecyclerView extends RecyclerView.Adapter<PoemsRecyclerView.Vi
 
         public ViewHolder(View v) {
             super(v);
-            v.setOnClickListener(this);
+
             v.findViewById(R.id.button_favorite).setOnClickListener(this);
             mLayout = v;
+            mLayout.setOnClickListener(this);
+            mLayout.setOnLongClickListener(this);
         }
 
 
         @Override
         public void onClick(View v) {
             Intent intent;
+            boolean favorite;
+            if(poemsFragment != null)
+                favorite= poemsFragment.getMultiSelection();
+            else favorite= favoriteFragment.getMultiSelection();
+
+            if (!favorite)
             switch (v.getId()){
                 case R.id.button_favorite:
                     System.out.println("Button favorite ");
@@ -115,31 +152,40 @@ public class PoemsRecyclerView extends RecyclerView.Adapter<PoemsRecyclerView.Vi
                     System.out.println("Button other");
                     break;
             }
+            else setSelection(getAdapterPosition());
         }
         private void updateValues(int position){
-            long start = System.currentTimeMillis();
-            if(fragment instanceof FavoriteFragment){
-                ((FavoriteFragment)fragment).updateValues(position,true);
-                Fragment tempFragment = fragmentManager.findFragmentById(R.id.frame_root);
+            if(fragment instanceof  FavoriteFragment) {
+                fragment.updateValues(position, true);
+                AbstractFragment tempFragment = (AbstractFragment)fragmentManager.findFragmentById(R.id.frame_root);
                 if( tempFragment instanceof PoemsFragment){
-                    ((PoemsFragment)tempFragment).updateValues(position);
+                    tempFragment.updateValues(position);
                 }
-            }else if (fragment instanceof PoemsFragment){
-                ((PoemsFragment)fragment).updateValues(position);
-                /***
-                 * todo убрать костыль с номером объекта из viewpager
-                 */
-                ((FavoriteFragment)(fragmentManager.findFragmentByTag("android:switcher:" + R.id.viewpager + ":" + 1))).updateValues(position,false);
             }
-            System.out.println("finish: " + (System.currentTimeMillis() - start));
+            else {
+                ((TabbedActivity)fragment.getActivity()).updateFavorites();
+                fragment.updateValues(position);
+            }
         }
         @Override
         public boolean onLongClick(View v) {
             /**
              * todo удалить после тестирования
              */
-            // v.setSelected(!v.isSelected());
+            boolean favorite;
+            if(poemsFragment != null)
+                favorite= poemsFragment.getMultiSelection();
+            else favorite= favoriteFragment.getMultiSelection();
+            System.out.println("fragment: " + fragment + " favorite: " + favorite);
+            if(!favorite)
+                setMultiSelectionMode(true);
+            else setMultiSelectionMode(false);
             return true;
+        }
+        private void setMultiSelectionMode(Boolean multiSelectionMode) {
+            if(poemsFragment != null)
+            poemsFragment.setMultiSelection(multiSelectionMode, getAdapterPosition());
+            else favoriteFragment.setMultiSelection(multiSelectionMode, getAdapterPosition());
         }
     }
 }

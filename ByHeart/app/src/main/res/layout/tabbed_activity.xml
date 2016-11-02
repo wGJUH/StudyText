@@ -52,14 +52,16 @@ and uncomment coordinator layout-->
 <!--
     </android.support.design.widget.CoordinatorLayout>
 -->
-    <android.support.design.widget.FloatingActionButton
+    <com.github.clans.fab.FloatingActionButton
         android:id="@+id/fab_add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_margin="@dimen/fab_margin"
-        app:layout_scrollFlags="scroll|enterAlways"
-        app:backgroundTint="@color/colorPrimary"
-        app:srcCompat="@drawable/ic_add_white_48dp" />
+        app:fab_label="Counter"
+        app:fab_colorNormal="@color/colorPrimary"
+        app:fab_colorPressed="@color/colorPrimary"
+        app:fab_colorRipple="@color/colorPrimary"
+        android:src="@drawable/create" />
 
 </android.support.design.widget.CoordinatorLayout>

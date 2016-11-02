@@ -2,11 +2,9 @@ package com.wgjuh.byheart;
 
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Typeface;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import com.github.clans.fab.FloatingActionButton;
+
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
@@ -15,12 +13,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.OrientationListener;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.wgjuh.byheart.adapters.FragmentAdapter;
+import com.wgjuh.byheart.fragments.AbstractFragment;
 import com.wgjuh.byheart.fragments.FavoriteFragment;
 import com.wgjuh.byheart.fragments.PoemsFragment;
 import com.wgjuh.byheart.fragments.PoetsFragment;
@@ -40,11 +39,21 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
     public static boolean isShouldBeUpdated = false;
     private FragmentAdapter adapter;
     private Toolbar toolbar;
-
+    private boolean isFabForDelete = false;
+    private boolean isFabForFavorite = false;
+    private AbstractFragment fragmentMultiSelection;
     @Override
     public void onBackPressed() {
         if(mViewPager.getCurrentItem() != 0){
-            mViewPager.setCurrentItem(mViewPager.getCurrentItem()-1);
+            FavoriteFragment favoriteFragment = ((FavoriteFragment)adapter.getItem(mViewPager.getCurrentItem()));
+            if(favoriteFragment.getMultiSelection()){
+                favoriteFragment.setMultiSelection(false,0);
+            }else  mViewPager.setCurrentItem(mViewPager.getCurrentItem()-1);
+        }else  if(rootFragment.getFragmentManager().findFragmentById(R.id.frame_root) instanceof PoemsFragment){
+            PoemsFragment poemsFragment = ((PoemsFragment)rootFragment.getFragmentManager().findFragmentById(R.id.frame_root));
+            if(poemsFragment.getMultiSelection())
+            poemsFragment.setMultiSelection(false,0);
+            else super.onBackPressed();
         }else super.onBackPressed();
     }
 
@@ -97,6 +106,24 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
 
             @Override
             public void onPageSelected(int position) {
+                System.out.println("child: " + adapter.getItem(position));
+                FloatingActionButton floatingActionButton = (FloatingActionButton) findViewById(R.id.fab_add);
+                if(position == 0){
+                    if (rootFragment.getFragmentManager().findFragmentById(R.id.frame_root) instanceof PoetsFragment){
+                        PoetsFragment poetsFragment = ((PoetsFragment)rootFragment.getFragmentManager().findFragmentById(R.id.frame_root));
+                        poetsFragment.updateToolbar(poetsFragment.getMultiSelection());
+                    }else{
+                        PoemsFragment poemsFragment = ((PoemsFragment)rootFragment.getFragmentManager().findFragmentById(R.id.frame_root));
+                        poemsFragment.updateToolbar(poemsFragment.getMultiSelection());
+                    }
+                    if(isFabForDelete)
+                        floatingActionButton.setImageResource(R.drawable.delete_hover);
+                }else{
+                    FavoriteFragment favoriteFragment = ((FavoriteFragment)adapter.getItem(position));
+                    favoriteFragment.updateToolbar(favoriteFragment.getMultiSelection());
+                    if(isFabForFavorite)
+                        floatingActionButton.setImageResource(R.drawable.favorites);
+                }
             }
 
             @Override
@@ -133,7 +160,9 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
         Typeface robotoslab = Typeface.createFromAsset(getAssets(), "robotoslab_regular.ttf");
         textView.setTypeface(robotoslab);
     }*/
-
+    public void updateFavorites(){
+        ((FavoriteFragment)adapter.getItem(1)).updateValues(0,false);
+    }
     private void setupViewPager(ViewPager mViewPager) {
         adapter = new FragmentAdapter(getSupportFragmentManager());
         adapter.addFragment(rootFragment, getString(R.string.title_lib));
@@ -148,27 +177,79 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
         return true;
     }
 
+    public void replaceMenu(){
+
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+
+        switch (item.getItemId()){
+            case R.id.action_selection:
+                Toast.makeText(this,"SELECT ALL",Toast.LENGTH_SHORT).show();
+                fragmentMultiSelection.toggleSelectAll();
+                break;
+            case R.id.action_favorites:
+                Toast.makeText(this,"FAVORITE ALL",Toast.LENGTH_SHORT).show();
+                fragmentMultiSelection.favoriteItems();
+                break;
+            case R.id.action_delete:
+                Toast.makeText(this,"DELETE",Toast.LENGTH_SHORT).show();
+                fragmentMultiSelection.deleteItems();
+                break;
+            default:
+                break;
+        }
+        /*int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
-        }
+        }*/
 
         return super.onOptionsItemSelected(item);
     }
+    public void updateFabFunction(AbstractFragment fragment,boolean isFabFor){
+        System.out.println("Update function");
+        FloatingActionButton floatingActionButton = (FloatingActionButton) findViewById(R.id.fab_add);
+        if(!(fragment instanceof FavoriteFragment)){
+        if(this.isFabForDelete != isFabFor) {
+            this.isFabForDelete = isFabFor;
+            floatingActionButton.hide(true);
+            if (this.isFabForDelete) {
+                System.out.println("FAB for delete");
+                floatingActionButton.setImageResource(R.drawable.delete_hover);
 
+            } else {
+                System.out.println("FAB for create");
+                floatingActionButton.setImageResource(R.drawable.create);
+            }
+            floatingActionButton.show(true);
+        }
+    }else if(this.isFabForFavorite != isFabFor) {
+            System.out.println("FabForFavorite: " + isFabFor);
+            this.isFabForFavorite = isFabFor;
+            floatingActionButton.hide(true);
+            if (this.isFabForFavorite) {
+                System.out.println("FAB for favorites");
+                floatingActionButton.setImageResource(R.drawable.favorites);
+            } else {
+                System.out.println("FAB for create");
+                floatingActionButton.setImageResource(R.drawable.create);
+            }
+            floatingActionButton.show(true);
+        }
+        fragmentMultiSelection = fragment;
+    }
     @Override
     public void onClick(View v) {
         Intent intent;
+        if(!isFabForDelete && !isFabForFavorite)
         switch (v.getId()) {
             case R.id.fab_add:
-
                 System.out.println(adapter.getItem(mViewPager.getCurrentItem()));
                 if (adapter.getItem(mViewPager.getCurrentItem()) instanceof RootFragment) {
                     if (rootFragment.getFragmentManager().findFragmentById(R.id.frame_root) instanceof PoetsFragment) {
@@ -191,6 +272,13 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
             default:
                 break;
         }
+        else if(isFabForDelete && mViewPager.getCurrentItem() == 0){
+            Toast.makeText(this,"DELETE",Toast.LENGTH_SHORT).show();
+            fragmentMultiSelection.deleteItems();
+        }else if (isFabForFavorite && mViewPager.getCurrentItem() == 1){
+            Toast.makeText(this,"FAVORITE ALL",Toast.LENGTH_SHORT).show();
+            fragmentMultiSelection.favoriteItems();
+        }
     }
 
     @Override
@@ -199,6 +287,7 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
         if (requestCode == REQUEST_ADD_NEW_AUTHOR && resultCode == RESULT_OK) {
             String s = data.getStringExtra(KEY_AUTHOR);
             long resultId = data.getLongExtra(KEY_ID,-777L);
+            System.out.println("name after save: " + s + " id: " + resultId);
             if(resultId == -777L){
                 System.out.println("FAILE");
                 return;

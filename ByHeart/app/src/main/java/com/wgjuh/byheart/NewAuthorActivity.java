@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
@@ -43,7 +44,6 @@ public class NewAuthorActivity extends AppCompatActivity implements View.OnClick
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_save_author);
         imageView = (ImageView) findViewById(R.id.author_photo);
         editText = (EditText) findViewById(R.id.new_author_name);
-        setFont(editText);
         imageView.setOnClickListener(this);
         fab.setOnClickListener(this);
     }
@@ -54,10 +54,6 @@ public class NewAuthorActivity extends AppCompatActivity implements View.OnClick
         startActivityForResult(i, REQUEST_LOAD_IMAGE);
     }
 
-    public void setFont(EditText editText) {
-        Typeface robotoslab = Typeface.createFromAsset(getAssets(), "robotoslab_regular.ttf");
-        editText.setTypeface(robotoslab);
-    }
 
     @Override
     public void onClick(View v) {
@@ -126,31 +122,11 @@ public class NewAuthorActivity extends AppCompatActivity implements View.OnClick
             authorImagePath = cursor.getString(columnIndex); // returns null
             System.out.println("imagePath: " + authorImagePath);
             cursor.close();
-            Picasso.Builder builder = new Picasso.Builder(this);
-            builder.listener(new Picasso.Listener() {
-                @Override
-                public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
-
-                    System.out.println("ERRRROR: " + exception);
-                    exception.printStackTrace();
-                }
-            });
-
-            Picasso picasso = builder.build();
-            picasso.load(new File(authorImagePath)).error(R.drawable.favorites)
-                    .fit()
+            Glide.with(this)
+                    .load(new File(authorImagePath))
+                    .placeholder(this.getResources().getDrawable(R.drawable.ic_launcher_app))
                     .centerCrop()
-                    .into(imageView, new Callback() {
-                        @Override
-                        public void onSuccess() {
-
-                        }
-
-                        @Override
-                        public void onError() {
-                            System.out.println("ERROR");
-                        }
-                    });
+                    .into(imageView);
         }
     }
 }

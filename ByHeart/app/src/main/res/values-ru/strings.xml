@@ -9,4 +9,6 @@
     <string name="hint_input_title">Введите название</string>
     <string name="title_activity_study_poem">StudyPoem</string>
     <string name="author_exist">Папка уже существует, пожалуйста измените название или удалите существующую папку с таким названием</string>
+    <string name="counter">Выбрано</string>
+
 </resources>
