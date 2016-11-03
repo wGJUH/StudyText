@@ -42,7 +42,7 @@ public class FavoriteFragment extends AbstractFragment{
     private Toolbar toolbar;
     private TextView toolbarTextView;
     public FavoriteFragment() {
-        //super();
+
     }
 
     @Override

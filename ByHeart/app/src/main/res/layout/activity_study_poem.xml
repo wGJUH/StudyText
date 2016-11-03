@@ -55,21 +55,22 @@
 
             android:src="@drawable/clear_all"/>
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/eraser"
+            android:id="@+id/fab_hide"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:fab_label="@string/hide_text"
             fab:fab_size="normal"
             app:fab_colorNormal="@color/colorPrimary"
             app:fab_colorPressed="@color/colorPrimary"
             android:src="@drawable/eraser"/>
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/pencil"
+            android:id="@+id/fab_show"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             fab:fab_size="normal"
             app:fab_colorNormal="@color/colorPrimary"
             app:fab_colorPressed="@color/colorPrimary"
-
+            app:fab_label="@string/show_text"
             android:src="@drawable/pencil"/>
 
     </com.github.clans.fab.FloatingActionMenu>

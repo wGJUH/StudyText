@@ -14,4 +14,7 @@
     <string name="action_delete">selected_delete</string>
     <string name="action_favorites">selected_favorites</string>
     <string name="action_select">selected_selection</string>
+    <string name="executing_task">text formating</string>
+    <string name="hide_text">Hide text</string>
+    <string name="show_text">Show Text</string>
 </resources>

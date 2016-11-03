@@ -23,6 +23,7 @@ import static com.wgjuh.byheart.Data.DARK_GREEN;
 public class SpannableByHeart extends ClickableSpan {
     private Context context;
     private Point startEnd;
+
     SpannableByHeart(Context context, int start, int end) {
         this.context = context;
         this.startEnd = new Point();
@@ -32,13 +33,13 @@ public class SpannableByHeart extends ClickableSpan {
     public void onClick(View widget) {
         CustomTextView tv = (CustomTextView) widget;
         ListView listView = (ListView) widget.getParent();
-
         // TODO add check if tv.getText() instanceof Spanned
         Spanned s = (Spanned) tv.getText();
         int start = s.getSpanStart(this);
         int end = s.getSpanEnd(this);
         System.out.println("START: " + start + " END: " + end + " TAG: " + listView.getPositionForView(widget));
         Spannable spannable = new SpannableString(tv.getText());
+        System.out.println("spans: " + (spannable.getSpans(spannable.getSpanStart(spannable),spannable.getSpanEnd(spannable),BackgroundColorSpan.class)).toString());
         BackgroundColorSpan[] colorSpans = spannable.getSpans(start, end, BackgroundColorSpan.class);
         ForegroundColorSpan[] foregroundColorSpans = spannable.getSpans(start, end, ForegroundColorSpan.class);
         if (colorSpans.length != 0 && foregroundColorSpans.length != 0) {
@@ -60,10 +61,7 @@ public class SpannableByHeart extends ClickableSpan {
             spannable.setSpan(new ForegroundColorSpan(DARK_GREEN), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 
-       // tv.setText(spannable, TextView.BufferType.SPANNABLE);
-        //Cast spannable to spannableStringBuilder and then sen it with position to update method
         sendUpdateRequest(widget, listView, spannable);
-        //Toast.makeText(context,"position: " + listView.getPositionForView(tv),Toast.LENGTH_SHORT).show();
     }
 
     private void sendUpdateRequest(View widget, ListView listView, Spannable spannable) {
