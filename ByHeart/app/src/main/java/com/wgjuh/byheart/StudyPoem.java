@@ -2,6 +2,7 @@ package com.wgjuh.byheart;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
@@ -41,15 +42,18 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
     private Bundle bundle;
     private SqlWorker sqlWorker;
     private ArrayList<SpannableStringBuilder> spannableStringBuilders;
-    public  Map<Integer, ArrayList<Integer>> hided = new HashMap<>();
-    public  ArrayList<ArrayList<Point>> spannableBorders;
+    public Map<Integer, ArrayList<Integer>> hided = new HashMap<>();
+    public ArrayList<ArrayList<Point>> spannableBorders;
     private RecyclerView recyclerView;
     private TextRecyclerView textRecyclerView;
     private int first_visible;
     public FloatingActionMenu floatingActionMenu;
     public String text;
-    private com.github.clans.fab.FloatingActionButton fab_hide, fab_show;
+    private com.github.clans.fab.FloatingActionButton fab_hide, fab_show, fab_clear;
     private int counter = 0;
+    private int wordsCount = 0;
+    private int stringCount = 0;
+    private int PROCENT = 5;
     Handler handler;
     ProgressDialog pbCount;
     ListView listView;
@@ -68,8 +72,10 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         fab_hide = (FloatingActionButton) findViewById(R.id.fab_hide);
         fab_show = (FloatingActionButton) findViewById(R.id.fab_show);
+        fab_clear = (FloatingActionButton) findViewById(R.id.clear);
         fab_hide.setOnClickListener(this);
         fab_show.setOnClickListener(this);
+        fab_clear.setOnClickListener(this);
         spannableStringBuilders = new ArrayList<>();
         spannableBorders = new ArrayList<>();
         text = getTextFromDB(getTextId());
@@ -77,9 +83,9 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
         pbCount.setMessage(getResources().getString(R.string.executing_task));
         pbCount.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         pbCount.setProgress(0);
-        int count = getStringCount(text);
-        pbCount.setMax(count);
-        if (count > 200)
+        stringCount = getStringCount(text);
+        pbCount.setMax(stringCount);
+        if (stringCount > 200)
             pbCount.show();
 
         listView = (ListView) findViewById(R.id.text_recycler_view);
@@ -126,6 +132,7 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
         SpannableString text = new SpannableString(s);
         Matcher matcher = Pattern.compile(PATTERN_WORD).matcher(s);
         while (matcher.find()) {
+            wordsCount++;
             text.setSpan(new SpannableByHeart(this, matcher.start(), matcher.end()), matcher.start(), matcher.end(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
         return text;
@@ -160,8 +167,8 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                            spannableStringBuilders.add(finalSpannableStringBuilder);
-                            makeBorders(finalSpannableStringBuilder);
+                        spannableStringBuilders.add(finalSpannableStringBuilder);
+                        makeBorders(finalSpannableStringBuilder);
 
                     }
                 });
@@ -205,33 +212,49 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.fab_show:
-                showWords();
+                //showWords();
+                showWordsByProc();
                 break;
-            case R.id.fab_hide:
+            case R.id.fab_hide:/*
                 generateHide();
-                hideWords();
+                hideWords();*/
+                generateHideInProc();
+                hideWordsByProc();
+                break;
+            case R.id.clear:
+                clearAllHiden();
                 break;
             default:
                 break;
         }
     }
-    private void showWords(){
+
+    private void  clearAllHiden(){
+        for (int i = 0; i < spannableStringBuilders.size(); i++) {
+            spannableStringBuilders.get(i).clearSpans();
+        }
+        hided.clear();
+        textRecyclerView.notifyDataSetChanged();
+    }
+
+    private void showWords() {
         System.out.println("Strings sizes: " + spannableStringBuilders.size() +
                 " borders: " + spannableBorders.size() + " row " + hided.size());
         for (int i = 0; i < hided.size(); i++) {
-            if(hided.get(i).size() != 0){
-                int lastHiden = hided.get(i).get(hided.get(i).size()-1);
+            if (hided.get(i).size() != 0) {
+                int lastHiden = hided.get(i).get(hided.get(i).size() - 1);
                 Point point = spannableBorders.get(i).get(lastHiden);
-                BackgroundColorSpan[] backgroundColorSpen = (spannableStringBuilders.get(i)).getSpans(point.x,point.y,BackgroundColorSpan.class);
+                BackgroundColorSpan[] backgroundColorSpen = (spannableStringBuilders.get(i)).getSpans(point.x, point.y, BackgroundColorSpan.class);
                 (spannableStringBuilders.get(i)).removeSpan(backgroundColorSpen[0]);
-                ForegroundColorSpan[] foregroundColorSpen = (spannableStringBuilders.get(i)).getSpans(point.x,point.y,ForegroundColorSpan.class);
+                ForegroundColorSpan[] foregroundColorSpen = (spannableStringBuilders.get(i)).getSpans(point.x, point.y, ForegroundColorSpan.class);
                 (spannableStringBuilders.get(i)).removeSpan(foregroundColorSpen[0]);
-                hided.get(i).remove(hided.get(i).size()-1);
+                hided.get(i).remove(hided.get(i).size() - 1);
                 hided.get(i).trimToSize();
             }
         }
         textRecyclerView.notifyDataSetChanged();
     }
+
     private void hideWords() {
         System.out.println("Strings sizes: " + spannableStringBuilders.size() +
                 " borders: " + spannableBorders.size() + " row " + hided.size());
@@ -260,9 +283,8 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
                 hided.put(i, new ArrayList<Integer>());
             }
             if (temp != 0) {
-
                 int willBeHided = -1;
-                if(hided.get(i).size() < spannableBorders.get(i).size()) {
+                if (hided.get(i).size() < spannableBorders.get(i).size()) {
                     do {
                         willBeHided = random.nextInt(temp);
                         System.out.println("willBeHided : " + willBeHided
@@ -270,15 +292,150 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
                                 + " size: " + hided.get(i).size() + " borders: " + spannableBorders.get(i).size());
                     }
                     while (hided.get(i).contains(willBeHided));
-                        hided.get(i).add(willBeHided);
+                    hided.get(i).add(willBeHided);
                 }
             }
-           /* if(temp != 0) {
-                System.out.println("temp: " + temp);
-                words.add(random.nextInt(temp));
-            }else words.add(-1);*/
         }
         System.out.println("Words: " + hided);
+    }
+    private void showWordsByProc(){
+        int emptyRows = 0;
+        boolean emptys = true;
+        int showNow = 0;
+        int procShown = 0;
+        int rows = spannableStringBuilders.size();
+        int hidedCount = 0;
+        int currentlyHiden = 0;
+        for(int i = 0; i < hided.size();i++)
+                hidedCount += hided.get(i).size();
+        System.out.println("hidedCount: " + hidedCount);
+        procShown = wordsCount / PROCENT;
+        for(int i = 0; i < spannableBorders.size();i++ )
+            if(spannableBorders.get(i).size() == 0) emptyRows++;
+        if(procShown < rows){
+            procShown = rows - emptyRows;
+        }
+        for(int i = 0; i < hided.size();i++){
+            currentlyHiden += hided.get(i).size();
+        }
+        if(currentlyHiden < rows){
+           procShown = currentlyHiden;
+        }
+        System.out.println("procShown: " + procShown);
+
+        do {
+
+            for (int i = 0; i < spannableStringBuilders.size() && procShown != showNow; i++) {
+                if (spannableBorders.get(i).size() == 0 && emptys){
+                    continue;
+            }
+                Spannable spannable = (Spannable) spannableStringBuilders.get(i);
+                BackgroundColorSpan[] backgroundColorSpen = (spannableStringBuilders.get(i)).getSpans(0, spannable.length(), BackgroundColorSpan.class);
+                ForegroundColorSpan[] foregroundColorSpen = (spannableStringBuilders.get(i)).getSpans(0, spannable.length(), ForegroundColorSpan.class);
+                if (backgroundColorSpen.length != 0) {
+                    (spannableStringBuilders.get(i)).removeSpan(backgroundColorSpen[backgroundColorSpen.length - 1]);
+                    (spannableStringBuilders.get(i)).removeSpan(foregroundColorSpen[foregroundColorSpen.length - 1]);
+                    hided.get(i).remove(hided.get(i).size()-1);
+                    showNow++;
+                }
+            }
+            emptys = false;
+            System.out.println("procShown: " + procShown + " showNow: " + showNow);
+        }while (procShown != showNow);
+        // TODO: 06.11.2016 пока что оставлю очищение при откате закрашивания
+        textRecyclerView.notifyDataSetChanged();
+    }
+    private void generateHideInProc() {
+        Random random = new Random();
+        int procHiden = 0;
+        int hidenNow = 0;
+        int rows = spannableBorders.size();
+        //нужно для учета пустых строк на первом круге
+        boolean emptys = true;
+        //Сколько слов надо закрасить
+        procHiden = wordsCount / PROCENT;
+        int currentlyHiden = 0;
+        int emptyRows = 0;
+        for(int i = 0; i < spannableBorders.size();i++ )
+            if(spannableBorders.get(i).size() == 0) emptyRows++;
+        if(procHiden < rows){
+            procHiden = rows - emptyRows;
+        }
+        for(int i = 0; i < hided.size();i++){
+            currentlyHiden += hided.get(i).size();
+        }
+        if (procHiden > (wordsCount - currentlyHiden)){
+
+
+        procHiden = wordsCount - currentlyHiden;
+        }
+
+        do {
+            //увеличиваем счетчик на количество пустых строк
+            /*if(emptys){
+                procHiden += emptyRows;
+            }*/
+            //проходим по строкам
+            for (int i = 0; i < rows && hidenNow != procHiden; i++) {
+                if (hided.get(i) == null) {
+                    hided.put(i, new ArrayList<Integer>());
+                }
+                //если размер строки с возможными границами больше
+                if (spannableBorders.get(i).size() > hided.get(i).size() && spannableBorders.get(i).size() != 0) {
+                    int willBeHiden = -1;
+                    do {
+                        willBeHiden = random.nextInt(spannableBorders.get(i).size());
+                    } while (hided.get(i).contains(willBeHiden));
+                    hided.get(i).add(willBeHiden);
+                    hidenNow++;
+                    //на первом круге увеличиваем счетчик при пустых строках
+                }else if (spannableBorders.get(i).size() == 0 && emptys) /*hidenNow++*/continue;
+            }
+            System.out.println("generated: " + hidenNow + " shouldBeGenerated: " + procHiden + " all Words: " + wordsCount );
+            emptys = false;
+        } while (hidenNow != procHiden);
+        currentlyHiden=0;
+        for(int i = 0; i < hided.size();i++){
+            currentlyHiden += hided.get(i).size();
+        }
+        System.out.println("wordsCount: " + wordsCount + " currentlyHiden: " + currentlyHiden );
+    }
+
+    private void hideWordsByProc() {
+
+        int start = -1, end = -1;
+        Point point;
+        for (int i = 0; i < hided.size(); i++) {
+            //получаем строку
+            Spannable spannable = (Spannable) spannableStringBuilders.get(i);
+            //получаем границы слов по порядку
+            for (int j = 0; j < hided.get(i).size(); j++) {
+                point = spannableBorders.get(i).get(hided.get(i).get(j));
+                start = point.x;
+                end = point.y;
+                BackgroundColorSpan[] backgroundColorSpans = spannable.getSpans(start, end, BackgroundColorSpan.class);
+                ForegroundColorSpan[] foregroundColorSpans = spannable.getSpans(start, end, ForegroundColorSpan.class);
+                if (backgroundColorSpans.length != 0) {
+                    int color = backgroundColorSpans[0].getBackgroundColor();
+                    switch (color) {
+                        case Color.WHITE:
+                            spannable.setSpan(new BackgroundColorSpan(DARK_GREEN), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            spannable.setSpan(new ForegroundColorSpan(DARK_GREEN), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            break;
+                        case DARK_GREEN:
+                            break;
+                        default:
+                            break;
+                    }
+                }else{
+                    spannable.setSpan(new BackgroundColorSpan(DARK_GREEN), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    spannable.setSpan(new ForegroundColorSpan(DARK_GREEN), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }
+            }
+        }
+
+        textRecyclerView.notifyDataSetChanged();
+
     }
 
     @Override
@@ -300,24 +457,8 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
         if (!floatingActionMenu.isMenuHidden()) {
-            System.out.println("isShown");
+            //System.out.println("isShown");
             floatingActionMenu.close(true);
         }
-
-        /*
-        if (firstVisibleItem > first_visible) {
-            System.out.println("smaller");
-            if (!floatingActionMenu.isMenuHidden()) {
-                System.out.println("isShown");
-                floatingActionMenu.close(true);
-            }
-        } else if (firstVisibleItem < first_visible) {
-            System.out.println("bigger");
-            if (!floatingActionMenu.isMenuHidden()) {
-                System.out.println("isHided");
-                floatingActionMenu.close(true);
-            }
-        }
-        first_visible = firstVisibleItem;*/
     }
 }

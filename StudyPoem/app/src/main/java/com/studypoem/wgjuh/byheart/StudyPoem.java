@@ -165,7 +165,7 @@ public class StudyPoem extends AppCompatActivity implements View.OnClickListener
         return text;
     }
 
-    private ArrayList<SpannableStringBuilder> getArray(SpannableString spannableString) {
+        private ArrayList<SpannableStringBuilder> getArray(SpannableString spannableString) {
         ArrayList<SpannableStringBuilder> spannableStrings = new ArrayList<>();
         //StringBuilder stringBuilder = new StringBuilder();
         SpannableStringBuilder stringBuilder = new SpannableStringBuilder();
@@ -390,6 +390,7 @@ public class StudyPoem extends AppCompatActivity implements View.OnClickListener
                 fab_random_hide.show();
             }
         }
+
         first_visible = firstVisibleItem;
     }
 

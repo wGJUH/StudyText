@@ -216,6 +216,7 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
         System.out.println("Update function");
         FloatingActionButton floatingActionButton = (FloatingActionButton) findViewById(R.id.fab_add);
         if(!(fragment instanceof FavoriteFragment)){
+            isFabForFavorite = isFabFor;
         if(this.isFabForDelete != isFabFor) {
             this.isFabForDelete = isFabFor;
             floatingActionButton.hide(true);
@@ -230,6 +231,7 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
             floatingActionButton.show(true);
         }
     }else if(this.isFabForFavorite != isFabFor) {
+            isFabForDelete = isFabFor;
             System.out.println("FabForFavorite: " + isFabFor);
             this.isFabForFavorite = isFabFor;
             floatingActionButton.hide(true);

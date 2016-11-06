@@ -228,7 +228,6 @@ public class PoetsFragment extends AbstractFragment {
             toolbarTextView.setGravity(Gravity.START);
             toolbar.inflateMenu(R.menu.menu);
             ((TabbedActivity) getActivity()).updateFabFunction(this, false);
-
         }
     }
 
