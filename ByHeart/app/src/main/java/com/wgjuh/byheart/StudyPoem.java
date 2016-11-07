@@ -35,6 +35,7 @@ import com.wgjuh.byheart.myapplication.R;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
 import java.util.regex.Matcher;
@@ -227,9 +228,16 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
         System.out.println("Borders: " + spannableBorders.size() + " lenght: " + spannableBorders.get(spannableBorders.size() - 1).size());
     }
 
-    public void updateStringsArray(int position, SpannableStringBuilder spannable) {
+    public void updateStringsArray(int position, SpannableStringBuilder spannable, Point borders) {
         spannableStringBuilders.remove(position);
         spannableStringBuilders.add(position, spannable);
+        int index = spannableBorders.get(position).indexOf(borders);
+        if(hided.get(position) != null && hided.get(position).contains(index)){
+            hided.get(position).remove(hided.get(position).indexOf(index));
+        }else{
+            if(hided.get(position) == null) hided.put(position,new ArrayList<Integer>());
+            hided.get(position).add(index);
+        }
         textRecyclerView.notifyDataSetChanged();
     }
 
@@ -399,12 +407,11 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
         if (procHiden < rows) {
             procHiden = rows - emptyRows;
         }
-        for (int i = 0; i < hided.size(); i++) {
-            currentlyHiden += hided.get(i).size();
+      
+        for (Iterator<Integer> it = hided.keySet().iterator(); it.hasNext(); ) {
+            currentlyHiden += hided.get(it.next()).size();
         }
         if (procHiden > (wordsCount - currentlyHiden)) {
-
-
             procHiden = wordsCount - currentlyHiden;
         }
 

@@ -61,13 +61,14 @@ public class SpannableByHeart extends ClickableSpan {
             spannable.setSpan(new ForegroundColorSpan(DARK_GREEN), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 
-        sendUpdateRequest(widget, listView, spannable);
+        sendUpdateRequest(widget, listView, spannable, new Point(start,end));
     }
 
-    private void sendUpdateRequest(View widget, ListView listView, Spannable spannable) {
+    private void sendUpdateRequest(View widget, ListView listView, Spannable spannable, Point borders) {
         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
         spannableStringBuilder.append(spannable);
-        ((StudyPoem)context).updateStringsArray(listView.getPositionForView(widget), spannableStringBuilder);
+        System.out.println("spannable start: " + borders.x + " end: " +borders.y);
+        ((StudyPoem)context).updateStringsArray(listView.getPositionForView(widget), spannableStringBuilder, borders);
     }
 
     @Override

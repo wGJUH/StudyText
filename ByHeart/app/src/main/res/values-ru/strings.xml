@@ -34,4 +34,6 @@
     <string name="mail_developer">wgjuher.development@gmail.com</string>
     <string name="about_designer">Дизайн основной темы и всех иконок был разработан Шманко Ларисой, для связи с ней вы можете использовать следующий адресс электронной почты:</string>
     <string name="mail_designer">mellnica2@gmail.com</string>
+    <string name="permissions">Разрешения</string>
+
 </resources>
