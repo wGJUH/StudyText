@@ -26,6 +26,7 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.github.clans.fab.FloatingActionMenu;
 import com.wgjuh.byheart.adapters.TextRecyclerView;
@@ -58,8 +59,8 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
     private int PROCENT = 5;
     Handler handler;
     ProgressDialog pbCount;
-    ListView listView;
-
+    ListView    listView;
+    Toolbar toolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,12 +68,23 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
         handler = new Handler();
         floatingActionMenu = (FloatingActionMenu) findViewById(R.id.fab_menu);
         sqlWorker = new SqlWorker(this);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+         toolbar = (Toolbar) findViewById(R.id.toolbar);
         customTextView = (CustomTextView)findViewById(R.id.textItem);
-        toolbar.setTitle(getTitleFromDB(getTextId()));
+        //toolbar.setTitle(getTitleFromDB(getTextId()));
+        setToolBarTitle();
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+      /*  getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);*/
+        // TODO: 07.11.2016 hot fix hide menu on scroll
+       floatingActionMenu.setOnMenuButtonClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!floatingActionMenu.isOpened()){
+                listView.smoothScrollBy(0,0);
+                floatingActionMenu.open(true);
+                }else floatingActionMenu.close(true);
+            }
+        });
         fab_hide = (FloatingActionButton) findViewById(R.id.fab_hide);
         fab_show = (FloatingActionButton) findViewById(R.id.fab_show);
         fab_clear = (FloatingActionButton) findViewById(R.id.clear);
@@ -130,7 +142,9 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
     private String getTitleFromDB(int id) {
         return sqlWorker.getTitleFromDB(id);
     }
-
+    private void setToolBarTitle(){
+        ((TextView)toolbar.findViewById(R.id.toolbar_title)).setText(getTitleFromDB(getTextId()));
+    }
     private SpannableString getSpannableString(String s) {
         SpannableString text = new SpannableString(s);
         Matcher matcher = Pattern.compile(PATTERN_WORD).matcher(s);
@@ -222,6 +236,10 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.fab_menu:
+                System.out.println("CLICK");
+                listView.smoothScrollBy(0,0);
+                break;
             case R.id.fab_show:
                 //showWords();
                 showWordsByProc();
@@ -477,6 +495,10 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
                 break;
             case R.id.action_text_smaller:
                 textRecyclerView.updateSize(this,-2,textRecyclerView.getTextView().getTextSize());
+                break;
+            case R.id.action_settings:
+                Intent intent = new Intent(this,AboutActivity.class);
+                startActivity(intent);
                 break;
             default:
                 break;

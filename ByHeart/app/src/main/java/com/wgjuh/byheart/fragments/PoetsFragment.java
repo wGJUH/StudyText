@@ -75,6 +75,7 @@ public class PoetsFragment extends AbstractFragment {
         recyclerView = (RecyclerView) frameView.findViewById(R.id.recyler_list_poets);
         recyclerView.setLayoutManager(getGridManager());
         toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+        if(toolbar != null)
         toolbarTextView = (TextView) toolbar.findViewById(R.id.toolbar_title);
         //GridView gridView = (GridView)frameView.findViewById(R.id.recyler_list_poets);
         setValues();
@@ -195,7 +196,8 @@ public class PoetsFragment extends AbstractFragment {
         myPoetsRecyclerView.notifyDataSetChanged();
     }
 
-    public void setMultiSelection(Boolean multiSelection, int position) {
+    @Override
+    public void setMultiSelection(boolean multiSelection, int position) {
         this.multiSelection = multiSelection;
         if (multiSelection) {
             updateSelection(position);

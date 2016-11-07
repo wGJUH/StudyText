@@ -14,7 +14,7 @@ import com.wgjuh.byheart.myapplication.R;
  * Created by wGJUH on 19.10.2016.
  */
 
-public class RootFragment extends Fragment {
+public class RootFragment extends AbstractFragment {
     public PoetsFragment poetsFragment = new PoetsFragment();
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -38,5 +38,33 @@ public class RootFragment extends Fragment {
         if(getFragmentManager().findFragmentById(R.id.frame_root) instanceof PoemsFragment){
 
         }
+    }
+
+    @Override
+    public void deleteItems() {
+
+    }
+
+    @Override
+    public void favoriteItems() {
+
+    }
+
+    @Override
+    public int[] getSelected() {
+        return new int[0];
+    }
+
+    @Override
+    public void toggleSelectAll() {
+
+    }
+
+    @Override
+    public void setMultiSelection(boolean multiSelection, int position) {
+        AbstractFragment abstractFragment  = (AbstractFragment) getFragmentManager().findFragmentById(R.id.frame_root);
+        if(abstractFragment instanceof PoemsFragment)
+            ((PoemsFragment)abstractFragment).setMultiSelection(false,0);
+
     }
 }

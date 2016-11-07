@@ -1,6 +1,9 @@
 package com.wgjuh.byheart;
 
+import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -8,7 +11,11 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -60,12 +67,54 @@ public class NewAuthorActivity extends AppCompatActivity implements View.OnClick
     private void setToolbarTitle(){
         customTextView.setText(this.getString(R.string.title_activity_new_author));
     }
+    public void requestMultiplePermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED  && ContextCompat
+                .checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED ) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{
+                            Manifest.permission.READ_EXTERNAL_STORAGE,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    },
+                    PERMISSION_REQUEST_CODE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if(requestCode == Data.PERMISSION_REQUEST_CODE && grantResults.length == 2){
+            if(grantResults[0] != PackageManager.PERMISSION_GRANTED || grantResults[1] != PackageManager.PERMISSION_GRANTED){
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle(getString(R.string.permissions)).setMessage(getString(R.string.permissions_message))
+                        .setPositiveButton(getString(R.string.grant), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(getBaseContext(),getString(R.string.thanks),Toast.LENGTH_SHORT).show();
+                                requestMultiplePermissions();
+                                dialog.cancel();
+                            }
+                        }).setNegativeButton(getString(R.string.denied), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(getBaseContext(),getString(R.string.permissions_need),Toast.LENGTH_LONG).show();
+                        dialog.cancel();
+                    }
+                }).create().show();
+            }
+
+        }else selectAuthorPortrait();
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.author_photo:
-                selectAuthorPortrait();
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                    requestMultiplePermissions();
+                }else  selectAuthorPortrait();
+
                 break;
             case R.id.fab_save_author:
                 long result = saveNewAuthor();

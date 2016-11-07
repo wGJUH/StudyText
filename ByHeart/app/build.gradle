@@ -1,6 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'ByHeart'
+            keyPassword 'WGJUH19111992wgjuh'
+            storeFile file('C:/Users/wGJUH/Documents/keys/wgjuh_development.jks')
+            storePassword 'WGJUH19111992wgjuh'
+        }
+    }
     compileSdkVersion 24
     buildToolsVersion "24.0.3"
     defaultConfig {
@@ -10,6 +18,8 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        //меняем название apk
+        setProperty("archivesBaseName", "ByHeart")
     }
     buildTypes {
         release {

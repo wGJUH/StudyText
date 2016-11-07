@@ -14,4 +14,5 @@ public abstract class AbstractFragment extends Fragment {
     public void updateValues(int position){};
     public void updateValues(int position, boolean favorite){}
     public abstract void toggleSelectAll();
+    public abstract void setMultiSelection(boolean multiSelection,int position);
 }

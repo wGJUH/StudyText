@@ -1,13 +1,21 @@
 package com.wgjuh.byheart;
 
+import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import com.github.clans.fab.FloatingActionButton;
 
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -25,6 +33,8 @@ import com.wgjuh.byheart.fragments.PoemsFragment;
 import com.wgjuh.byheart.fragments.PoetsFragment;
 import com.wgjuh.byheart.fragments.RootFragment;
 import com.wgjuh.byheart.myapplication.R;
+
+import static android.R.id.message;
 
 public class TabbedActivity extends AppCompatActivity implements View.OnClickListener, Data {
 
@@ -49,17 +59,14 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
             if(favoriteFragment.getMultiSelection()){
                 favoriteFragment.setMultiSelection(false,0);
             }else  mViewPager.setCurrentItem(mViewPager.getCurrentItem()-1);
-        }else  if(rootFragment.getFragmentManager().findFragmentById(R.id.frame_root) instanceof PoemsFragment){
-            PoemsFragment poemsFragment = ((PoemsFragment)rootFragment.getFragmentManager().findFragmentById(R.id.frame_root));
-            if(poemsFragment.getMultiSelection())
-            poemsFragment.setMultiSelection(false,0);
-            else super.onBackPressed();
-        }else super.onBackPressed();
+        }else {
+            ((AbstractFragment) adapter.getItem(mViewPager.getCurrentItem())).setMultiSelection(false, 0);
+            super.onBackPressed();
+        }
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         setContentView(R.layout.tabbed_activity);
         sqlWorker = new SqlWorker(this);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -73,6 +80,10 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
         else setupLandscapeOrientation();
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_add);
         fab.setOnClickListener(this);
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this,Manifest.permission.READ_EXTERNAL_STORAGE))
+            requestMultiplePermissions();
+        super.onCreate(savedInstanceState);
+
     }
 
     public static boolean isShouldUpdate() {
@@ -92,6 +103,51 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
         fragmentTransaction.replace(R.id.frame_poets, new PoetsFragment());
         fragmentTransaction.replace(R.id.frame_poems, new FavoriteFragment());
         fragmentTransaction.commit();
+    }
+    public void requestMultiplePermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED  && ContextCompat
+                .checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED ) {
+                     ActivityCompat.requestPermissions(this,
+                    new String[]{
+                            Manifest.permission.READ_EXTERNAL_STORAGE,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    },
+                    PERMISSION_REQUEST_CODE);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        //
+        super.onResume();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if(requestCode == Data.PERMISSION_REQUEST_CODE && grantResults.length == 2){
+            if(grantResults[0] != PackageManager.PERMISSION_GRANTED || grantResults[1] != PackageManager.PERMISSION_GRANTED){
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle(getString(R.string.permissions)).setMessage(getString(R.string.permissions_message))
+                        .setPositiveButton(getString(R.string.grant), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(getBaseContext(),getString(R.string.thanks),Toast.LENGTH_SHORT).show();
+                        requestMultiplePermissions();
+                        dialog.cancel();
+                    }
+                }).setNegativeButton(getString(R.string.denied), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(getBaseContext(),getString(R.string.permissions_need),Toast.LENGTH_LONG).show();
+                    dialog.cancel();
+                    }
+                }).create().show();
+            }
+
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     private void setupPortraitOrientation() {
@@ -199,6 +255,10 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.action_delete:
                 //Toast.makeText(this,"DELETE",Toast.LENGTH_SHORT).show();
                 fragmentMultiSelection.deleteItems();
+                break;
+            case R.id.action_settings:
+                Intent intent = new Intent(this,AboutActivity.class);
+                startActivity(intent);
                 break;
             default:
                 break;

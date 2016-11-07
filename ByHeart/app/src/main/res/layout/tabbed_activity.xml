@@ -35,6 +35,7 @@ and uncomment coordinator layout-->
                     android:textColor="@color/white"
                     android:textSize="20sp"/>
                 </android.support.v7.widget.Toolbar>
+
             <android.support.design.widget.TabLayout
                 android:id="@+id/tabs"
                 android:layout_width="match_parent"

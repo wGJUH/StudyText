@@ -16,12 +16,22 @@
     <string name="clear_text">Открыть весь текст</string>
     <string name="toast_input_title_or_text">Пожалуйста введите заголовок и текст</string>
     <string name="title_activity_new_author">Новая папка</string>
-    <string name="title_activity_new_poem">Новы текст</string>
+    <string name="title_activity_new_poem">Новый текст</string>
     <string name="save_text">Сохранить текст</string>
     <string name="paste_text">Вставить текст</string>
     <string name="add_save_new_text">Меню</string>
     <string name="hint_input_text">1) Пожалуйста, скопируйте текст из интернета и вставьте в данное поле нажав на кнопку в нижнем правом углу или вручную введите текст. \n2) Введите заголовок. \n3) Нажмите кнопку сохранить. \n4) После сохранения вы попадете в папку содержащую сохранённый текст.</string>
     <string name="hint_add_author_photo">Щелкните для добавления изображения папки</string>
-
-
+    <string name="action_delete">удалить выбранное</string>
+    <string name="action_favorites">сделать избранным</string>
+    <string name="action_select">выбрать всё</string>
+    <string name="grant">Разрешить</string>
+    <string name="denied">Запретить</string>
+    <string name="thanks">Благодарим Вас.</string>
+    <string name="permissions_need">Благодарим Вас.\nВы можете предоставить данные разрешения позже в настройка приложений Вашего телефона.</string>
+    <string name="permissions_message">Данные разрешения необходимы для возможности создания папок с вашими собственными изображениями.</string>
+    <string name="about_developer">Данное приложение было разработано Кипнисом Владиславом, для связи с ним вы можете использовать следующий адресс электронной почты:</string>
+    <string name="mail_developer">wgjuher.development@gmail.com</string>
+    <string name="about_designer">Дизайн основной темы и всех иконок был разработан Шманко Ларисой, для связи с ней вы можете использовать следующий адресс электронной почты:</string>
+    <string name="mail_designer">mellnica2@gmail.com</string>
 </resources>

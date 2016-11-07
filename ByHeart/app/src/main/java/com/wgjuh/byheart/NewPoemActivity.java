@@ -57,7 +57,7 @@ public class NewPoemActivity extends AppCompatActivity implements View.OnClickLi
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_study_poem, menu);
+        getMenuInflater().inflate(R.menu.menu_new_poem, menu);
         return true;
     }
 

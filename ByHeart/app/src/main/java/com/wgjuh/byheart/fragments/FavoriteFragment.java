@@ -58,6 +58,7 @@ public class FavoriteFragment extends AbstractFragment{
         myPoemsRecyclerView = new PoemsRecyclerView(context, null, sparseBooleanArray ,values, this);
         recyclerView.setAdapter(myPoemsRecyclerView);
         toolbar = (Toolbar)getActivity().findViewById(R.id.toolbar);
+        if(toolbar != null)
         toolbarTextView = (TextView)toolbar.findViewById(R.id.toolbar_title);
     }
 
@@ -119,6 +120,20 @@ public class FavoriteFragment extends AbstractFragment{
         myPoemsRecyclerView.notifyDataSetChanged();
     }
 
+    @Override
+    public void setMultiSelection(boolean multiSelection, int position) {
+        this.multiSelection = multiSelection;
+        if(multiSelection) {
+            updateSelection(position);
+            System.out.println("array:" + sparseBooleanArray.toString() + " multiselection: " + this.multiSelection);
+        }else{
+            counter = 0;
+            sparseBooleanArray.clear();
+        }
+        updateToolbar(multiSelection);
+        myPoemsRecyclerView.notifyDataSetChanged();
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -136,18 +151,6 @@ public class FavoriteFragment extends AbstractFragment{
         updateToolbarCounter();
         if (sparseBooleanArray.size() == 0)
             setMultiSelection(false,position);
-    }
-    public void setMultiSelection(Boolean multiSelection,int position){
-        this.multiSelection = multiSelection;
-        if(multiSelection) {
-            updateSelection(position);
-            System.out.println("array:" + sparseBooleanArray.toString() + " multiselection: " + this.multiSelection);
-        }else{
-            counter = 0;
-            sparseBooleanArray.clear();
-        }
-        updateToolbar(multiSelection);
-        myPoemsRecyclerView.notifyDataSetChanged();
     }
     private void updateToolbarCounter(){
         toolbarTextView.setText(sparseBooleanArray.size() + " " + getString(R.string.counter));

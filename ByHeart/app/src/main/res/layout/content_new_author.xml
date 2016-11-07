@@ -19,6 +19,8 @@
         android:layout_height="@dimen/new_title_field"
         android:gravity="start"
         android:hint="@string/hint_input_author_name"
+        android:maxLines="1"
+        android:singleLine="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
         style="@style/myedittext"/>

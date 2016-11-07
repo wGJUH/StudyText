@@ -149,18 +149,8 @@ public class PoemsFragment extends AbstractFragment implements Data {
         myPoemsRecyclerView.notifyDataSetChanged();
     }
 
-    public void updateSelection(int position) {
-        if (!sparseBooleanArray.get(position))
-            sparseBooleanArray.put(position, true);
-        else sparseBooleanArray.delete(position);
-        System.out.println("array:" + sparseBooleanArray.toString() + " size: " + sparseBooleanArray.size());
-        myPoemsRecyclerView.notifyItemChanged(position);
-        updateToolbarCounter();
-        if (sparseBooleanArray.size() == 0)
-            setMultiSelection(false, position);
-    }
-
-    public void setMultiSelection(Boolean multiSelection, int position) {
+    @Override
+    public void setMultiSelection(boolean multiSelection, int position) {
         this.multiSelection = multiSelection;
         if (multiSelection) {
             updateSelection(position);
@@ -171,6 +161,17 @@ public class PoemsFragment extends AbstractFragment implements Data {
         }
         updateToolbar(multiSelection);
         myPoemsRecyclerView.notifyDataSetChanged();
+    }
+
+    public void updateSelection(int position) {
+        if (!sparseBooleanArray.get(position))
+            sparseBooleanArray.put(position, true);
+        else sparseBooleanArray.delete(position);
+        System.out.println("array:" + sparseBooleanArray.toString() + " size: " + sparseBooleanArray.size());
+        myPoemsRecyclerView.notifyItemChanged(position);
+        updateToolbarCounter();
+        if (sparseBooleanArray.size() == 0)
+            setMultiSelection(false, position);
     }
 
     private void updateToolbarCounter() {

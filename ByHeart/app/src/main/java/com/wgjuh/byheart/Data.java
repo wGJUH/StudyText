@@ -32,6 +32,7 @@ public interface Data {
     Integer REQUEST_ADD_NEW_AUTHOR = 2;
     Integer REQUEST_ADD_NEW_POEM = 3;
     Integer REQUEST_ADD_NEW_FAVORITE = 4;
+    Integer PERMISSION_REQUEST_CODE = 5;
 
     /**
      * result codes
