@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
@@ -29,24 +32,39 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_save_new_text"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
+    <include layout="@layout/content_new_poem"
+        android:id="@+id/include" />
+
+    <com.github.clans.fab.FloatingActionMenu
+        android:id="@+id/fab_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        android:layout_marginTop="@dimen/fab_margin"
-        app:srcCompat="@drawable/ic_save" />
-    <android.support.design.widget.FloatingActionButton
+        fab:menu_openDirection="up"
+        fab:menu_fab_show_animation="@anim/fab_scale_up"
+        fab:menu_fab_hide_animation="@anim/fab_scale_down"
+        app:menu_colorNormal="@color/colorPrimaryDark"
+        app:menu_colorPressed="@color/colorPrimary"
+        >
+    <com.wgjuh.byheart.CustomFloatingButton
+        android:id="@+id/fab_save_new_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        fab:fab_size="normal"
+        app:fab_colorNormal="@color/colorPrimary"
+        app:fab_colorPressed="@color/colorPrimary"
+        app:fab_label="@string/save_text"
+        android:src="@drawable/ic_save"
+        />
+
+    <com.wgjuh.byheart.CustomFloatingButton
         android:id="@+id/fab_paste_new_text"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_gravity="top|end"
-        app:layout_anchor="@id/fab_save_new_text"
-        app:layout_anchorGravity="top"
-        android:layout_marginBottom="80dp"
-        app:srcCompat="@drawable/ic_paste" />
-
-    <include layout="@layout/content_new_poem" />
-
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:fab_label="@string/paste_text"
+        fab:fab_size="normal"
+        app:fab_colorNormal="@color/colorPrimary"
+        app:fab_colorPressed="@color/colorPrimary"
+        android:src="@drawable/ic_paste" />
+    </com.github.clans.fab.FloatingActionMenu>
 </android.support.design.widget.CoordinatorLayout>

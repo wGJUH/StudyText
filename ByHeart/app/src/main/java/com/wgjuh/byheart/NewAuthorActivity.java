@@ -31,16 +31,20 @@ import static android.graphics.Bitmap.createScaledBitmap;
 
 public class NewAuthorActivity extends AppCompatActivity implements View.OnClickListener, Data {
     ImageView imageView;
+    CustomTextView hint_photo;
     EditText editText;
+    CustomTextView customTextView;
     String authorImagePath = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_author);
+        customTextView = (CustomTextView) findViewById(R.id.toolbar_title);
+        hint_photo = (CustomTextView)findViewById(R.id.hint_add_author_photo);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setToolbarTitle();
         setSupportActionBar(toolbar);
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_save_author);
         imageView = (ImageView) findViewById(R.id.author_photo);
         editText = (EditText) findViewById(R.id.new_author_name);
@@ -53,7 +57,9 @@ public class NewAuthorActivity extends AppCompatActivity implements View.OnClick
         Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(i, REQUEST_LOAD_IMAGE);
     }
-
+    private void setToolbarTitle(){
+        customTextView.setText(this.getString(R.string.title_activity_new_author));
+    }
 
     @Override
     public void onClick(View v) {
@@ -114,6 +120,7 @@ public class NewAuthorActivity extends AppCompatActivity implements View.OnClick
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_LOAD_IMAGE && resultCode == RESULT_OK) {
+            hint_photo.setVisibility(View.GONE);
             Uri uri = data.getData();
             String[] projection = {MediaStore.Images.Media.DATA};
             Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
@@ -125,8 +132,8 @@ public class NewAuthorActivity extends AppCompatActivity implements View.OnClick
             Glide.with(this)
                     .load(new File(authorImagePath))
                     .placeholder(this.getResources().getDrawable(R.drawable.ic_launcher_app))
-                    .centerCrop()
                     .into(imageView);
+
         }
     }
 }

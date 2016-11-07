@@ -1,11 +1,11 @@
 <resources>
     <string name="app_name">ByHeart</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Information</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="title_lib">Library</string>
     <string name="title_favorite">Favorite</string>
-    <string name="title_activity_new_author">NewAuthorActivity</string>
-    <string name="title_activity_new_poem">NewPoemActivity</string>
+    <string name="title_activity_new_author">New author</string>
+    <string name="title_activity_new_poem">New text</string>
     <string name="hint_input_author_name">Input author name</string>
     <string name="hint_input_title">Input title</string>
     <string name="title_activity_study_poem">StudyPoem</string>
@@ -17,4 +17,11 @@
     <string name="executing_task">text formating</string>
     <string name="hide_text">Hide text</string>
     <string name="show_text">Show Text</string>
+    <string name="clear_text">Clear text hide</string>
+    <string name="toast_input_title_or_text">Please fill title and text</string>
+    <string name="save_text">Save</string>
+    <string name="paste_text">Paste</string>
+    <string name="add_save_new_text">menu</string>
+    <string name="hint_input_text">Please paste text here with button in right bottom corner, or write text manual</string>
+    <string name="hint_add_author_photo">Click to add folder image</string>
 </resources>

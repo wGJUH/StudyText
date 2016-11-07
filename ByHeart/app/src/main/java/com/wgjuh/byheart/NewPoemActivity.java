@@ -4,16 +4,21 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
+import com.github.clans.fab.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.TypedValue;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.clans.fab.FloatingActionMenu;
 import com.wgjuh.byheart.myapplication.R;
 
 public class NewPoemActivity extends AppCompatActivity implements View.OnClickListener, Data {
@@ -30,6 +35,8 @@ public class NewPoemActivity extends AppCompatActivity implements View.OnClickLi
         setSupportActionBar(toolbar);
         FloatingActionButton fabSaveText = (FloatingActionButton) findViewById(R.id.fab_save_new_text);
         FloatingActionButton fabPasteText = (FloatingActionButton) findViewById(R.id.fab_paste_new_text);
+        FloatingActionMenu floatingActionMenu = (FloatingActionMenu)findViewById(R.id.fab_menu);
+        floatingActionMenu.open(false);
         fabSaveText.setOnClickListener(this);
         fabPasteText.setOnClickListener(this);
         editTextPoem = (EditText)findViewById(R.id.new_text_poem);
@@ -48,6 +55,29 @@ public class NewPoemActivity extends AppCompatActivity implements View.OnClickLi
             }
         }
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_study_poem, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_text_bigger:
+                editTextPoem.setTextSize(TypedValue.COMPLEX_UNIT_PX, editTextPoem.getTextSize()+2);
+                break;
+            case R.id.action_text_smaller:
+                editTextPoem.setTextSize(TypedValue.COMPLEX_UNIT_PX, editTextPoem.getTextSize()-2);
+                break;
+            default:
+                break;
+        }
+
+
+
+        return super.onOptionsItemSelected(item);
+    }
     private void setViewpagerTitle() {
         TextView viewTitle = (TextView)findViewById(R.id.toolbar_title);
         viewTitle.setText(authorName);
@@ -65,13 +95,15 @@ public class NewPoemActivity extends AppCompatActivity implements View.OnClickLi
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.fab_save_new_text:
-                Toast.makeText(this,"SAVE",Toast.LENGTH_SHORT).show();
-                saveNewText();
-                setResult(RESULT_OK, getIntent().putExtra(KEY_TITLE,getPoemTitle()));
-                finish();
+                if(!editTextTitle.getText().toString().equals("") && !editTextPoem.getText().toString().equals("")) {
+                    saveNewText();
+                    setResult(RESULT_OK, getIntent().putExtra(KEY_TITLE, getPoemTitle()));
+                    finish();
+                }
+                else Toast.makeText(this,this.getString(R.string.toast_input_title_or_text),Toast.LENGTH_SHORT).show();
                 break;
             case R.id.fab_paste_new_text:
-                Toast.makeText(this,"Paste",Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this,"Paste",Toast.LENGTH_SHORT).show();
                 pasteNewText();
                 break;
             default:

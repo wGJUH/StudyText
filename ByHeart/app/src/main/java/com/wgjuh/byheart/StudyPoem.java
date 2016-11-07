@@ -19,6 +19,7 @@ import android.text.Spanned;
 import android.text.style.BackgroundColorSpan;
 import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -47,6 +48,7 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
     private RecyclerView recyclerView;
     private TextRecyclerView textRecyclerView;
     private int first_visible;
+    private CustomTextView customTextView;
     public FloatingActionMenu floatingActionMenu;
     public String text;
     private com.github.clans.fab.FloatingActionButton fab_hide, fab_show, fab_clear;
@@ -66,6 +68,7 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
         floatingActionMenu = (FloatingActionMenu) findViewById(R.id.fab_menu);
         sqlWorker = new SqlWorker(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        customTextView = (CustomTextView)findViewById(R.id.textItem);
         toolbar.setTitle(getTitleFromDB(getTextId()));
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -83,9 +86,9 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
         pbCount.setMessage(getResources().getString(R.string.executing_task));
         pbCount.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         pbCount.setProgress(0);
-        stringCount = getStringCount(text);
+        stringCount = getWordsCount(text);
         pbCount.setMax(stringCount);
-        if (stringCount > 200 || wordsCount > 500)
+        if (stringCount > 1000)
             pbCount.show();
 
         listView = (ListView) findViewById(R.id.text_recycler_view);
@@ -134,10 +137,18 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
         while (matcher.find()) {
             wordsCount++;
             text.setSpan(new SpannableByHeart(this, matcher.start(), matcher.end()), matcher.start(), matcher.end(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            handler.post(updateProgress);
         }
         return text;
     }
-
+    private int getWordsCount(String s) {
+        Matcher matcher = Pattern.compile(PATTERN_WORD).matcher(s);
+        int count = 0;
+        while (matcher.find())
+            count++;
+        System.out.println("count: " + count);
+        return count;
+    }
     private int getStringCount(String s) {
         Matcher matcher = Pattern.compile(PATTERN_STRING).matcher(s);
         int count = 0;
@@ -174,7 +185,7 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
                 });
                 spannableStringBuilder = new SpannableStringBuilder();
             }
-            handler.post(updateProgress);
+
             startPosition = matcher.end();
         }
         System.out.println("finish: " + (System.currentTimeMillis() - start));
@@ -185,7 +196,7 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
         @Override
         public void run() {
             System.out.println("progress: " + spannableStringBuilders.size());
-            pbCount.setProgress(spannableStringBuilders.size());
+            pbCount.setProgress(wordsCount);
         }
     };
 
@@ -230,8 +241,8 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
     }
 
     private void clearAllHiden() {
-        for (int i = 0; i < hided.size(); i++)
-            for (int j = 0; j < hided.get(i).size(); j++) {
+        for (int i = 0; i < spannableBorders.size(); i++)
+            for (int j = 0; j < spannableBorders.get(i).size(); j++) {
                 Point point = spannableBorders.get(i).get(j);
                 BackgroundColorSpan[] backgroundColorSpen = (spannableStringBuilders.get(i)).getSpans(point.x, point.y, BackgroundColorSpan.class);
                 ForegroundColorSpan[] foregroundColorSpen = (spannableStringBuilders.get(i)).getSpans(point.x, point.y, ForegroundColorSpan.class);
@@ -460,6 +471,19 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_text_bigger:
+                textRecyclerView.updateSize(this,2,textRecyclerView.getTextView().getTextSize());
+                break;
+            case R.id.action_text_smaller:
+                textRecyclerView.updateSize(this,-2,textRecyclerView.getTextView().getTextSize());
+                break;
+            default:
+                break;
+        }
+
+
+
         return super.onOptionsItemSelected(item);
     }
 

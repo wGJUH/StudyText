@@ -7,12 +7,12 @@ and uncomment coordinator layout-->
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="false">
+    android:fitsSystemWindows="true">
 
-   <!-- <android.support.design.widget.CoordinatorLayout
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingBottom="8dp">-->
+        android:paddingBottom="8dp">
 
         <android.support.design.widget.AppBarLayout
             android:id="@+id/appbar"
@@ -49,9 +49,7 @@ and uncomment coordinator layout-->
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"  />
-<!--
     </android.support.design.widget.CoordinatorLayout>
--->
     <com.github.clans.fab.FloatingActionButton
         android:id="@+id/fab_add"
         android:layout_width="wrap_content"

@@ -189,15 +189,15 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
 
         switch (item.getItemId()){
             case R.id.action_selection:
-                Toast.makeText(this,"SELECT ALL",Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this,"SELECT ALL",Toast.LENGTH_SHORT).show();
                 fragmentMultiSelection.toggleSelectAll();
                 break;
             case R.id.action_favorites:
-                Toast.makeText(this,"FAVORITE ALL",Toast.LENGTH_SHORT).show();
+               // Toast.makeText(this,"FAVORITE ALL",Toast.LENGTH_SHORT).show();
                 fragmentMultiSelection.favoriteItems();
                 break;
             case R.id.action_delete:
-                Toast.makeText(this,"DELETE",Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this,"DELETE",Toast.LENGTH_SHORT).show();
                 fragmentMultiSelection.deleteItems();
                 break;
             default:
@@ -275,10 +275,10 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
                 break;
         }
         else if(isFabForDelete && mViewPager.getCurrentItem() == 0){
-            Toast.makeText(this,"DELETE",Toast.LENGTH_SHORT).show();
+           // Toast.makeText(this,"DELETE",Toast.LENGTH_SHORT).show();
             fragmentMultiSelection.deleteItems();
         }else if (isFabForFavorite && mViewPager.getCurrentItem() == 1){
-            Toast.makeText(this,"FAVORITE ALL",Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this,"FAVORITE ALL",Toast.LENGTH_SHORT).show();
             fragmentMultiSelection.favoriteItems();
         }
     }
