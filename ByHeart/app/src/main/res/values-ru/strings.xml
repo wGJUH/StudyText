@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Наизусть</string>
+    <string name="action_settings">Информация</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="title_lib">Библиотека</string>
+    <string name="title_favorite">Избранное</string>
+    <string name="hint_input_author_name">Введите название папки</string>
+    <string name="hint_input_title">Введите заголовок</string>
+    <string name="title_activity_study_poem">StudyPoem</string>
+    <string name="author_exist">Папка уже существует, пожалуйста измените название или удалите существующую папку с таким названием</string>
+    <string name="counter">Выбрано</string>
+    <string name="executing_task">текст подготавливается</string>
+    <string name="hide_text">Закрыть часть текста</string>
+    <string name="show_text">Открыть часть текста</string>
+    <string name="clear_text">Открыть весь текст</string>
+    <string name="toast_input_title_or_text">Пожалуйста введите заголовок и текст</string>
+    <string name="title_activity_new_author">Новая папка</string>
+    <string name="title_activity_new_poem">Новы текст</string>
+    <string name="save_text">Сохранить текст</string>
+    <string name="paste_text">Вставить текст</string>
+    <string name="add_save_new_text">Меню</string>
+    <string name="hint_input_text">1) Пожалуйста, скопируйте текст из интернета и вставьте в данное поле нажав на кнопку в нижнем правом углу или вручную введите текст. \n2) Введите заголовок. \n3) Нажмите кнопку сохранить. \n4) После сохранения вы попадете в папку содержащую сохранённый текст.</string>
+    <string name="hint_add_author_photo">Щелкните для добавления изображения папки</string>
+
+
+</resources>

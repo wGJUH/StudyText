@@ -141,7 +141,7 @@ public class SQLWorker extends SQLiteOpenHelper implements Data {
         ArrayList<String> strings = new ArrayList<String>();
         ArrayList<Integer> id = new ArrayList<Integer>();
         ArrayList<String> portrait_ids = new ArrayList<String>();
-        cursor = database.query(DB_NAME, new String[]{COLUMN_AUTHOR_NAME,COLUMN_ID,COLUMN_PORTRAIT_ID}, null, null, COLUMN_AUTHOR_NAME, null, COLUMN_AUTHOR_NAME);
+        cursor = database.query(DB_NAME, new String[]{COLUMN_AUTHOR_NAME,COLUMN_ID,COLUMN_PORTRAIT_ID}, COLUMN_AUTHOR_NAME + " IS NOT NULL", null, COLUMN_AUTHOR_NAME, null, COLUMN_AUTHOR_NAME);
         if(cursor.moveToFirst()){
             do{
                 strings.add(cursor.getString(cursor.getColumnIndex(COLUMN_AUTHOR_NAME)));
@@ -227,7 +227,7 @@ public class SQLWorker extends SQLiteOpenHelper implements Data {
         boolean starred = false;
         opendatabase();
         System.out.println(MainActivity.TAG + " author: " + author + " title: " + title);
-        if (!author.equals(FAVORITES)) {
+        if (!author.equals(context.getString(R.string.title_favorites))) {
             if (author != null) {
                 Cursor cursor = database.query(DB_NAME, new String[]{COLUMN_ID, COLUMN_FAVORITE}, COLUMN_AUTHOR_NAME + " = ? AND " + COLUMN_POEM_TITLE + " = ?", new String[]{author, title}, null, null, null);
                 if (cursor.moveToFirst()) {
@@ -261,7 +261,7 @@ public class SQLWorker extends SQLiteOpenHelper implements Data {
         System.out.println(MainActivity.TAG + " setStar "+ " author: " + toolbar + " title: " + title);
             if (toolbar != null) {
                 Cursor cursor;
-                if (!toolbar.equals(FAVORITES)) {
+                if (!toolbar.equals(context.getString(R.string.title_favorites))) {
                      cursor = database.query(DB_NAME, new String[]{COLUMN_ID,   COLUMN_AUTHOR_NAME ,COLUMN_FAVORITE}, COLUMN_AUTHOR_NAME + " = ? AND " + COLUMN_POEM_TITLE + " = ?", new String[]{toolbar, title}, null, null, null);
                 }else {
                      cursor = database.query(DB_NAME, new String[]{COLUMN_ID,  COLUMN_AUTHOR_NAME,COLUMN_FAVORITE}, COLUMN_POEM_TITLE + " = ?", new String[]{title}, null, null, null);
@@ -288,7 +288,16 @@ public class SQLWorker extends SQLiteOpenHelper implements Data {
         close();
         return newState;
     }
-
+    public String getauthorImagePath(String authorName){
+        String imagePath = null;
+        if(authorName != null) {
+            Cursor cursor = database.query(DB_NAME, new String[]{COLUMN_PORTRAIT_ID}, COLUMN_AUTHOR_NAME + " = ?", new String[]{authorName}, null, null, null);
+            if (cursor.moveToFirst()) {
+                imagePath = cursor.getString(0);
+            }
+        }
+        return imagePath;
+    }
     public void addStringToDB(String authorName, String authorImagePath ,String poemTitle, String text, Boolean starred) {
         System.out.println(MainActivity.TAG+" SAVE: a:" + authorName + " t: " +poemTitle + " s: " + starred);
         opendatabase();
@@ -302,12 +311,12 @@ public class SQLWorker extends SQLiteOpenHelper implements Data {
         close();
     }
     public void addStringToDB(String authorName,String poemTitle, String text, Boolean starred) {
-        System.out.println(MainActivity.TAG+" SAVE: a:" + authorName + " t: " +poemTitle + " s: " + starred);
         opendatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(COLUMN_AUTHOR_NAME, authorName);
         contentValues.put(COLUMN_POEM_TITLE, poemTitle);
         contentValues.put(COLUMN_POEM, text);
+        contentValues.put(COLUMN_PORTRAIT_ID,getauthorImagePath(authorName));
         if (starred) contentValues.put(COLUMN_FAVORITE, 1);
         database.insert(DB_NAME, null, contentValues);
         close();
@@ -317,7 +326,7 @@ public class SQLWorker extends SQLiteOpenHelper implements Data {
         Cursor cursor;
         opendatabase();
         System.out.println(MainActivity.TAG + " author: " + author + " title: " + title);
-        if (author.equals(LIBRARY)) {
+        if (author.equals(context.getString(R.string.title_library))) {
             cursor = database.query(DB_NAME, new String[]{COLUMN_ID, COLUMN_FAVORITE},COLUMN_AUTHOR_NAME+ " = ?", new String[]{title}, null, null, null);
         } else {
             cursor = database.query(DB_NAME, new String[]{COLUMN_ID, COLUMN_FAVORITE},COLUMN_AUTHOR_NAME+ " = ? AND "+COLUMN_POEM_TITLE+" = ?", new String[]{author, title}, null, null, null);
@@ -364,12 +373,20 @@ public class SQLWorker extends SQLiteOpenHelper implements Data {
         opendatabase();
         Cursor cursor = database.query(DB_NAME, null, null, null, COLUMN_AUTHOR_NAME, null, COLUMN_AUTHOR_NAME);
         int i = 0;
+        String author;
         if (cursor.moveToFirst())
             do {
                 i++;
-                if (cursor.getString(cursor.getColumnIndex(COLUMN_AUTHOR_NAME)).equals(s)) break;
+                author = cursor.getString(cursor.getColumnIndex(COLUMN_AUTHOR_NAME));
+                System.out.println(MainActivity.TAG + " author name: " + author.length() + " needed: " + s.length());
+                System.out.println(MainActivity.TAG + " equals " + author.equals(s));
+                if (author.equals(s)) {
+                    System.out.println(MainActivity.TAG+" break");
+                    break;
+                }
             } while (cursor.moveToNext());
         close();
+        System.out.println(MainActivity.TAG + " i : " + i);
         return i;
     }
 

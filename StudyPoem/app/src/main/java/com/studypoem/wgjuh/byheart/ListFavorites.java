@@ -6,6 +6,17 @@ package com.studypoem.wgjuh.byheart;
 
 public class ListFavorites extends ListPoems {
     @Override
+    public void init() {
+        super.init();
+    }
+
+    @Override
+    public void runSetters() {
+        super.runSetters();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+    }
+
+    @Override
     public Values getValues() {
         return sqlWorker.getStarred();
     }

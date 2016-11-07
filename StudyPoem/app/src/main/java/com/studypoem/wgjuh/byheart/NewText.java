@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.OvershootInterpolator;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
@@ -104,13 +105,15 @@ public class NewText extends AppCompatActivity implements Data, View.OnClickList
             fab.setImageResource(android.R.drawable.ic_menu_save);
             mainFabState = SAVE_TEXT;
         }else{
-            Toast.makeText(this,"Please input or copy some text", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,getString(R.string.toast_input_text), Toast.LENGTH_LONG).show();
         }
     }
     private void saveText(){
         final View view = LayoutInflater.from(this).inflate(R.layout.new_author, null, false);
         final String poem = ((EditText)findViewById(R.id.new_text)).getText().toString()+"\n";
         view.findViewById(R.id.photo_layout).setVisibility(View.GONE);
+        ((TextView)view.findViewById(R.id.author_name_message)).setText(getResources().getString(R.string.input_title));
+        ((EditText)view.findViewById(R.id.author_name)).setHint(getResources().getString(R.string.input_title_hint));
         new AlertDialog.Builder(this).setView(view)
                 .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
                     @Override
@@ -119,7 +122,7 @@ public class NewText extends AppCompatActivity implements Data, View.OnClickList
                         String poem_title = ((EditText)view.findViewById(R.id.author_name)).getText().toString();
                         System.out.println(MainActivity.TAG+ " author: " + author_name + " title: " + poem_title);
                         if(!poem_title.equals("")) {
-                            if (author_name.equals(FAVORITES)){
+                            if (author_name.equals(getString(R.string.title_favorites))){
                                 sqlWorker.addStringToDB(null, poem_title, poem,true);
                                 setResult(666);
                                 finish();

@@ -46,7 +46,7 @@ final class Values{
         this.portraitIds.addAll(temp);
     }
     public void setAll(Values values){
-       setIds(values.getIds());
+        setIds(values.getIds());
         setPortraitIds(values.getPortraitIds());
         setStrings(values.getStrings());
     }

@@ -34,14 +34,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.defaultLibraryStart:
                 ListPoems.lvl = Data.LVL_POETS;
                 intent = new Intent(this,ListPoets.class);
-                intent.putExtra(Data.KEY_ACTIVITY, Data.LIBRARY);
+                intent.putExtra(Data.KEY_ACTIVITY, getString(R.string.title_library));
                 startActivity(intent);
                 break;
             case R.id.myLibraryStart:
                 ListPoems.lvl = Data.LVL_POEMS;
                 intent = new Intent(this,ListFavorites.class);
-                intent.putExtra(Data.KEY_ACTIVITY, Data.FAVORITES);
-                intent.putExtra(Data.KEY_REGEX, Data.FAVORITES);
+                intent.putExtra(Data.KEY_ACTIVITY, getString(R.string.title_favorites));
+                intent.putExtra(Data.KEY_REGEX, getString(R.string.title_favorites));
                 startActivity(intent);
                 break;
             default:

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Наизусть</string>
+    <string name="action_settings">Настройки</string>
+    <string name="mane_text">Вставьте текст нажав на розовую кнопку</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="dialog_name">AlertDialogCustom</string>
+    <string name="add">Добавить</string>
+    <string name="remove">Удалить</string>
+    <string name="input_author">Введите имя автора</string>
+    <string name="input_author_hint">Автор</string>
+    <string name="save">Сохранить</string>
+    <string name="title_activity_add_new_text">AddNewText</string>
+    <string name="title_library">Библиотека</string>
+    <string name="title_favorites">Избранное</string>
+    <string name="cancel">Отмена</string>
+    <string name="input_title">Введите название</string>
+    <string name="input_title_hint">Название</string>
+    <string name="delete">Удалить</string>
+    <string name="select_photo">Нажмите для выбора фотографии</string>
+    <string name="toast_input_text">Пожалуйста введите текст с клавиатуры или вставьте текст нажав на розовую кнопку</string>
+
+</resources>
