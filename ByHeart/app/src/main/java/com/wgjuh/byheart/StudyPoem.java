@@ -349,19 +349,15 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
         int showNow = 0;
         int procShown = 0;
         int rows = spannableStringBuilders.size();
-        int hidedCount = 0;
         int currentlyHiden = 0;
-        for (int i = 0; i < hided.size(); i++)
-            hidedCount += hided.get(i).size();
-        System.out.println("hidedCount: " + hidedCount);
         procShown = wordsCount / PROCENT;
         for (int i = 0; i < spannableBorders.size(); i++)
             if (spannableBorders.get(i).size() == 0) emptyRows++;
         if (procShown < rows) {
             procShown = rows - emptyRows;
         }
-        for (int i = 0; i < hided.size(); i++) {
-            currentlyHiden += hided.get(i).size();
+        for (Iterator<Integer> it = hided.keySet().iterator(); it.hasNext(); ) {
+            currentlyHiden += hided.get(it.next()).size();
         }
         if (currentlyHiden < rows) {
             procShown = currentlyHiden;
@@ -407,7 +403,7 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
         if (procHiden < rows) {
             procHiden = rows - emptyRows;
         }
-      
+
         for (Iterator<Integer> it = hided.keySet().iterator(); it.hasNext(); ) {
             currentlyHiden += hided.get(it.next()).size();
         }
