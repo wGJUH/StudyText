@@ -24,8 +24,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/mail_developer"
+        android:autoLink="email"
         android:clickable="true"
-        android:onClick="openMailDeveloper"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="22sp"
         />
@@ -43,8 +43,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/mail_designer"
+        android:autoLink="email"
         android:clickable="true"
-        android:onClick="openMailDesigner"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="22sp"
         />

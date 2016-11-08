@@ -6,7 +6,7 @@
         android:id="@+id/action_favorites"
         android:orderInCategory="102"
         android:title="@string/action_favorites"
-        android:icon="@drawable/favorites"
+        android:icon="@drawable/favoritewhite"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_selection"

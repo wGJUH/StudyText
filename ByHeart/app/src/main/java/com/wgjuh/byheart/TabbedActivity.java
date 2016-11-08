@@ -80,8 +80,9 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
         else setupLandscapeOrientation();
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_add);
         fab.setOnClickListener(this);
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this,Manifest.permission.READ_EXTERNAL_STORAGE))
-            requestMultiplePermissions();
+        //if (ActivityCompat.shouldShowRequestPermissionRationale(this,Manifest.permission.READ_EXTERNAL_STORAGE))
+        requestMultiplePermissions();
+
         super.onCreate(savedInstanceState);
 
     }
@@ -127,7 +128,7 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if(requestCode == Data.PERMISSION_REQUEST_CODE && grantResults.length == 2){
-            if(grantResults[0] != PackageManager.PERMISSION_GRANTED || grantResults[1] != PackageManager.PERMISSION_GRANTED){
+            if(ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE) && (grantResults[0] != PackageManager.PERMISSION_GRANTED || grantResults[1] != PackageManager.PERMISSION_GRANTED) ){
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle(getString(R.string.permissions)).setMessage(getString(R.string.permissions_message))
                         .setPositiveButton(getString(R.string.grant), new DialogInterface.OnClickListener() {
@@ -178,7 +179,7 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
                     FavoriteFragment favoriteFragment = ((FavoriteFragment)adapter.getItem(position));
                     favoriteFragment.updateToolbar(favoriteFragment.getMultiSelection());
                     if(isFabForFavorite)
-                        floatingActionButton.setImageResource(R.drawable.favorites);
+                        floatingActionButton.setImageResource(R.drawable.favoritewhite);
                 }
             }
 
@@ -297,7 +298,7 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
             floatingActionButton.hide(true);
             if (this.isFabForFavorite) {
                 System.out.println("FAB for favorites");
-                floatingActionButton.setImageResource(R.drawable.favorites);
+                floatingActionButton.setImageResource(R.drawable.favoritewhite);
             } else {
                 System.out.println("FAB for create");
                 floatingActionButton.setImageResource(R.drawable.create);

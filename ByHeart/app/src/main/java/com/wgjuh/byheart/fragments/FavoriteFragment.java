@@ -156,6 +156,7 @@ public class FavoriteFragment extends AbstractFragment{
         toolbarTextView.setText(sparseBooleanArray.size() + " " + getString(R.string.counter));
     }
     public void updateToolbar(boolean isMultiSelection){
+
         toolbar.getMenu().clear();
         if(isMultiSelection) {
             toolbarTextView.setText(sparseBooleanArray.size() + " " + getString(R.string.counter));

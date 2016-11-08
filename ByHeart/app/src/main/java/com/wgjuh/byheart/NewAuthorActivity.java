@@ -68,10 +68,10 @@ public class NewAuthorActivity extends AppCompatActivity implements View.OnClick
         customTextView.setText(this.getString(R.string.title_activity_new_author));
     }
     public void requestMultiplePermissions() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED  && ContextCompat
-                .checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED ) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED  && ContextCompat
+                    .checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED ) {
             ActivityCompat.requestPermissions(this,
                     new String[]{
                             Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -84,7 +84,7 @@ public class NewAuthorActivity extends AppCompatActivity implements View.OnClick
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if(requestCode == Data.PERMISSION_REQUEST_CODE && grantResults.length == 2){
-            if(grantResults[0] != PackageManager.PERMISSION_GRANTED || grantResults[1] != PackageManager.PERMISSION_GRANTED){
+            if(ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE) && (grantResults[0] != PackageManager.PERMISSION_GRANTED || grantResults[1] != PackageManager.PERMISSION_GRANTED)){
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle(getString(R.string.permissions)).setMessage(getString(R.string.permissions_message))
                         .setPositiveButton(getString(R.string.grant), new DialogInterface.OnClickListener() {
@@ -113,7 +113,12 @@ public class NewAuthorActivity extends AppCompatActivity implements View.OnClick
             case R.id.author_photo:
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
                     requestMultiplePermissions();
-                }else  selectAuthorPortrait();
+                }else if(ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED  && ContextCompat
+                        .checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED ){
+                    Toast.makeText(this,getString(R.string.for_load_photo_permission),Toast.LENGTH_LONG).show();
+                } else selectAuthorPortrait();
 
                 break;
             case R.id.fab_save_author:
