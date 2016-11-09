@@ -26,14 +26,17 @@ import java.util.List;
 
 public class SqlWorker extends SQLiteOpenHelper implements Data {
     private Context context;
+    final static int DB_VERSION = 3;
     SQLiteDatabase database;
 
     public SqlWorker(Context context) {
-        super(context, DB_NAME, null, 1);
+        super(context, DB_NAME, null, DB_VERSION);
         this.context = context;
         if (isDatabaseExists()) {
             System.out.println("Database exists");
             //opendatabase();
+
+            checkVersion();
         } else {
             System.out.println("Database doesn't exist");
             try {
@@ -43,7 +46,15 @@ public class SqlWorker extends SQLiteOpenHelper implements Data {
             }
         }
     }
-
+    private void checkVersion(){
+        opendatabase();
+        System.out.println("VERSION: " +        database.getVersion()
+        );
+        if(database.getVersion() < DB_VERSION)
+            onUpgrade(database,database.getVersion(),DB_VERSION);
+        else System.out.println("LAST VERSION");
+        close();
+    }
     public void createdatabase() throws IOException {
         long start = System.currentTimeMillis();
         if (isDatabaseExists()) {
@@ -84,11 +95,13 @@ public class SqlWorker extends SQLiteOpenHelper implements Data {
         while ((length = myinput.read(buffer)) > 0) {
             myoutput.write(buffer, 0, length);
         }
-
         //Close the streams
         myoutput.flush();
         myoutput.close();
         myinput.close();
+        opendatabase();
+       database.setVersion(DB_VERSION);
+        close();
     }
 
     public boolean deleteByIds(String[] ids) {
@@ -274,7 +287,7 @@ public class SqlWorker extends SQLiteOpenHelper implements Data {
 
 
         if (!authorName.equals(context.getString(R.string.app_name))) {
-            System.out.println("authorName: " + authorName + " poem Title: " + context.getString(R.string.app_name));
+            System.out.println("authorName: " + authorName + " poem Title: " + title);
             contentValues.put(COLUMN_AUTHOR_NAME, authorName);
             String portraitID = "";
             cursor = database.query(DB_NAME, new String[]{COLUMN_PORTRAIT_ID}, COLUMN_AUTHOR_NAME + " =?", new String[]{authorName}, null, null, null);
@@ -294,12 +307,24 @@ public class SqlWorker extends SQLiteOpenHelper implements Data {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        System.out.println("onCreateonCreateonCreate");
 
 
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        System.out.println("UpgradeUpgradeUpgrade");
+        if(oldVersion < newVersion){
+            System.out.println("UpgradeUpgradeUpgrade GO");
+
+            opendatabase();
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(COLUMN_AUTHOR_NAME,"Некрасов Н.А.");
+            System.out.println("UpgradeUpgradeUpgrade updated: " +  database.update(DB_NAME, contentValues ,COLUMN_AUTHOR_NAME +"=?", new String[]{"Некрасов Н.А"}));
+            database.setVersion(DB_VERSION);
+            close();
+        }
     }
 
     public boolean isAuthorExist(String authorName) {
@@ -355,19 +380,21 @@ public class SqlWorker extends SQLiteOpenHelper implements Data {
     }
 
     public int getRowPoemNumber(String author, String title) {
-        System.out.println(" take rowNumber");
+        System.out.println(" take rowNumber by author: " + author + " title: " + title);
         opendatabase();
         Cursor cursor;
         String tempTitle;
         if (author != null)
-            cursor = database.query(DB_NAME, null, COLUMN_AUTHOR_NAME + " =?", new String[]{author}, null, null, COLUMN_POEM_TITLE);
+            cursor = database.query(DB_NAME, null, COLUMN_AUTHOR_NAME + "=?", new String[]{author}, null, null, COLUMN_POEM_TITLE);
         else
-            cursor = database.query(DB_NAME, null, COLUMN_FAVORITE + " =? ", new String[]{"" + 1}, null, null, COLUMN_POEM_TITLE);
+            cursor = database.query(DB_NAME, null, COLUMN_FAVORITE + "=?", new String[]{"" + 1}, null, null, COLUMN_POEM_TITLE);
         int i = -1;
         if (cursor.moveToFirst())
             do {
                 i++;
                 tempTitle = cursor.getString(cursor.getColumnIndex(COLUMN_POEM_TITLE));
+                if(tempTitle == null) continue;
+                System.out.println("TEMP TITLE: " + tempTitle);
                 if (tempTitle.equals(title)) {
                     System.out.println(" break");
                     break;
@@ -379,7 +406,7 @@ public class SqlWorker extends SQLiteOpenHelper implements Data {
         /**
          * todo не уверен в правильности этого i-1
          */
-        return i - 1;
+        return i;
     }
 
     public String getTitleFromDB(int id) {

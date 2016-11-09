@@ -76,15 +76,11 @@ public class PoemsFragment extends AbstractFragment implements Data {
     }
 
     private void setViewpagerTitle() {
+        System.out.println("setViewpagerTitle: " +bundle.getString(KEY_AUTHOR));
+
         TextView viewTitle = (TextView) getActivity().findViewById(R.id.toolbar_title);
         viewTitle.setText(getAuthorName());
-        //setTypeFace(viewTitle);
     }
-
-    /* private void setTypeFace(TextView textView) {
-         Typeface robotoslab = Typeface.createFromAsset(context.getAssets(), "robotoslab_regular.ttf");
-         textView.setTypeface(robotoslab);
-     }*/
     private String getAuthorName() {
         return bundle.getString(KEY_AUTHOR);
     }
@@ -104,6 +100,7 @@ public class PoemsFragment extends AbstractFragment implements Data {
     }
 
     public void updateValues(int position) {
+        System.out.println("Update poems");
         Values values = getValues();
         this.values.setStrings(values.getStrings());
         this.values.setStarrs(values.getStarrs());

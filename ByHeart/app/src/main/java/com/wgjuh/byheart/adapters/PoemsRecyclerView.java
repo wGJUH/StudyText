@@ -83,12 +83,12 @@ public class PoemsRecyclerView extends RecyclerView.Adapter<PoemsRecyclerView.Vi
         textView.setTypeface(robotoslab);
     }*/
   private void setViewSelected(ViewHolder viewHolder, int position) {
-      System.out.println("Selected boolean array: " + sparseBooleanArray.toString() + " position: " + position);
+      //System.out.println("Selected boolean array: " + sparseBooleanArray.toString() + " position: " + position);
       if (sparseBooleanArray.get(position)) {
-          System.out.println("Make Selected: " + sparseBooleanArray.get(position));
+          //System.out.println("Make Selected: " + sparseBooleanArray.get(position));
           viewHolder.mLayout.setBackgroundColor(context.getResources().getColor(R.color.selected));
       } else {
-          System.out.println("Make Selected: " + sparseBooleanArray.get(position));
+         // System.out.println("Make Selected: " + sparseBooleanArray.get(position));
           viewHolder.mLayout.setBackgroundColor(Color.WHITE);
       }
   }
@@ -99,7 +99,7 @@ public class PoemsRecyclerView extends RecyclerView.Adapter<PoemsRecyclerView.Vi
         else favoriteFragment.updateSelection(position);
     }
     public void setImageButton(ImageButton imageButton, int position){
-        System.out.println(" pre finish");
+        //System.out.println(" pre finish");
         if(starrs.get((position))){
             imageButton.setImageResource(R.drawable.favorite_active);
         }else imageButton.setImageResource(R.drawable.favorite_disabled);

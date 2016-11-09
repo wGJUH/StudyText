@@ -116,7 +116,7 @@ public class NewPoemActivity extends AppCompatActivity implements View.OnClickLi
     }
     @NonNull
     private String getPoem() {
-        return editTextPoem.getText().toString();
+        return editTextPoem.getText().toString()+"\n";
     }
 
     private void saveNewText(){

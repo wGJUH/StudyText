@@ -82,7 +82,7 @@ public class FavoriteFragment extends AbstractFragment{
         if(position != -1 && favorite)
         myPoemsRecyclerView.notifyItemRemoved(position);
         else myPoemsRecyclerView.notifyDataSetChanged();
-        setMultiSelection(false,0);
+        //setMultiSelection(false,0);
     }
 
     @Override
@@ -164,11 +164,16 @@ public class FavoriteFragment extends AbstractFragment{
             toolbar.inflateMenu(R.menu.multiselection_favorites_menu);
             ((TabbedActivity)getActivity()).updateFabFunction(this,true);
         }else {
-            toolbarTextView.setText(getString(R.string.app_name));
+            //toolbarTextView.setText(getString(R.string.app_name));
+            setViewpagerTitle();
             toolbarTextView.setGravity(Gravity.START);
             toolbar.inflateMenu(R.menu.menu);
             ((TabbedActivity)getActivity()).updateFabFunction(this,false);
         }
+    }
+    private void setViewpagerTitle() {
+        TextView viewTitle = (TextView) getActivity().findViewById(R.id.toolbar_title);
+        viewTitle.setText(context.getString(R.string.app_name));
     }
     public Boolean getMultiSelection() {
         return multiSelection;

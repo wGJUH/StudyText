@@ -96,12 +96,12 @@ public class PoetsRecyclerView extends RecyclerView.Adapter<PoetsRecyclerView.Vi
     }
 
     private void setViewSelected(ViewHolder viewHolder, int position) {
-        System.out.println("Selected boolean array: " + sparseBooleanArray.toString() + " position: " + position);
+       //System.out.println("Selected boolean array: " + sparseBooleanArray.toString() + " position: " + position);
         if (sparseBooleanArray.get(position)) {
-            System.out.println("Make Selected: " + sparseBooleanArray.get(position));
+           // System.out.println("Make Selected: " + sparseBooleanArray.get(position));
             viewHolder.mLayout.setCardBackgroundColor(context.getResources().getColor(R.color.selected));
         } else {
-            System.out.println("Make Selected: " + sparseBooleanArray.get(position));
+           // System.out.println("Make Selected: " + sparseBooleanArray.get(position));
             viewHolder.mLayout.setCardBackgroundColor(Color.WHITE);
         }
     }
