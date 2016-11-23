@@ -15,8 +15,8 @@ android {
         applicationId "com.studypoem.wgjuh.byheart"
         minSdkVersion 16
         targetSdkVersion 24
-        versionCode 9
-        versionName "1.1.6"
+        versionCode 11
+        versionName "1.2.7"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         //меняем название apk
         setProperty("archivesBaseName", "ByHeart")

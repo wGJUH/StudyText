@@ -199,9 +199,11 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
                     }
                 });
                 spannableStringBuilder = new SpannableStringBuilder();
+                startPosition = matcher.end();
             }
 
-            startPosition = matcher.end();
+
+
         }
         System.out.println("finish: " + (System.currentTimeMillis() - start));
 
@@ -221,11 +223,11 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
         int start = 0;
         while (matcher.find()) {
             Point temp = new Point(matcher.start(), matcher.end());
-            System.out.println("temp Point: " + temp + "start: " + matcher.start());
+            //System.out.println("temp Point: " + temp + "start: " + matcher.start());
             spannableBorders.get(spannableBorders.size() - 1).add(temp);
             start = matcher.end() + 1;
         }
-        System.out.println("Borders: " + spannableBorders.size() + " lenght: " + spannableBorders.get(spannableBorders.size() - 1).size());
+        //System.out.println("Borders: " + spannableBorders.size() + " lenght: " + spannableBorders.get(spannableBorders.size() - 1).size());
     }
 
     public void updateStringsArray(int position, SpannableStringBuilder spannable, Point borders) {

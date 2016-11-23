@@ -8,6 +8,7 @@ import com.wgjuh.byheart.myapplication.BuildConfig;
 
 public interface Data {
     String DB_NAME = "PoemsTable";
+    String DB_UPGRADE_NAME = "PoemsTableUpgrade";
     String DB_LOCATION = "/data/data/" + BuildConfig.APPLICATION_ID + "/databases/";
     /**
      * Columns
@@ -42,7 +43,7 @@ public interface Data {
      * Pattern
      */
     public static final String PATTERN_WORD = "[A-zA-Z0-9а-яА-ЯёЁ]+";
-    public static final String PATTERN_STRING = "\\n\\r|\\r\\n|\\r|\\n|\\Z";
+    public static final String PATTERN_STRING = "\\n\\r|\\r\\n|\\r|\\n|\\Z|\\n\\n";
     /**
      * Color
      */

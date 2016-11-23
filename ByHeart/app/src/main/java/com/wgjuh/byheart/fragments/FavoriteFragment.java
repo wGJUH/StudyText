@@ -82,6 +82,8 @@ public class FavoriteFragment extends AbstractFragment{
         if(position != -1 && favorite)
         myPoemsRecyclerView.notifyItemRemoved(position);
         else myPoemsRecyclerView.notifyDataSetChanged();
+        multiSelection = false;
+        sparseBooleanArray.clear();
         //setMultiSelection(false,0);
     }
 

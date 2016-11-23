@@ -2,13 +2,11 @@ package com.wgjuh.byheart;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.text.Editable;
 
 import com.wgjuh.byheart.myapplication.R;
 
@@ -26,7 +24,10 @@ import java.util.List;
 
 public class SqlWorker extends SQLiteOpenHelper implements Data {
     private Context context;
-    final static int DB_VERSION = 3;
+    final static int DB_VERSION = 4;
+    //this is for clearly update db.
+    private int anchorUpgradeID = 42;
+    private boolean loadNewPoems = true;
     SQLiteDatabase database;
 
     public SqlWorker(Context context) {
@@ -50,8 +51,14 @@ public class SqlWorker extends SQLiteOpenHelper implements Data {
         opendatabase();
         System.out.println("VERSION: " +        database.getVersion()
         );
-        if(database.getVersion() < DB_VERSION)
-            onUpgrade(database,database.getVersion(),DB_VERSION);
+        if(database.getVersion() < DB_VERSION) {
+            try {
+                copyTempdatabase();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            onUpgrade(database, database.getVersion(), DB_VERSION);
+        }
         else System.out.println("LAST VERSION");
         close();
     }
@@ -70,6 +77,7 @@ public class SqlWorker extends SQLiteOpenHelper implements Data {
         }
         System.out.println(" createDB method finished: " + (System.currentTimeMillis() - start));
     }
+
 
     private void copydatabase() throws IOException {
         //Open your local db as the input stream
@@ -100,10 +108,39 @@ public class SqlWorker extends SQLiteOpenHelper implements Data {
         myoutput.close();
         myinput.close();
         opendatabase();
-       database.setVersion(DB_VERSION);
+        database.setVersion(DB_VERSION);
         close();
     }
+    private void copyTempdatabase() throws IOException {
+        //Open your local db as the input stream
+        System.out.println(" START COPYING");
+        InputStream myinput = null;
+        try {
+            myinput = context.getAssets().open(DB_NAME);
+        } catch (IOException e) {
+            System.out.println(" get from assets failed ");
+            e.printStackTrace();
+        }
+        System.out.println(" assets: " + myinput.available());
+        // Path to the just created empty db
+        String outfilename = DB_LOCATION + DB_UPGRADE_NAME;
 
+        //Open the empty db as the output stream
+        OutputStream myoutput = new FileOutputStream(outfilename);
+
+        // transfer byte to inputfile to outputfile
+        byte[] buffer = new byte[myinput.available()];
+        System.out.println(" BUFFER: " + buffer.length);
+        int length;
+        while ((length = myinput.read(buffer)) > 0) {
+            myoutput.write(buffer, 0, length);
+        }
+        //Close the streams
+        myoutput.flush();
+        myoutput.close();
+        myinput.close();
+
+    }
     public boolean deleteByIds(String[] ids) {
         opendatabase();
         for (String s : ids) {
@@ -322,11 +359,44 @@ public class SqlWorker extends SQLiteOpenHelper implements Data {
             ContentValues contentValues = new ContentValues();
             contentValues.put(COLUMN_AUTHOR_NAME,"Некрасов Н.А.");
             System.out.println("UpgradeUpgradeUpgrade updated: " +  database.update(DB_NAME, contentValues ,COLUMN_AUTHOR_NAME +"=?", new String[]{"Некрасов Н.А"}));
+            //database.execSQL("INSERT INTO "+ DB_NAME + " SELECT * FROM " +DB_UPGRADE_NAME+"."+DB_UPGRADE_NAME + ";");
+            if(isLoadNewPoems()){
+                loadNewPoems();
+            }
             database.setVersion(DB_VERSION);
             close();
+
         }
     }
+    private boolean isLoadNewPoems(){
+        return loadNewPoems;
+    }
+    private int getAnchorUpgradeID(){
+        return anchorUpgradeID;
+    }
+    private void loadNewPoems() {
+        ContentValues contentValues;SQLiteDatabase sqLiteDatabase = SQLiteDatabase.openDatabase(DB_LOCATION+DB_UPGRADE_NAME, null, SQLiteDatabase.OPEN_READWRITE);
+        Cursor cursor = sqLiteDatabase.query(DB_NAME,null,null,null,null,null,COLUMN_ID);
+        if(cursor.moveToFirst()){
+            do{
+                if(cursor.getInt(cursor.getColumnIndex(COLUMN_ID)) >= getAnchorUpgradeID()) {
+                    contentValues = new ContentValues();
+                    contentValues.put(COLUMN_AUTHOR_NAME, cursor.getString(cursor.getColumnIndex(COLUMN_AUTHOR_NAME)));
+                    contentValues.put(COLUMN_POEM_TITLE, cursor.getString(cursor.getColumnIndex(COLUMN_POEM_TITLE)));
+                    contentValues.put(COLUMN_PORTRAIT_ID, cursor.getString(cursor.getColumnIndex(COLUMN_PORTRAIT_ID)));
+                    contentValues.put(COLUMN_POEM, cursor.getString(cursor.getColumnIndex(COLUMN_POEM)));
+                    System.out.println("inserted: " + database.insert(DB_NAME, null, contentValues));
+                }
+            }while (cursor.moveToNext());
+        }
+        cursor.close();
+        sqLiteDatabase.close();
+        removeTempDatabase();
+    }
 
+    private void removeTempDatabase(){
+        context.deleteDatabase(DB_UPGRADE_NAME);
+    }
     public boolean isAuthorExist(String authorName) {
         opendatabase();
         Cursor cursor = database.query(DB_NAME, new String[]{COLUMN_AUTHOR_NAME}, COLUMN_AUTHOR_NAME + "=? ", new String[]{authorName}, null, null, null);

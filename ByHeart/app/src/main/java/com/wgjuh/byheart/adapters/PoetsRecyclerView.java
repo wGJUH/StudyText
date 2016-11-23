@@ -89,7 +89,7 @@ public class PoetsRecyclerView extends RecyclerView.Adapter<PoetsRecyclerView.Vi
             String adress = photos.get(position);
 
             //todo getDrawable deprecated but i have no other for my api lvl
-            Glide.with(context).load("file:///" + adress).placeholder(context.getResources().getDrawable(R.drawable.ic_launcher_app)).centerCrop() // resizes the image to these dimensions (in pixel)
+            Glide.with(context).load("file:///" + adress).placeholder(context.getResources().getDrawable(R.drawable.ic_launcher_app)).crossFade().centerCrop() // resizes the image to these dimensions (in pixel)
                     .into(holder.imageView);
         }
         setViewSelected(holder, position);
