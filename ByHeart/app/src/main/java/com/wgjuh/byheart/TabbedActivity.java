@@ -352,7 +352,7 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
             long resultId = data.getLongExtra(KEY_ID,-777L);
             System.out.println("name after save: " + s + " id: " + resultId);
             if(resultId == -777L){
-                System.out.println("FAILE");
+                System.out.println("FAIL");
                 return;
             }
             System.out.println("name: " + s);

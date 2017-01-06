@@ -36,4 +36,9 @@
     <string name="mail_designer"><a href="mailto:mellnica2@gmail.com">mellnica2@gmail.com</a></string>
     <string name="for_load_photo_permission"><![CDATA[For load photo you need grant permission to app. Go to your phone settings->apps->ByHeart->Permissons]]></string>
     <string name="have_no_any_mail_apps">You have no any apps to send mail. Mail address copy to clipboard. </string>
+    <string name="action_options">Edit</string>
+    <string name="hint_change_photo">To change photo, please click image</string>
+    <string-array name="poet_options">
+        <item> Redact </item>
+    </string-array>
 </resources>

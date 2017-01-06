@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -27,6 +28,7 @@ import com.bumptech.glide.Glide;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
+import com.wgjuh.byheart.myapplication.BuildConfig;
 import com.wgjuh.byheart.myapplication.R;
 
 import java.io.File;
@@ -53,12 +55,39 @@ public class NewAuthorActivity extends AppCompatActivity implements View.OnClick
         setToolbarTitle();
         setSupportActionBar(toolbar);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_save_author);
+
         imageView = (ImageView) findViewById(R.id.author_photo);
         editText = (EditText) findViewById(R.id.new_author_name);
         imageView.setOnClickListener(this);
         fab.setOnClickListener(this);
+        Bundle bundle = getIntent().getExtras();
+        checkBundleValues(bundle);
     }
 
+    private void checkBundleValues(Bundle bundle) {
+        if( bundle != null){
+            editText.setText(bundle.getString(Data.KEY_AUTHOR));
+            authorImagePath = bundle.getString(KEY_ID);
+            System.out.println("bundle string: " + bundle.get(KEY_ID));
+            int photoId = getId(authorImagePath);
+            if (photoId != 0) {
+                System.out.println("load image from resources");
+                Glide.with(this).load(photoId).centerCrop().into(imageView);
+            } else {
+                System.out.println("load image from sdcard");
+                //todo getDrawable deprecated but i have no other for my api lvl
+                Glide.with(this).load("file:///" + authorImagePath).placeholder(getResources().getDrawable(R.drawable.ic_launcher_app)).crossFade().centerCrop() // resizes the image to these dimensions (in pixel)
+                        .into(imageView);
+            }
+            hint_photo.setText(getString(R.string.hint_change_photo));
+        }
+    }
+
+    private int getId(String adress) {
+        if (adress != null)
+            return getResources().getIdentifier(adress, "drawable", BuildConfig.APPLICATION_ID);
+        else return 0;
+    }
     public void selectAuthorPortrait() {
         System.out.println("TEST");
         Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -123,6 +152,7 @@ public class NewAuthorActivity extends AppCompatActivity implements View.OnClick
                 break;
             case R.id.fab_save_author:
                 long result = saveNewAuthor();
+                System.out.println("fab_save_author: " + result);
                 if (result != -1L) {
                     setResult(RESULT_OK,getIntent().putExtra(KEY_AUTHOR,getAuthorName()).putExtra(KEY_ID,result));
                     finish();
@@ -132,16 +162,26 @@ public class NewAuthorActivity extends AppCompatActivity implements View.OnClick
                 break;
         }
     }
-
+    private Bundle getBundle(){
+        return getIntent().getExtras();
+    }
     private long saveNewAuthor() {
-        if (isNameNotNull() && isAuthorNotExists(getAuthorName())) {
+        if (isNameNotNull() && !isAuthorNotExists(getAuthorName()) && getBundle() == null) {
             return new SqlWorker(this).addNewAuthor(getAuthorName(), getAuthorImagePath());
+        } else if( isNameNotNull() && !isAuthorNotExists(getAuthorName()) && getBundle() != null){
+            return new SqlWorker(this).changeAuthor(editText.getText().toString(),getBundle().getString(KEY_AUTHOR),getAuthorImagePath());
         } else return -1L;
     }
 
     private boolean isAuthorNotExists(String authorName) {
         boolean result = new SqlWorker(this).isAuthorExist(authorName);
-        if(!result){
+        if(result && getBundle() != null && getBundle().getString(KEY_AUTHOR).equals(getAuthorName())){
+            return false;
+            /*Toast.makeText(this,getString(R.string.author_exist),Toast.LENGTH_LONG).show();*/
+        } else if (result && getBundle() != null && !getBundle().getString(KEY_AUTHOR).equals(getAuthorName())){
+            Toast.makeText(this,getString(R.string.author_exist),Toast.LENGTH_LONG).show();
+            return true;
+        }else if (result && getBundle() == null){
             Toast.makeText(this,getString(R.string.author_exist),Toast.LENGTH_LONG).show();
         }
         return result;

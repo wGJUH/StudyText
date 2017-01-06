@@ -47,21 +47,22 @@ public class SqlWorker extends SQLiteOpenHelper implements Data {
             }
         }
     }
-    private void checkVersion(){
+
+    private void checkVersion() {
         opendatabase();
-        System.out.println("VERSION: " +        database.getVersion()
+        System.out.println("VERSION: " + database.getVersion()
         );
-        if(database.getVersion() < DB_VERSION) {
+        if (database.getVersion() < DB_VERSION) {
             try {
                 copyTempdatabase();
             } catch (IOException e) {
                 e.printStackTrace();
             }
             onUpgrade(database, database.getVersion(), DB_VERSION);
-        }
-        else System.out.println("LAST VERSION");
+        } else System.out.println("LAST VERSION");
         close();
     }
+
     public void createdatabase() throws IOException {
         long start = System.currentTimeMillis();
         if (isDatabaseExists()) {
@@ -111,6 +112,7 @@ public class SqlWorker extends SQLiteOpenHelper implements Data {
         database.setVersion(DB_VERSION);
         close();
     }
+
     private void copyTempdatabase() throws IOException {
         //Open your local db as the input stream
         System.out.println(" START COPYING");
@@ -141,6 +143,7 @@ public class SqlWorker extends SQLiteOpenHelper implements Data {
         myinput.close();
 
     }
+
     public boolean deleteByIds(String[] ids) {
         opendatabase();
         for (String s : ids) {
@@ -274,7 +277,7 @@ public class SqlWorker extends SQLiteOpenHelper implements Data {
                 contentValues.put(COLUMN_FAVORITE, (cursor.getInt(cursor.getColumnIndex(COLUMN_FAVORITE)) ^ 1));
                 updated = database.update(DB_NAME, contentValues, COLUMN_ID + " =? ", new String[]{"" + id});
             }
-            System.out.println("Udpated: " + updated +" with id: " +id);
+            System.out.println("Udpated: " + updated + " with id: " + id);
             cursor.close();
         } else {
             cursor.close();
@@ -295,10 +298,10 @@ public class SqlWorker extends SQLiteOpenHelper implements Data {
             do {
                 int id = cursor.getInt(cursor.getColumnIndex(COLUMN_ID));
                 String authorName = cursor.getString(cursor.getColumnIndex(COLUMN_AUTHOR_NAME));
-                    if (ids.contains(id)) {
-                        System.out.println("ids contains: " + id + " ids: " + ids.toString());
-                      setStar(id);
-                    }
+                if (ids.contains(id)) {
+                    System.out.println("ids contains: " + id + " ids: " + ids.toString());
+                    setStar(id);
+                }
 
             } while (cursor.moveToNext());
         }
@@ -315,6 +318,17 @@ public class SqlWorker extends SQLiteOpenHelper implements Data {
         long inserted = database.insert(DB_NAME, null, contentValues);
         close();
         return inserted;
+    }
+
+    public long changeAuthor(String authorName, String oldName, String authorPhoto) {
+        System.out.println("author: " + authorName + " old: " + oldName);
+        opendatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COLUMN_AUTHOR_NAME, authorName);
+        contentValues.put(COLUMN_PORTRAIT_ID, authorPhoto);
+        long updated = database.update(DB_NAME, contentValues, COLUMN_AUTHOR_NAME + " =? ", new String[]{oldName});
+        close();
+        return updated;
     }
 
     public void addNewText(String authorName, String title, String poem) {
@@ -352,15 +366,15 @@ public class SqlWorker extends SQLiteOpenHelper implements Data {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         System.out.println("UpgradeUpgradeUpgrade");
-        if(oldVersion < newVersion){
+        if (oldVersion < newVersion) {
             System.out.println("UpgradeUpgradeUpgrade GO");
 
             opendatabase();
             ContentValues contentValues = new ContentValues();
-            contentValues.put(COLUMN_AUTHOR_NAME,"Некрасов Н.А.");
-            System.out.println("UpgradeUpgradeUpgrade updated: " +  database.update(DB_NAME, contentValues ,COLUMN_AUTHOR_NAME +"=?", new String[]{"Некрасов Н.А"}));
+            contentValues.put(COLUMN_AUTHOR_NAME, "Некрасов Н.А.");
+            System.out.println("UpgradeUpgradeUpgrade updated: " + database.update(DB_NAME, contentValues, COLUMN_AUTHOR_NAME + "=?", new String[]{"Некрасов Н.А"}));
             //database.execSQL("INSERT INTO "+ DB_NAME + " SELECT * FROM " +DB_UPGRADE_NAME+"."+DB_UPGRADE_NAME + ";");
-            if(isLoadNewPoems()){
+            if (isLoadNewPoems()) {
                 loadNewPoems();
             }
             database.setVersion(DB_VERSION);
@@ -368,18 +382,22 @@ public class SqlWorker extends SQLiteOpenHelper implements Data {
 
         }
     }
-    private boolean isLoadNewPoems(){
+
+    private boolean isLoadNewPoems() {
         return loadNewPoems;
     }
-    private int getAnchorUpgradeID(){
+
+    private int getAnchorUpgradeID() {
         return anchorUpgradeID;
     }
+
     private void loadNewPoems() {
-        ContentValues contentValues;SQLiteDatabase sqLiteDatabase = SQLiteDatabase.openDatabase(DB_LOCATION+DB_UPGRADE_NAME, null, SQLiteDatabase.OPEN_READWRITE);
-        Cursor cursor = sqLiteDatabase.query(DB_NAME,null,null,null,null,null,COLUMN_ID);
-        if(cursor.moveToFirst()){
-            do{
-                if(cursor.getInt(cursor.getColumnIndex(COLUMN_ID)) >= getAnchorUpgradeID()) {
+        ContentValues contentValues;
+        SQLiteDatabase sqLiteDatabase = SQLiteDatabase.openDatabase(DB_LOCATION + DB_UPGRADE_NAME, null, SQLiteDatabase.OPEN_READWRITE);
+        Cursor cursor = sqLiteDatabase.query(DB_NAME, null, null, null, null, null, COLUMN_ID);
+        if (cursor.moveToFirst()) {
+            do {
+                if (cursor.getInt(cursor.getColumnIndex(COLUMN_ID)) >= getAnchorUpgradeID()) {
                     contentValues = new ContentValues();
                     contentValues.put(COLUMN_AUTHOR_NAME, cursor.getString(cursor.getColumnIndex(COLUMN_AUTHOR_NAME)));
                     contentValues.put(COLUMN_POEM_TITLE, cursor.getString(cursor.getColumnIndex(COLUMN_POEM_TITLE)));
@@ -387,27 +405,28 @@ public class SqlWorker extends SQLiteOpenHelper implements Data {
                     contentValues.put(COLUMN_POEM, cursor.getString(cursor.getColumnIndex(COLUMN_POEM)));
                     System.out.println("inserted: " + database.insert(DB_NAME, null, contentValues));
                 }
-            }while (cursor.moveToNext());
+            } while (cursor.moveToNext());
         }
         cursor.close();
         sqLiteDatabase.close();
         removeTempDatabase();
     }
 
-    private void removeTempDatabase(){
+    private void removeTempDatabase() {
         context.deleteDatabase(DB_UPGRADE_NAME);
     }
+
     public boolean isAuthorExist(String authorName) {
         opendatabase();
         Cursor cursor = database.query(DB_NAME, new String[]{COLUMN_AUTHOR_NAME}, COLUMN_AUTHOR_NAME + "=? ", new String[]{authorName}, null, null, null);
         if (cursor.moveToFirst()) {
             cursor.close();
             close();
-            return false;
+            return true;
         }
         cursor.close();
         close();
-        return true;
+        return false;
     }
 
     public int getRowNumber(Long id) {
@@ -463,7 +482,7 @@ public class SqlWorker extends SQLiteOpenHelper implements Data {
             do {
                 i++;
                 tempTitle = cursor.getString(cursor.getColumnIndex(COLUMN_POEM_TITLE));
-                if(tempTitle == null) continue;
+                if (tempTitle == null) continue;
                 System.out.println("TEMP TITLE: " + tempTitle);
                 if (tempTitle.equals(title)) {
                     System.out.println(" break");

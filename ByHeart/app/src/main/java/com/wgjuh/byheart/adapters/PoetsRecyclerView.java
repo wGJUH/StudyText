@@ -1,28 +1,29 @@
 package com.wgjuh.byheart.adapters;
 
-import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Typeface;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.squareup.picasso.Picasso;
 import com.wgjuh.byheart.Data;
+import com.wgjuh.byheart.NewAuthorActivity;
 import com.wgjuh.byheart.Values;
 import com.wgjuh.byheart.fragments.PoemsFragment;
 import com.wgjuh.byheart.fragments.PoetsFragment;
@@ -120,13 +121,16 @@ public class PoetsRecyclerView extends RecyclerView.Adapter<PoetsRecyclerView.Vi
         public ImageView imageView;
         public TextView authorName;
         public Toolbar toolbar;
+        public ImageButton imageButton;
 
         public ViewHolder(View v) {
             super(v);
             imageView = (ImageView) v.findViewById(R.id.poem_author_portrait);
             authorName = (TextView) v.findViewById(R.id.poem_author);
+            imageButton = (ImageButton)v.findViewById(R.id.button_options);
 
             mLayout = (CardView) v;
+            imageButton.setOnClickListener(this);
             mLayout.setOnClickListener(this);
             mLayout.setOnLongClickListener(this);
         }
@@ -134,10 +138,38 @@ public class PoetsRecyclerView extends RecyclerView.Adapter<PoetsRecyclerView.Vi
         @Override
         public void onClick(View v) {
             //replaceToPoems();
+        switch (v.getId()){
+            case R.id.button_options:
+                System.out.println("OPTIONS");
+                PopupMenu popupMenu = new PopupMenu(context.getContext(),imageButton);
+                popupMenu.getMenuInflater().inflate(R.menu.menu_poet_options, popupMenu.getMenu());
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        Intent intent = new Intent(context.getContext(), NewAuthorActivity.class);
+                        System.out.println("position: " + getAdapterPosition());
+                        intent.putExtra(Data.KEY_AUTHOR, names.get(getAdapterPosition()));
+                        intent.putExtra(Data.KEY_ID,photos.get(getAdapterPosition()));
+                 /*     int id = getId(getAdapterPosition());
+                        System.out.println("id: " + id);
+                        if( id != 0){
+                        intent.putExtra(Data.KEY_ID,id);
+                        } else {
+                            intent.putExtra(Data.KEY_ID,photos.get(getAdapterPosition()));
+                        }*/
+                        context.getActivity().startActivityForResult(intent, REQUEST_ADD_NEW_AUTHOR);
+                        return false;
+                    }
+                });
+                popupMenu.show();
+                break;
+            default:
+                if (!((PoetsFragment) context).getMultiSelection())
+                    replaceToPoems();
+                else setSelection(getAdapterPosition());
+                break;
+        }
 
-            if (!((PoetsFragment) context).getMultiSelection())
-                replaceToPoems();
-            else setSelection(getAdapterPosition());
         }
 
         private void replaceToPoems() {
@@ -167,5 +199,6 @@ public class PoetsRecyclerView extends RecyclerView.Adapter<PoetsRecyclerView.Vi
         private void setMultiSelectionMode(Boolean multiSelectionMode) {
             ((PoetsFragment) context).setMultiSelection(multiSelectionMode, getAdapterPosition());
         }
+
     }
 }
