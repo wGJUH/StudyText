@@ -11,12 +11,12 @@ public final class Values {
     private ArrayList<Integer> ids;
     private ArrayList<String> portraitIds;
     private ArrayList<Boolean> starrs;
+    private ArrayList<String> poetNames = new ArrayList<>();
 
 
 
     Values(ArrayList<String> strings, ArrayList<String> portraitIds){
         this.strings = strings;
-        this.ids = ids;
         this.portraitIds = portraitIds;
     }
     Values(ArrayList<String> strings, ArrayList<Boolean> starrs, ArrayList<Integer> ids){
@@ -24,6 +24,16 @@ public final class Values {
         this.starrs = starrs;
         this.ids = ids;
     }
+
+    public void setPoetNames(ArrayList<String> poetNames){
+        this.poetNames.clear();
+        this.poetNames.addAll(poetNames);
+    }
+
+    public ArrayList<String> getPoetNames() {
+        return poetNames;
+    }
+
     public ArrayList<String> getStrings(){
         return strings;
     }

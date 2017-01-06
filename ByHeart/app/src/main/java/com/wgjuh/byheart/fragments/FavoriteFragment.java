@@ -64,6 +64,7 @@ public class FavoriteFragment extends AbstractFragment{
 
     private void setValues() {
         values = sqlWorker.getStarred();
+        values.setPoetNames(sqlWorker.getAuthorFavorites());
     }
 
     @Override
@@ -71,9 +72,11 @@ public class FavoriteFragment extends AbstractFragment{
         System.out.println("PAUSE");
         super.onPause();
     }
+    //// TODO: 06.01.2017 это должно помочь в задаче с добавлением поля имени автора в избранном 
     public void updateValues(int position,boolean favorite){
         Values values = sqlWorker.getStarred();
         System.out.println(values.getStrings());
+        this.values.setPoetNames(sqlWorker.getAuthorFavorites());
         this.values.setStrings(values.getStrings());
         this.values.setStarrs(values.getStarrs());
         this.values.setIds(values.getIds());

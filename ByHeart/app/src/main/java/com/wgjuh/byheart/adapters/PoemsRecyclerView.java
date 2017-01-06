@@ -36,6 +36,7 @@ import java.util.ArrayList;
 public class PoemsRecyclerView extends RecyclerView.Adapter<PoemsRecyclerView.ViewHolder> implements Data {
     private ArrayList<String> titles;
     private ArrayList<Boolean> starrs;
+    private ArrayList<String> poets;
     private ViewHolder viewHolder;
     private Context context;
     private String authorName;
@@ -46,19 +47,23 @@ public class PoemsRecyclerView extends RecyclerView.Adapter<PoemsRecyclerView.Vi
     private SparseBooleanArray sparseBooleanArray;
     private PoemsFragment poemsFragment;
     private FavoriteFragment favoriteFragment;
+
     public PoemsRecyclerView(Context context, String authorName , SparseBooleanArray sparseBooleanArray, Values values, AbstractFragment fragment) {
         this.context = context;
         titles = values.getStrings();
         starrs = values.getStarrs();
         this.authorName = authorName;
         this.ids = values.getIds();
+        this.poets = values.getPoetNames();
         this.fragment = fragment;
         sqlWorker = new SqlWorker(context);
         this.sparseBooleanArray = sparseBooleanArray;
         fragmentManager = fragment.getFragmentManager();
         if(fragment instanceof  PoemsFragment)
             poemsFragment = (PoemsFragment)fragment;
-                    else favoriteFragment = (FavoriteFragment)fragment;
+                    else {
+            favoriteFragment = (FavoriteFragment)fragment;
+        }
     }
 
     @Override
@@ -74,14 +79,15 @@ public class PoemsRecyclerView extends RecyclerView.Adapter<PoemsRecyclerView.Vi
         ImageButton imageButton = (ImageButton)holder.mLayout.findViewById(R.id.button_favorite);
         setImageButton(imageButton,position);
         title.setText(titles.get(position));
+        if(favoriteFragment == null)
+        holder.mLayout.findViewById(R.id.favorite_author_name).setVisibility(View.GONE);
+        else{//// TODO: 06.01.2017 сделать обновление в нормальном виде. Нужно для добавление имен авторов в вкладке избранное
+            ((TextView)holder.mLayout.findViewById(R.id.favorite_author_name)).setText(poets.get(position));
+        }
         setViewSelected(holder, position);
 
-        //setTypeFace(title);
     }
-  /*  private void setTypeFace(TextView textView){
-        Typeface robotoslab = Typeface.createFromAsset(context.getAssets(), "robotoslab_regular.ttf");
-        textView.setTypeface(robotoslab);
-    }*/
+
   private void setViewSelected(ViewHolder viewHolder, int position) {
       //System.out.println("Selected boolean array: " + sparseBooleanArray.toString() + " position: " + position);
       if (sparseBooleanArray.get(position)) {

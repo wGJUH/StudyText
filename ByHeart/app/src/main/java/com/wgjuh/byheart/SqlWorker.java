@@ -539,4 +539,17 @@ public class SqlWorker extends SQLiteOpenHelper implements Data {
         close();
         return text;
     }
+
+    public ArrayList<String> getAuthorFavorites() {
+        ArrayList<String> authorFavorites = new ArrayList<>();
+        opendatabase();
+        Cursor cursor = database.query(DB_NAME, new String[]{COLUMN_AUTHOR_NAME}, COLUMN_FAVORITE + " = ?", new String[]{"" + 1}, null, null, COLUMN_POEM_TITLE);
+        if(cursor.moveToFirst()){
+           do {
+               authorFavorites.add(cursor.getString(cursor.getColumnIndex(COLUMN_AUTHOR_NAME)));
+           }while (cursor.moveToNext());
+        }
+        close();
+        return authorFavorites;
+    }
 }
