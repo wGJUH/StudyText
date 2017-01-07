@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">ByHeart</string>
-    <string name="action_settings">Information</string>
+    <string name="action_settings">Hide buttons</string>
+    <string name="action_information">Information</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="title_lib">Library</string>
     <string name="title_favorite">Favorite</string>

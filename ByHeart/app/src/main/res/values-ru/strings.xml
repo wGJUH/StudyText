@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Наизусть</string>
-    <string name="action_settings">Информация</string>
+    <string name="action_settings">Спрятать кнопки</string>
+    <string name="action_information">Информация</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="title_lib">Библиотека</string>
     <string name="title_favorite">Избранное</string>
@@ -11,8 +12,8 @@
     <string name="author_exist">Папка уже существует, пожалуйста измените название или удалите существующую папку с таким названием</string>
     <string name="counter">Выбрано</string>
     <string name="executing_task">текст подготавливается</string>
-    <string name="hide_text">Закрыть часть текста</string>
-    <string name="show_text">Открыть часть текста</string>
+    <string name="hide_text">Закрыть текст</string>
+    <string name="show_text">Открыть текст</string>
     <string name="clear_text">Открыть весь текст</string>
     <string name="toast_input_title_or_text">Пожалуйста введите заголовок и текст</string>
     <string name="title_activity_new_author">Новая папка</string>
@@ -30,9 +31,9 @@
     <string name="thanks">Благодарим Вас.</string>
     <string name="permissions_need">Благодарим Вас.\nВы можете предоставить данные разрешения позже в настройка приложений Вашего телефона.</string>
     <string name="permissions_message">Данные разрешения необходимы для возможности создания папок с вашими собственными изображениями.</string>
-    <string name="about_developer">Данное приложение было разработано Кипнисом Владиславом, для связи с ним вы можете использовать следующий адресс электронной почты:</string>
+    <string name="about_developer">Данное приложение было разработано Кипнисом Владиславом, для связи с ним вы можете использовать следующий адрес электронной почты:</string>
     <string name="mail_developer">wgjuher.development@gmail.com</string>
-    <string name="about_designer">Дизайн основной темы и всех иконок был разработан Шманко Ларисой, для связи с ней вы можете использовать следующий адресс электронной почты:</string>
+    <string name="about_designer">Дизайн основной темы и всех иконок был разработан Шманко Ларисой, для связи с ней вы можете использовать следующий адрес электронной почты:</string>
     <string name="mail_designer">mellnica2@gmail.com</string>
     <string name="permissions">Разрешения</string>
     <string name="for_load_photo_permission"><![CDATA[Для загрузки фото вам надо предоставить разрешения для приложения. Зайдите в настройки->приложения->Наизусть->Разрешения]]></string>

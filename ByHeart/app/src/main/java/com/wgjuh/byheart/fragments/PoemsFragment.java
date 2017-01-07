@@ -67,7 +67,7 @@ public class PoemsFragment extends AbstractFragment implements Data {
         bundle = getArguments();
         setValues();
         setViewpagerTitle();
-        myPoemsRecyclerView = new PoemsRecyclerView(context, getAuthorName(), sparseBooleanArray, values, this);
+        myPoemsRecyclerView = new PoemsRecyclerView(context, sparseBooleanArray, values, this);
         recyclerView.setAdapter(myPoemsRecyclerView);
     }
 

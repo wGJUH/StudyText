@@ -55,7 +55,7 @@ public class FavoriteFragment extends AbstractFragment{
         recyclerView = (RecyclerView)frameView.findViewById(R.id.recyler_list_poems);
         recyclerView.setLayoutManager(new LinearLayoutManager(context, OrientationHelper.VERTICAL,false));
         setValues();
-        myPoemsRecyclerView = new PoemsRecyclerView(context, null, sparseBooleanArray ,values, this);
+        myPoemsRecyclerView = new PoemsRecyclerView(context, sparseBooleanArray ,values, this);
         recyclerView.setAdapter(myPoemsRecyclerView);
         toolbar = (Toolbar)getActivity().findViewById(R.id.toolbar);
         if(toolbar != null)

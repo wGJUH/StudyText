@@ -3,13 +3,13 @@ package com.wgjuh.byheart;
 import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import com.github.clans.fab.FloatingActionButton;
 
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTransaction;
@@ -33,8 +33,6 @@ import com.wgjuh.byheart.fragments.PoemsFragment;
 import com.wgjuh.byheart.fragments.PoetsFragment;
 import com.wgjuh.byheart.fragments.RootFragment;
 import com.wgjuh.byheart.myapplication.R;
-
-import static android.R.id.message;
 
 public class TabbedActivity extends AppCompatActivity implements View.OnClickListener, Data {
 
@@ -227,6 +225,15 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
         mViewPager.setAdapter(adapter);
     }
 
+/*    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
+        MenuItem menuItem = menu.findItem(R.id.action_buttons_toggle);
+        boolean isChecked = sharedPreferences.getBoolean(KEY_BUTTONS_PREFERENCES,false);
+        menuItem.setChecked(isChecked);
+        return true;
+    }*/
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -257,10 +264,14 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
                 //Toast.makeText(this,"DELETE",Toast.LENGTH_SHORT).show();
                 fragmentMultiSelection.deleteItems();
                 break;
-            case R.id.action_settings:
+            case R.id.action_information:
                 Intent intent = new Intent(this,AboutActivity.class);
                 startActivity(intent);
                 break;
+/*            case R.id.action_buttons_toggle:
+                saveSharedPrefBoolean(KEY_BUTTONS_PREFERENCES,!item.isChecked());
+                item.setChecked(!item.isChecked());
+                break;*/
             default:
                 break;
         }
@@ -273,6 +284,13 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
 
         return super.onOptionsItemSelected(item);
     }
+
+/*    private void saveSharedPrefBoolean(String key, Boolean value ){
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
+        SharedPreferences.Editor  editor = sharedPreferences.edit();
+        editor.putBoolean(key,value);
+        editor.apply();
+    }*/
     public void updateFabFunction(AbstractFragment fragment,boolean isFabFor){
         System.out.println("Update function");
         FloatingActionButton floatingActionButton = (FloatingActionButton) findViewById(R.id.fab_add);

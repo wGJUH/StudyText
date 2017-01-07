@@ -10,10 +10,12 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.SparseBooleanArray;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.wgjuh.byheart.Data;
@@ -32,14 +34,12 @@ import java.util.ArrayList;
 /**
  * Created by wGJUH on 19.10.2016.
  */
-
 public class PoemsRecyclerView extends RecyclerView.Adapter<PoemsRecyclerView.ViewHolder> implements Data {
     private ArrayList<String> titles;
     private ArrayList<Boolean> starrs;
     private ArrayList<String> poets;
     private ViewHolder viewHolder;
     private Context context;
-    private String authorName;
     private ArrayList<Integer> ids;
     private AbstractFragment fragment;
     private SqlWorker sqlWorker;
@@ -48,11 +48,10 @@ public class PoemsRecyclerView extends RecyclerView.Adapter<PoemsRecyclerView.Vi
     private PoemsFragment poemsFragment;
     private FavoriteFragment favoriteFragment;
 
-    public PoemsRecyclerView(Context context, String authorName , SparseBooleanArray sparseBooleanArray, Values values, AbstractFragment fragment) {
+    public PoemsRecyclerView(Context context, SparseBooleanArray sparseBooleanArray, Values values, AbstractFragment fragment) {
         this.context = context;
         titles = values.getStrings();
         starrs = values.getStarrs();
-        this.authorName = authorName;
         this.ids = values.getIds();
         this.poets = values.getPoetNames();
         this.fragment = fragment;
@@ -79,8 +78,10 @@ public class PoemsRecyclerView extends RecyclerView.Adapter<PoemsRecyclerView.Vi
         ImageButton imageButton = (ImageButton)holder.mLayout.findViewById(R.id.button_favorite);
         setImageButton(imageButton,position);
         title.setText(titles.get(position));
-        if(favoriteFragment == null)
-        holder.mLayout.findViewById(R.id.favorite_author_name).setVisibility(View.GONE);
+        if(favoriteFragment == null) {
+            title.setTextSize(TypedValue.COMPLEX_UNIT_SP,16);
+            holder.mLayout.findViewById(R.id.favorite_author_name).setVisibility(View.GONE);
+        }
         else{//// TODO: 06.01.2017 сделать обновление в нормальном виде. Нужно для добавление имен авторов в вкладке избранное
             ((TextView)holder.mLayout.findViewById(R.id.favorite_author_name)).setText(poets.get(position));
         }

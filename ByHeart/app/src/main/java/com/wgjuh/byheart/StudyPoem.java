@@ -2,6 +2,7 @@ package com.wgjuh.byheart;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -19,13 +20,12 @@ import android.text.Spanned;
 import android.text.style.BackgroundColorSpan;
 import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
-import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
+import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.github.clans.fab.FloatingActionMenu;
@@ -54,6 +54,7 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
     public FloatingActionMenu floatingActionMenu;
     public String text;
     private com.github.clans.fab.FloatingActionButton fab_hide, fab_show, fab_clear;
+    private ImageButton hide_bottom, show_bottom, clear_bottom;
     private int counter = 0;
     private int wordsCount = 0;
     private int stringCount = 0;
@@ -89,6 +90,12 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
         fab_hide = (FloatingActionButton) findViewById(R.id.fab_hide);
         fab_show = (FloatingActionButton) findViewById(R.id.fab_show);
         fab_clear = (FloatingActionButton) findViewById(R.id.clear);
+        hide_bottom = (ImageButton) findViewById(R.id.hide_bottom);
+        show_bottom = (ImageButton) findViewById(R.id.show_bottom);
+        clear_bottom = (ImageButton) findViewById(R.id.clear_bottom);
+        clear_bottom.setOnClickListener(this);
+        show_bottom.setOnClickListener(this);
+        hide_bottom.setOnClickListener(this);
         fab_hide.setOnClickListener(this);
         fab_show.setOnClickListener(this);
         fab_clear.setOnClickListener(this);
@@ -123,6 +130,7 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
             }
         }).start();
 
+        hideShowFabMenu(getSharedPreferences(SHARED_PREF,MODE_PRIVATE).getBoolean(KEY_BUTTONS_PREFERENCES,false));
 
     }
 
@@ -212,7 +220,7 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
     Runnable updateProgress = new Runnable() {
         @Override
         public void run() {
-            System.out.println("progress: " + spannableStringBuilders.size());
+           // System.out.println("progress: " + spannableStringBuilders.size());
             pbCount.setProgress(wordsCount);
         }
     };
@@ -261,6 +269,17 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
                 hideWordsByProc();
                 break;
             case R.id.clear:
+                clearAllHiden();
+                break;
+            case  R.id.show_bottom:
+                showWordsByProc();
+
+                break;
+            case  R.id.hide_bottom:
+                generateHideInProc();
+                hideWordsByProc();
+                break;
+            case  R.id.clear_bottom:
                 clearAllHiden();
                 break;
             default:
@@ -361,9 +380,11 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
         for (Iterator<Integer> it = hided.keySet().iterator(); it.hasNext(); ) {
             currentlyHiden += hided.get(it.next()).size();
         }
+        System.out.println("currentlyHiden: " + currentlyHiden);
         if (currentlyHiden < rows) {
             procShown = currentlyHiden;
         }
+        if (procShown > currentlyHiden) procShown = currentlyHiden;
         System.out.println("procShown: " + procShown);
 
         do {
@@ -485,10 +506,19 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
     public void onScrollStateChanged(AbsListView view, int scrollState) {
 
     }
-
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF,MODE_PRIVATE);
+        MenuItem menuItem = menu.findItem(R.id.action_buttons_toggle);
+        boolean isChecked = sharedPreferences.getBoolean(KEY_BUTTONS_PREFERENCES,false);
+        menuItem.setChecked(isChecked);
+        hideShowFabMenu(isChecked);
+        return true;
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_study_poem, menu);
+       // ((Toolbar)findViewById(R.id.toolbar_bottom)).inflateMenu(R.menu.menu_study_poem_bottom);
         return true;
     }
 
@@ -501,19 +531,38 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
             case R.id.action_text_smaller:
                 textRecyclerView.updateSize(this,-2,textRecyclerView.getTextView().getTextSize());
                 break;
-            case R.id.action_settings:
+            case R.id.action_information:
                 Intent intent = new Intent(this,AboutActivity.class);
                 startActivity(intent);
+                break;
+            case R.id.action_buttons_toggle:
+                boolean check = item.isChecked();
+                saveSharedPrefBoolean(KEY_BUTTONS_PREFERENCES,!check);
+                hideShowFabMenu(!check);
+                item.setChecked(!check);
+
                 break;
             default:
                 break;
         }
-
-
-
         return super.onOptionsItemSelected(item);
     }
-
+    private void hideShowFabMenu(boolean checked){
+        if(checked) {
+            floatingActionMenu.hideMenu(true);
+            findViewById(R.id.toolbar_bottom).setVisibility(View.VISIBLE);
+        }
+        else {
+            floatingActionMenu.showMenu(true);
+            findViewById(R.id.toolbar_bottom).setVisibility(View.GONE);
+        }
+    }
+    private void saveSharedPrefBoolean(String key, Boolean value ){
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
+        SharedPreferences.Editor  editor = sharedPreferences.edit();
+        editor.putBoolean(key,value);
+        editor.apply();
+    }
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
         if (!floatingActionMenu.isMenuHidden()) {

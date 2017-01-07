@@ -25,6 +25,7 @@ public interface Data {
     String KEY_AUTHOR = "author";
     String KEY_TITLE = "title";
     String KEY_ID = "id";
+    String KEY_BUTTONS_PREFERENCES = "button_pref";
 
     /**
      * request codes
@@ -49,5 +50,8 @@ public interface Data {
      */
     public static final int DARK_GREEN = 0xff005948;
     public static final int DARK_GREEN_BRIGHT = 0x55005948;
-
+    /**
+     * Pref
+     */
+    public static final String SHARED_PREF = "SETTINGS_PREF";
 }
