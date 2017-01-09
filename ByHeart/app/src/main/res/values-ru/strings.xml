@@ -36,7 +36,7 @@
     <string name="about_designer">Дизайн основной темы и всех иконок был разработан Шманко Ларисой, для связи с ней вы можете использовать следующий адрес электронной почты:</string>
     <string name="mail_designer">mellnica2@gmail.com</string>
     <string name="permissions">Разрешения</string>
-    <string name="for_load_photo_permission"><![CDATA[Для загрузки фото вам надо предоставить разрешения для приложения. Зайдите в настройки->приложения->Наизусть->Разрешения]]></string>
+    <string name="for_load_photo_permission">Для загрузки фото вам надо предоставить разрешения для приложения. Зайдите в настройки->приложения->Наизусть->Разрешения</string>
     <string name="have_no_any_mail_apps">У вас нет установленных почтовых клиентов для отправки письма. Почтовый адрес скопирован. </string>
     <string-array name="poet_options">
         <item> Редактировать </item>

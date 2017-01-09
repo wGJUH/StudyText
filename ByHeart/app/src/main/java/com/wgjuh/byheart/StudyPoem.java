@@ -29,6 +29,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.github.clans.fab.FloatingActionMenu;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.wgjuh.byheart.adapters.TextRecyclerView;
 import com.wgjuh.byheart.myapplication.R;
 
@@ -61,30 +63,42 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
     private int PROCENT = 5;
     Handler handler;
     ProgressDialog pbCount;
-    ListView    listView;
+    ListView listView;
     Toolbar toolbar;
+    private AnalyticsApp analyticsApp;
+    private Tracker tracker;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        tracker.setScreenName("StudyPoem");
+        tracker.send(new HitBuilders.ScreenViewBuilder().build());
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_study_poem);
+        analyticsApp = (AnalyticsApp) getApplication();
+        tracker = analyticsApp.getDefaultTracker();
         handler = new Handler();
         floatingActionMenu = (FloatingActionMenu) findViewById(R.id.fab_menu);
         sqlWorker = new SqlWorker(this);
-         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        customTextView = (CustomTextView)findViewById(R.id.textItem);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        customTextView = (CustomTextView) findViewById(R.id.textItem);
         //toolbar.setTitle(getTitleFromDB(getTextId()));
         setToolBarTitle();
         setSupportActionBar(toolbar);
       /*  getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);*/
         // TODO: 07.11.2016 hot fix hide menu on scroll
-       floatingActionMenu.setOnMenuButtonClickListener(new View.OnClickListener() {
+        floatingActionMenu.setOnMenuButtonClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!floatingActionMenu.isOpened()){
-                listView.smoothScrollBy(0,0);
-                floatingActionMenu.open(true);
-                }else floatingActionMenu.close(true);
+                if (!floatingActionMenu.isOpened()) {
+                    listView.smoothScrollBy(0, 0);
+                    floatingActionMenu.open(true);
+                } else floatingActionMenu.close(true);
             }
         });
         fab_hide = (FloatingActionButton) findViewById(R.id.fab_hide);
@@ -130,7 +144,7 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
             }
         }).start();
 
-        hideShowFabMenu(getSharedPreferences(SHARED_PREF,MODE_PRIVATE).getBoolean(KEY_BUTTONS_PREFERENCES,false));
+        hideShowFabMenu(getSharedPreferences(SHARED_PREF, MODE_PRIVATE).getBoolean(KEY_BUTTONS_PREFERENCES, false));
 
     }
 
@@ -151,9 +165,11 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
     private String getTitleFromDB(int id) {
         return sqlWorker.getTitleFromDB(id);
     }
-    private void setToolBarTitle(){
-        ((TextView)toolbar.findViewById(R.id.toolbar_title)).setText(getTitleFromDB(getTextId()));
+
+    private void setToolBarTitle() {
+        ((TextView) toolbar.findViewById(R.id.toolbar_title)).setText(getTitleFromDB(getTextId()));
     }
+
     private SpannableString getSpannableString(String s) {
         SpannableString text = new SpannableString(s);
         Matcher matcher = Pattern.compile(PATTERN_WORD).matcher(s);
@@ -164,6 +180,7 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
         }
         return text;
     }
+
     private int getWordsCount(String s) {
         Matcher matcher = Pattern.compile(PATTERN_WORD).matcher(s);
         int count = 0;
@@ -172,6 +189,7 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
         System.out.println("count: " + count);
         return count;
     }
+
     private int getStringCount(String s) {
         Matcher matcher = Pattern.compile(PATTERN_STRING).matcher(s);
         int count = 0;
@@ -211,7 +229,6 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
             }
 
 
-
         }
         System.out.println("finish: " + (System.currentTimeMillis() - start));
 
@@ -220,7 +237,7 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
     Runnable updateProgress = new Runnable() {
         @Override
         public void run() {
-           // System.out.println("progress: " + spannableStringBuilders.size());
+            // System.out.println("progress: " + spannableStringBuilders.size());
             pbCount.setProgress(wordsCount);
         }
     };
@@ -242,10 +259,10 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
         spannableStringBuilders.remove(position);
         spannableStringBuilders.add(position, spannable);
         int index = spannableBorders.get(position).indexOf(borders);
-        if(hided.get(position) != null && hided.get(position).contains(index)){
+        if (hided.get(position) != null && hided.get(position).contains(index)) {
             hided.get(position).remove(hided.get(position).indexOf(index));
-        }else{
-            if(hided.get(position) == null) hided.put(position,new ArrayList<Integer>());
+        } else {
+            if (hided.get(position) == null) hided.put(position, new ArrayList<Integer>());
             hided.get(position).add(index);
         }
         textRecyclerView.notifyDataSetChanged();
@@ -256,7 +273,7 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
         switch (v.getId()) {
             case R.id.fab_menu:
                 System.out.println("CLICK");
-                listView.smoothScrollBy(0,0);
+                listView.smoothScrollBy(0, 0);
                 break;
             case R.id.fab_show:
                 //showWords();
@@ -271,15 +288,15 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
             case R.id.clear:
                 clearAllHiden();
                 break;
-            case  R.id.show_bottom:
+            case R.id.show_bottom:
                 showWordsByProc();
 
                 break;
-            case  R.id.hide_bottom:
+            case R.id.hide_bottom:
                 generateHideInProc();
                 hideWordsByProc();
                 break;
-            case  R.id.clear_bottom:
+            case R.id.clear_bottom:
                 clearAllHiden();
                 break;
             default:
@@ -288,6 +305,10 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
     }
 
     private void clearAllHiden() {
+        tracker.send(new HitBuilders.EventBuilder()
+                .setCategory("Action")
+                .setAction("Show all words")
+                .build());
         for (int i = 0; i < spannableBorders.size(); i++)
             for (int j = 0; j < spannableBorders.get(i).size(); j++) {
                 Point point = spannableBorders.get(i).get(j);
@@ -365,6 +386,10 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
     }
 
     private void showWordsByProc() {
+        tracker.send(new HitBuilders.EventBuilder()
+                .setCategory("Action")
+                .setAction("Show words by proc")
+                .build());
         int emptyRows = 0;
         boolean emptys = true;
         int showNow = 0;
@@ -399,7 +424,8 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
                 if (backgroundColorSpen.length != 0) {
                     (spannableStringBuilders.get(i)).removeSpan(backgroundColorSpen[backgroundColorSpen.length - 1]);
                     (spannableStringBuilders.get(i)).removeSpan(foregroundColorSpen[foregroundColorSpen.length - 1]);
-                    hided.get(i).remove(hided.get(i).size() - 1);
+                    if ((hided.get(i).size() - 1) != -1)
+                        hided.get(i).remove(hided.get(i).size() - 1);
                     showNow++;
                 }
             }
@@ -466,7 +492,10 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
     }
 
     private void hideWordsByProc() {
-
+        tracker.send(new HitBuilders.EventBuilder()
+                .setCategory("Action")
+                .setAction("Hide words")
+                .build());
         int start = -1, end = -1;
         Point point;
         for (int i = 0; i < hided.size(); i++) {
@@ -506,63 +535,71 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
     public void onScrollStateChanged(AbsListView view, int scrollState) {
 
     }
+
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF,MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
         MenuItem menuItem = menu.findItem(R.id.action_buttons_toggle);
-        boolean isChecked = sharedPreferences.getBoolean(KEY_BUTTONS_PREFERENCES,false);
+        boolean isChecked = sharedPreferences.getBoolean(KEY_BUTTONS_PREFERENCES, false);
         menuItem.setChecked(isChecked);
         hideShowFabMenu(isChecked);
         return true;
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_study_poem, menu);
-       // ((Toolbar)findViewById(R.id.toolbar_bottom)).inflateMenu(R.menu.menu_study_poem_bottom);
+        // ((Toolbar)findViewById(R.id.toolbar_bottom)).inflateMenu(R.menu.menu_study_poem_bottom);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.action_text_bigger:
-                textRecyclerView.updateSize(this,2,textRecyclerView.getTextView().getTextSize());
+                textRecyclerView.updateSize(this, 2, textRecyclerView.getTextView().getTextSize());
                 break;
             case R.id.action_text_smaller:
-                textRecyclerView.updateSize(this,-2,textRecyclerView.getTextView().getTextSize());
+                textRecyclerView.updateSize(this, -2, textRecyclerView.getTextView().getTextSize());
                 break;
             case R.id.action_information:
-                Intent intent = new Intent(this,AboutActivity.class);
+                Intent intent = new Intent(this, AboutActivity.class);
                 startActivity(intent);
                 break;
             case R.id.action_buttons_toggle:
                 boolean check = item.isChecked();
-                saveSharedPrefBoolean(KEY_BUTTONS_PREFERENCES,!check);
+                saveSharedPrefBoolean(KEY_BUTTONS_PREFERENCES, !check);
                 hideShowFabMenu(!check);
                 item.setChecked(!check);
-
+                tracker.send(new HitBuilders.EventBuilder()
+                        .setCategory("Action")
+                        .setAction("toggle")
+                        .setLabel("bottom keybord" + item.isChecked())
+                        .build());
                 break;
             default:
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
-    private void hideShowFabMenu(boolean checked){
-        if(checked) {
+
+    private void hideShowFabMenu(boolean checked) {
+        if (checked) {
             floatingActionMenu.hideMenu(true);
             findViewById(R.id.toolbar_bottom).setVisibility(View.VISIBLE);
-        }
-        else {
+        } else {
             floatingActionMenu.showMenu(true);
             findViewById(R.id.toolbar_bottom).setVisibility(View.GONE);
         }
     }
-    private void saveSharedPrefBoolean(String key, Boolean value ){
+
+    private void saveSharedPrefBoolean(String key, Boolean value) {
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
-        SharedPreferences.Editor  editor = sharedPreferences.edit();
-        editor.putBoolean(key,value);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(key, value);
         editor.apply();
     }
+
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
         if (!floatingActionMenu.isMenuHidden()) {

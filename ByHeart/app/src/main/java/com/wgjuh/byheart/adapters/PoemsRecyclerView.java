@@ -18,6 +18,8 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.analytics.Tracker;
+import com.wgjuh.byheart.AnalyticsApp;
 import com.wgjuh.byheart.Data;
 import com.wgjuh.byheart.SqlWorker;
 import com.wgjuh.byheart.StudyPoem;
@@ -47,6 +49,7 @@ public class PoemsRecyclerView extends RecyclerView.Adapter<PoemsRecyclerView.Vi
     private SparseBooleanArray sparseBooleanArray;
     private PoemsFragment poemsFragment;
     private FavoriteFragment favoriteFragment;
+
 
     public PoemsRecyclerView(Context context, SparseBooleanArray sparseBooleanArray, Values values, AbstractFragment fragment) {
         this.context = context;

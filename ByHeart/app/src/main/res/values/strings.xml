@@ -15,10 +15,10 @@
     <string name="action_delete">selected_delete</string>
     <string name="action_favorites">selected_favorites</string>
     <string name="action_select">selected_selection</string>
-    <string name="executing_task">text formating</string>
+    <string name="executing_task">text formatting</string>
     <string name="hide_text">Hide text</string>
-    <string name="show_text">Show Text</string>
-    <string name="clear_text">Clear text hide</string>
+    <string name="show_text">Show text</string>
+    <string name="clear_text">Show all text</string>
     <string name="toast_input_title_or_text">Please fill title and text</string>
     <string name="save_text">Save</string>
     <string name="paste_text">Paste</string>
