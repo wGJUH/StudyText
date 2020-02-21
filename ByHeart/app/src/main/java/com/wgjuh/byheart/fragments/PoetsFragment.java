@@ -2,26 +2,22 @@ package com.wgjuh.byheart.fragments;
 
 import android.content.Context;
 import android.content.res.Configuration;
-import android.graphics.Typeface;
 import android.net.Uri;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.RecyclerView.LayoutManager;
-import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.SparseBooleanArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.squareup.picasso.Picasso;
 import com.wgjuh.byheart.AuthorsGrid;
 import com.wgjuh.byheart.SqlWorker;
@@ -30,13 +26,7 @@ import com.wgjuh.byheart.Values;
 import com.wgjuh.byheart.adapters.PoetsRecyclerView;
 import com.wgjuh.byheart.myapplication.R;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.zip.Inflater;
-
-import static android.widget.AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL;
 
 /**
  * Created by wGJUH on 18.10.2016.
@@ -45,7 +35,7 @@ import static android.widget.AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCR
 public class PoetsFragment extends AbstractFragment {
     private View frameView;
     private RecyclerView recyclerView;
-    private LayoutManager gridManager;
+    private RecyclerView.LayoutManager gridManager;
     private SqlWorker sqlWorker;
     private Context context;
     private PoetsRecyclerView myPoetsRecyclerView;
@@ -142,7 +132,7 @@ public class PoetsFragment extends AbstractFragment {
         textView.setTypeface(robotoslab);
     }*/
 
-    private LayoutManager getGridManager() {
+    private RecyclerView.LayoutManager getGridManager() {
         System.out.println("Get grid Manager");
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             return gridManager = new AuthorsGrid(context, 172 * getMetrics().densityDpi / 160 * 3);

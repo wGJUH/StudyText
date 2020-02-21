@@ -2,25 +2,25 @@
 android:fitsSystemWindows="false" to true
 and uncomment coordinator layout-->
 
-<android.support.design.widget.CoordinatorLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
-    <android.support.design.widget.CoordinatorLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingBottom="8dp">
 
-        <android.support.design.widget.AppBarLayout
+        <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/appbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-            <android.support.v7.widget.Toolbar
+            <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
@@ -34,9 +34,9 @@ and uncomment coordinator layout-->
                     android:text="@string/title_favorite"
                     android:textColor="@color/white"
                     android:textSize="20sp"/>
-                </android.support.v7.widget.Toolbar>
+                </androidx.appcompat.widget.Toolbar>
 
-            <android.support.design.widget.TabLayout
+            <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tabs"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -44,13 +44,13 @@ and uncomment coordinator layout-->
                 app:tabMode="fixed"
                 app:tabGravity="fill"
                 app:tabIndicatorColor="@color/colorPrimaryDark"/>
-        </android.support.design.widget.AppBarLayout>
-        <android.support.v4.view.ViewPager
+        </com.google.android.material.appbar.AppBarLayout>
+        <androidx.viewpager.widget.ViewPager
             android:id="@+id/viewpager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"  />
-    </android.support.design.widget.CoordinatorLayout>
+              />
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
     <com.github.clans.fab.FloatingActionButton
         android:id="@+id/fab_add"
         android:layout_width="wrap_content"
@@ -63,4 +63,4 @@ and uncomment coordinator layout-->
         app:fab_colorRipple="@color/colorPrimary"
         android:src="@drawable/create" />
 
-</android.support.design.widget.CoordinatorLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

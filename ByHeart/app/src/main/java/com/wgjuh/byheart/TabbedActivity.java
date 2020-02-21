@@ -6,17 +6,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import com.github.clans.fab.FloatingActionButton;
-
-import android.support.annotation.NonNull;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,8 +14,18 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.viewpager.widget.ViewPager;
+
+import com.github.clans.fab.FloatingActionButton;
 import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
+import com.google.android.material.tabs.TabLayout;
 import com.wgjuh.byheart.adapters.FragmentAdapter;
 import com.wgjuh.byheart.fragments.AbstractFragment;
 import com.wgjuh.byheart.fragments.FavoriteFragment;
@@ -51,16 +50,15 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
     private boolean isFabForDelete = false;
     private boolean isFabForFavorite = false;
     private AbstractFragment fragmentMultiSelection;
-    private AnalyticsApp analyticsApp;
-    private Tracker tracker;
+
     @Override
     public void onBackPressed() {
-        if(mViewPager.getCurrentItem() != 0){
-            FavoriteFragment favoriteFragment = ((FavoriteFragment)adapter.getItem(mViewPager.getCurrentItem()));
-            if(favoriteFragment.getMultiSelection()){
-                favoriteFragment.setMultiSelection(false,0);
-            }else  mViewPager.setCurrentItem(mViewPager.getCurrentItem()-1);
-        }else {
+        if (mViewPager.getCurrentItem() != 0) {
+            FavoriteFragment favoriteFragment = ((FavoriteFragment) adapter.getItem(mViewPager.getCurrentItem()));
+            if (favoriteFragment.getMultiSelection()) {
+                favoriteFragment.setMultiSelection(false, 0);
+            } else mViewPager.setCurrentItem(mViewPager.getCurrentItem() - 1);
+        } else {
             ((AbstractFragment) adapter.getItem(mViewPager.getCurrentItem())).setMultiSelection(false, 0);
             super.onBackPressed();
         }
@@ -69,9 +67,6 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.tabbed_activity);
-        analyticsApp = (AnalyticsApp)getApplication();
-        tracker = analyticsApp.getDefaultTracker();
-
         sqlWorker = new SqlWorker(this);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         rootFragment = new RootFragment();
@@ -109,12 +104,13 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
         fragmentTransaction.replace(R.id.frame_poems, new FavoriteFragment());
         fragmentTransaction.commit();
     }
+
     public void requestMultiplePermissions() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED  && ContextCompat
+                != PackageManager.PERMISSION_GRANTED && ContextCompat
                 .checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED ) {
-                     ActivityCompat.requestPermissions(this,
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
                     new String[]{
                             Manifest.permission.READ_EXTERNAL_STORAGE,
                             Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -124,31 +120,23 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     @Override
-    protected void onResume() {
-        //
-        super.onResume();
-        tracker.setScreenName("Screen: TabbedScreen");
-        tracker.send(new HitBuilders.ScreenViewBuilder().build());
-    }
-
-    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if(requestCode == Data.PERMISSION_REQUEST_CODE && grantResults.length == 2){
-            if(ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE) && (grantResults[0] != PackageManager.PERMISSION_GRANTED || grantResults[1] != PackageManager.PERMISSION_GRANTED) ){
+        if (requestCode == Data.PERMISSION_REQUEST_CODE && grantResults.length == 2) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE) && (grantResults[0] != PackageManager.PERMISSION_GRANTED || grantResults[1] != PackageManager.PERMISSION_GRANTED)) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle(getString(R.string.permissions)).setMessage(getString(R.string.permissions_message))
                         .setPositiveButton(getString(R.string.grant), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(getBaseContext(), getString(R.string.thanks), Toast.LENGTH_SHORT).show();
+                                requestMultiplePermissions();
+                                dialog.cancel();
+                            }
+                        }).setNegativeButton(getString(R.string.denied), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(getBaseContext(),getString(R.string.thanks),Toast.LENGTH_SHORT).show();
-                        requestMultiplePermissions();
+                        Toast.makeText(getBaseContext(), getString(R.string.permissions_need), Toast.LENGTH_LONG).show();
                         dialog.cancel();
-                    }
-                }).setNegativeButton(getString(R.string.denied), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(getBaseContext(),getString(R.string.permissions_need),Toast.LENGTH_LONG).show();
-                    dialog.cancel();
                     }
                 }).create().show();
             }
@@ -171,32 +159,22 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
             public void onPageSelected(int position) {
                 System.out.println("child: " + adapter.getItem(position));
                 FloatingActionButton floatingActionButton = (FloatingActionButton) findViewById(R.id.fab_add);
-                if(position == 0){
-                    if (rootFragment.getFragmentManager().findFragmentById(R.id.frame_root) instanceof PoetsFragment){
-                        PoetsFragment poetsFragment = ((PoetsFragment)rootFragment.getFragmentManager().findFragmentById(R.id.frame_root));
+                if (position == 0) {
+                    if (rootFragment.getFragmentManager().findFragmentById(R.id.frame_root) instanceof PoetsFragment) {
+                        PoetsFragment poetsFragment = ((PoetsFragment) rootFragment.getFragmentManager().findFragmentById(R.id.frame_root));
                         poetsFragment.updateToolbar(poetsFragment.getMultiSelection());
-                        tracker.setScreenName("PoetsFragment");
-                        tracker.send(new HitBuilders.ScreenViewBuilder().build());
-                    }else{
-                        PoemsFragment poemsFragment = ((PoemsFragment)rootFragment.getFragmentManager().findFragmentById(R.id.frame_root));
+                    } else {
+                        PoemsFragment poemsFragment = ((PoemsFragment) rootFragment.getFragmentManager().findFragmentById(R.id.frame_root));
                         poemsFragment.updateToolbar(poemsFragment.getMultiSelection());
-                        tracker.setScreenName("PoemsFragment");
-                        tracker.send(new HitBuilders.ScreenViewBuilder().build());
                     }
-                    if(isFabForDelete)
+                    if (isFabForDelete)
                         floatingActionButton.setImageResource(R.drawable.delete_hover);
-                }else{
-                    FavoriteFragment favoriteFragment = ((FavoriteFragment)adapter.getItem(position));
+                } else {
+                    FavoriteFragment favoriteFragment = ((FavoriteFragment) adapter.getItem(position));
                     favoriteFragment.updateToolbar(favoriteFragment.getMultiSelection());
-                    tracker.setScreenName("FavoriteFragment");
-                    tracker.send(new HitBuilders.ScreenViewBuilder().build());
-                    if(isFabForFavorite)
+                    if (isFabForFavorite)
                         floatingActionButton.setImageResource(R.drawable.favoritewhite);
                 }
-                tracker.send(new HitBuilders.EventBuilder()
-                        .setCategory("Action")
-                        .setAction("Go to tab: " + adapter.getItem(position))
-                        .build());
             }
 
             @Override
@@ -212,12 +190,14 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
     private void setViewpagerTitle() {
         TextView viewTitle = (TextView) findViewById(R.id.toolbar_title);
         viewTitle.setText(getString(R.string.app_name));
-       // setTypeFace(viewTitle);
+        // setTypeFace(viewTitle);
     }
-    private String getViewPagerTitle(){
+
+    private String getViewPagerTitle() {
         TextView viewTitle = (TextView) findViewById(R.id.toolbar_title);
         return viewTitle.getText().toString();
     }
+
     private void setTabsTitles() {
         TextView libTab = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_tab_title, null);
         libTab.setText(getString(R.string.title_lib));
@@ -233,9 +213,10 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
         Typeface robotoslab = Typeface.createFromAsset(getAssets(), "robotoslab_regular.ttf");
         textView.setTypeface(robotoslab);
     }*/
-    public void updateFavorites(){
-        ((FavoriteFragment)adapter.getItem(1)).updateValues(0,false);
+    public void updateFavorites() {
+        ((FavoriteFragment) adapter.getItem(1)).updateValues(0, false);
     }
+
     private void setupViewPager(ViewPager mViewPager) {
         adapter = new FragmentAdapter(getSupportFragmentManager());
         adapter.addFragment(rootFragment, getString(R.string.title_lib));
@@ -259,7 +240,7 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
         return true;
     }
 
-    public void replaceMenu(){
+    public void replaceMenu() {
 
     }
 
@@ -269,13 +250,13 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
 
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.action_selection:
                 //Toast.makeText(this,"SELECT ALL",Toast.LENGTH_SHORT).show();
                 fragmentMultiSelection.toggleSelectAll();
                 break;
             case R.id.action_favorites:
-               // Toast.makeText(this,"FAVORITE ALL",Toast.LENGTH_SHORT).show();
+                // Toast.makeText(this,"FAVORITE ALL",Toast.LENGTH_SHORT).show();
                 fragmentMultiSelection.favoriteItems();
                 break;
             case R.id.action_delete:
@@ -283,7 +264,7 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
                 fragmentMultiSelection.deleteItems();
                 break;
             case R.id.action_information:
-                Intent intent = new Intent(this,AboutActivity.class);
+                Intent intent = new Intent(this, AboutActivity.class);
                 startActivity(intent);
                 break;
 /*            case R.id.action_buttons_toggle:
@@ -303,31 +284,31 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
         return super.onOptionsItemSelected(item);
     }
 
-/*    private void saveSharedPrefBoolean(String key, Boolean value ){
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
-        SharedPreferences.Editor  editor = sharedPreferences.edit();
-        editor.putBoolean(key,value);
-        editor.apply();
-    }*/
-    public void updateFabFunction(AbstractFragment fragment,boolean isFabFor){
+    /*    private void saveSharedPrefBoolean(String key, Boolean value ){
+            SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
+            SharedPreferences.Editor  editor = sharedPreferences.edit();
+            editor.putBoolean(key,value);
+            editor.apply();
+        }*/
+    public void updateFabFunction(AbstractFragment fragment, boolean isFabFor) {
         System.out.println("Update function");
         FloatingActionButton floatingActionButton = (FloatingActionButton) findViewById(R.id.fab_add);
-        if(!(fragment instanceof FavoriteFragment)){
+        if (!(fragment instanceof FavoriteFragment)) {
             isFabForFavorite = isFabFor;
-        if(this.isFabForDelete != isFabFor) {
-            this.isFabForDelete = isFabFor;
-            floatingActionButton.hide(true);
-            if (this.isFabForDelete) {
-                System.out.println("FAB for delete");
-                floatingActionButton.setImageResource(R.drawable.delete_hover);
+            if (this.isFabForDelete != isFabFor) {
+                this.isFabForDelete = isFabFor;
+                floatingActionButton.hide(true);
+                if (this.isFabForDelete) {
+                    System.out.println("FAB for delete");
+                    floatingActionButton.setImageResource(R.drawable.delete_hover);
 
-            } else {
-                System.out.println("FAB for create");
-                floatingActionButton.setImageResource(R.drawable.create);
+                } else {
+                    System.out.println("FAB for create");
+                    floatingActionButton.setImageResource(R.drawable.create);
+                }
+                floatingActionButton.show(true);
             }
-            floatingActionButton.show(true);
-        }
-    }else if(this.isFabForFavorite != isFabFor) {
+        } else if (this.isFabForFavorite != isFabFor) {
             isFabForDelete = isFabFor;
             System.out.println("FabForFavorite: " + isFabFor);
             this.isFabForFavorite = isFabFor;
@@ -343,41 +324,39 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
         }
         fragmentMultiSelection = fragment;
     }
+
     @Override
     public void onClick(View v) {
         Intent intent;
-        if(!isFabForDelete && !isFabForFavorite)
-        switch (v.getId()) {
-            case R.id.fab_add:
-                System.out.println(adapter.getItem(mViewPager.getCurrentItem()));
-                if (adapter.getItem(mViewPager.getCurrentItem()) instanceof RootFragment) {
-                    if (rootFragment.getFragmentManager().findFragmentById(R.id.frame_root) instanceof PoetsFragment) {
-                        System.out.println("New Author");
-                        intent = new Intent(this, NewAuthorActivity.class);
-                        startActivityForResult(intent, REQUEST_ADD_NEW_AUTHOR);
-                        tracker.send(new HitBuilders.EventBuilder().setCategory("Action").setAction("Add new folder").build());
+        if (!isFabForDelete && !isFabForFavorite)
+            switch (v.getId()) {
+                case R.id.fab_add:
+                    System.out.println(adapter.getItem(mViewPager.getCurrentItem()));
+                    if (adapter.getItem(mViewPager.getCurrentItem()) instanceof RootFragment) {
+                        if (rootFragment.getFragmentManager().findFragmentById(R.id.frame_root) instanceof PoetsFragment) {
+                            System.out.println("New Author");
+                            intent = new Intent(this, NewAuthorActivity.class);
+                            startActivityForResult(intent, REQUEST_ADD_NEW_AUTHOR);
+                        } else {
+                            System.out.println("new Poems");
+                            intent = new Intent(this, NewPoemActivity.class);
+                            intent.putExtra(KEY_AUTHOR, getViewPagerTitle());
+                            startActivityForResult(intent, REQUEST_ADD_NEW_POEM);
+                        }
                     } else {
-                        tracker.send(new HitBuilders.EventBuilder().setCategory("Action").setAction("Add new poem").build());
-                        System.out.println("new Poems");
+                        System.out.println("new Favorite");
                         intent = new Intent(this, NewPoemActivity.class);
-                        intent.putExtra(KEY_AUTHOR,getViewPagerTitle());
-                        startActivityForResult(intent,REQUEST_ADD_NEW_POEM);
+                        intent.putExtra(KEY_AUTHOR, getString(R.string.app_name));
+                        startActivityForResult(intent, REQUEST_ADD_NEW_FAVORITE);
                     }
-                } else {
-                    tracker.send(new HitBuilders.EventBuilder().setCategory("Action").setAction("Add new favorite").build());
-                    System.out.println("new Favorite");
-                    intent = new Intent(this, NewPoemActivity.class);
-                    intent.putExtra(KEY_AUTHOR,getString(R.string.app_name));
-                    startActivityForResult(intent,REQUEST_ADD_NEW_FAVORITE);
-                }
-                break;
-            default:
-                break;
-        }
-        else if(isFabForDelete && mViewPager.getCurrentItem() == 0){
-           // Toast.makeText(this,"DELETE",Toast.LENGTH_SHORT).show();
+                    break;
+                default:
+                    break;
+            }
+        else if (isFabForDelete && mViewPager.getCurrentItem() == 0) {
+            // Toast.makeText(this,"DELETE",Toast.LENGTH_SHORT).show();
             fragmentMultiSelection.deleteItems();
-        }else if (isFabForFavorite && mViewPager.getCurrentItem() == 1){
+        } else if (isFabForFavorite && mViewPager.getCurrentItem() == 1) {
             //Toast.makeText(this,"FAVORITE ALL",Toast.LENGTH_SHORT).show();
             fragmentMultiSelection.favoriteItems();
         }
@@ -388,9 +367,9 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_ADD_NEW_AUTHOR && resultCode == RESULT_OK) {
             String s = data.getStringExtra(KEY_AUTHOR);
-            long resultId = data.getLongExtra(KEY_ID,-777L);
+            long resultId = data.getLongExtra(KEY_ID, -777L);
             System.out.println("name after save: " + s + " id: " + resultId);
-            if(resultId == -777L){
+            if (resultId == -777L) {
                 System.out.println("FAIL");
                 return;
             }
@@ -398,17 +377,18 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
             //int n = sqlWorker.getRowNumber(s);
             int n = sqlWorker.getRowNumber(resultId);
             ((PoetsFragment) rootFragment.getFragmentManager().findFragmentById(R.id.frame_root)).updateValues(n);
-        }else if(requestCode == REQUEST_ADD_NEW_FAVORITE && resultCode == RESULT_OK){
+        } else if (requestCode == REQUEST_ADD_NEW_FAVORITE && resultCode == RESULT_OK) {
             String s = data.getStringExtra(KEY_TITLE);
             System.out.println("title: " + s);
-            int n = sqlWorker.getRowPoemNumber(null,s);
+            int n = sqlWorker.getRowPoemNumber(null, s);
             System.out.println("number: " + n);
-            ((FavoriteFragment) adapter.getItem(mViewPager.getCurrentItem())).updateValues(n,true);
-        }else if(requestCode == REQUEST_ADD_NEW_POEM && resultCode == RESULT_OK){
+            ((FavoriteFragment) adapter.getItem(mViewPager.getCurrentItem())).updateValues(n, true);
+        } else if (requestCode == REQUEST_ADD_NEW_POEM && resultCode == RESULT_OK) {
             String s = data.getStringExtra(KEY_TITLE);
             System.out.println("title: " + s);
-            int n = sqlWorker.getRowPoemNumber(data.getStringExtra(KEY_AUTHOR),s);
+            int n = sqlWorker.getRowPoemNumber(data.getStringExtra(KEY_AUTHOR), s);
             System.out.println("number: " + n);
-            ((PoemsFragment) rootFragment.getFragmentManager().findFragmentById(R.id.frame_root)).updateValues(n);        }
+            ((PoemsFragment) rootFragment.getFragmentManager().findFragmentById(R.id.frame_root)).updateValues(n);
+        }
     }
 }

@@ -3,14 +3,6 @@ package com.wgjuh.byheart.adapters;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.PopupMenu;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -20,11 +12,18 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.appcompat.widget.PopupMenu;
+import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.squareup.picasso.Picasso;
-import com.wgjuh.byheart.AnalyticsApp;
 import com.wgjuh.byheart.Data;
 import com.wgjuh.byheart.NewAuthorActivity;
 import com.wgjuh.byheart.Values;
@@ -48,7 +47,6 @@ public class PoetsRecyclerView extends RecyclerView.Adapter<PoetsRecyclerView.Vi
     private Boolean multiSelection;
     private SparseBooleanArray sparseBooleanArray;
     private Tracker tracker;
-    private AnalyticsApp analyticsApp;
 
 
     public PoetsRecyclerView(Fragment context, Values values, Picasso picasso) {
@@ -66,8 +64,6 @@ public class PoetsRecyclerView extends RecyclerView.Adapter<PoetsRecyclerView.Vi
         this.ids = values.getIds();
         this.multiSelection = multiSelection;
         this.sparseBooleanArray = sparseBooleanArray;
-        analyticsApp = (AnalyticsApp) context.getActivity().getApplication();
-        tracker = analyticsApp.getDefaultTracker();
     }
 
     @Override
@@ -92,13 +88,13 @@ public class PoetsRecyclerView extends RecyclerView.Adapter<PoetsRecyclerView.Vi
         int id = getId(position);
         if (id != 0) {
             System.out.println("load image from resources");
-            Glide.with(context).load(id).centerCrop().into(holder.imageView);
+            Glide.with(context.getContext()).load(id).centerCrop().into(holder.imageView);
         } else {
             System.out.println("load image from sdcard");
             String adress = photos.get(position);
 
             //todo getDrawable deprecated but i have no other for my api lvl
-            Glide.with(context).load("file:///" + adress).placeholder(context.getResources().getDrawable(R.drawable.ic_launcher_app)).crossFade().centerCrop() // resizes the image to these dimensions (in pixel)
+            Glide.with(context.getContext()).load("file:///" + adress).placeholder(context.getResources().getDrawable(R.drawable.ic_launcher_app)).crossFade().centerCrop() // resizes the image to these dimensions (in pixel)
                     .into(holder.imageView);
         }
         setViewSelected(holder, position);

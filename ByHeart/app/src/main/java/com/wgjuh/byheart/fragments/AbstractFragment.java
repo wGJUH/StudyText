@@ -1,7 +1,6 @@
 package com.wgjuh.byheart.fragments;
 
-import android.support.v4.app.Fragment;
-import android.util.SparseBooleanArray;
+import androidx.fragment.app.Fragment;
 
 /**
  * Created by wGJUH on 02.11.2016.

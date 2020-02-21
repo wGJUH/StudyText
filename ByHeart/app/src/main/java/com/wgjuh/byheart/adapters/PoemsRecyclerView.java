@@ -3,23 +3,18 @@ package com.wgjuh.byheart.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Typeface;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.SparseBooleanArray;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.google.android.gms.analytics.Tracker;
-import com.wgjuh.byheart.AnalyticsApp;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.wgjuh.byheart.Data;
 import com.wgjuh.byheart.SqlWorker;
 import com.wgjuh.byheart.StudyPoem;
@@ -28,7 +23,6 @@ import com.wgjuh.byheart.Values;
 import com.wgjuh.byheart.fragments.AbstractFragment;
 import com.wgjuh.byheart.fragments.FavoriteFragment;
 import com.wgjuh.byheart.fragments.PoemsFragment;
-import com.wgjuh.byheart.fragments.PoetsFragment;
 import com.wgjuh.byheart.myapplication.R;
 
 import java.util.ArrayList;

@@ -44,6 +44,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     implementation "androidx.appcompat:appcompat:$appcompat_version"
+    implementation "com.google.android.material:material:$appcompat_version"
     implementation "androidx.recyclerview:recyclerview:$appcompat_version"
     implementation "androidx.cardview:cardview:1.0.0"
     implementation 'com.squareup.picasso:picasso:2.6.0-SNAPSHOT'

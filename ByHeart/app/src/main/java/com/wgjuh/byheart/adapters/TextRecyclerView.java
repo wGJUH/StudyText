@@ -1,14 +1,6 @@
 package com.wgjuh.byheart.adapters;
 
 import android.content.Context;
-import android.graphics.Typeface;
-import android.net.Uri;
-import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
 import android.util.TypedValue;
@@ -16,15 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.squareup.picasso.Picasso;
-import com.wgjuh.byheart.Data;
-import com.wgjuh.byheart.Values;
-import com.wgjuh.byheart.fragments.PoemsFragment;
-import com.wgjuh.byheart.myapplication.BuildConfig;
 import com.wgjuh.byheart.myapplication.R;
 
 import java.util.ArrayList;

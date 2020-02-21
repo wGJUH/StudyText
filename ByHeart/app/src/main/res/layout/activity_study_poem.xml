@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -10,14 +10,14 @@
     android:fitsSystemWindows="true"
     tools:context="com.wgjuh.byheart.StudyPoem">
 
-    <android.support.design.widget.AppBarLayout
+    <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar_study"
         android:layout_width="match_parent"
         android:layout_height="64dp"
         android:theme="@style/AppTheme.AppBarOverlay"
         app:elevation="4dp">
 
-        <android.support.v7.widget.Toolbar
+        <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
@@ -33,8 +33,8 @@
             android:singleLine="true"
             android:gravity="center_vertical|start"
             android:textSize="20sp"/>
-        </android.support.v7.widget.Toolbar>
-    </android.support.design.widget.AppBarLayout>
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
 
     <include
         layout="@layout/content_study_poem" />
@@ -88,4 +88,4 @@
             android:src="@drawable/pencil"/>
 
     </com.github.clans.fab.FloatingActionMenu>
-</android.support.design.widget.CoordinatorLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

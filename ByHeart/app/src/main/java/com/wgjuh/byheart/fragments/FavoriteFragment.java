@@ -2,12 +2,6 @@ package com.wgjuh.byheart.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.OrientationHelper;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.SparseBooleanArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -15,9 +9,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.OrientationHelper;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
-import com.wgjuh.byheart.AnalyticsApp;
 import com.wgjuh.byheart.SqlWorker;
 import com.wgjuh.byheart.TabbedActivity;
 import com.wgjuh.byheart.Values;
@@ -45,7 +44,6 @@ public class FavoriteFragment extends AbstractFragment {
     private Toolbar toolbar;
     private TextView toolbarTextView;
     private Tracker tracker;
-    private AnalyticsApp analyticsApp;
 
     public FavoriteFragment() {
 
@@ -58,16 +56,14 @@ public class FavoriteFragment extends AbstractFragment {
         context = getContext();
         sqlWorker = new SqlWorker(context);
         frameView = LayoutInflater.from(context).inflate(R.layout.fragment_poems, null, false);
-        recyclerView = (RecyclerView) frameView.findViewById(R.id.recyler_list_poems);
+        recyclerView = frameView.findViewById(R.id.recyler_list_poems);
         recyclerView.setLayoutManager(new LinearLayoutManager(context, OrientationHelper.VERTICAL, false));
         setValues();
         myPoemsRecyclerView = new PoemsRecyclerView(context, sparseBooleanArray, values, this);
         recyclerView.setAdapter(myPoemsRecyclerView);
-        toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+        toolbar = getActivity().findViewById(R.id.toolbar);
         if (toolbar != null)
-            toolbarTextView = (TextView) toolbar.findViewById(R.id.toolbar_title);
-        analyticsApp = (AnalyticsApp) getActivity().getApplication();
-        tracker = analyticsApp.getDefaultTracker();
+            toolbarTextView = toolbar.findViewById(R.id.toolbar_title);
     }
 
     private void setValues() {

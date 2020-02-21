@@ -3,13 +3,14 @@ package com.wgjuh.byheart;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
-import android.widget.TextView;
+
+import androidx.appcompat.widget.AppCompatTextView;
 
 /**
  * Created by wGJUH on 31.10.2016.
  */
 
-public class CustomTextView extends TextView {
+public class CustomTextView extends AppCompatTextView {
     public CustomTextView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init();
