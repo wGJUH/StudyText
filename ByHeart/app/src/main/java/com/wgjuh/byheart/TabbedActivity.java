@@ -25,8 +25,6 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
 import com.wgjuh.byheart.adapters.FragmentAdapter;
 import com.wgjuh.byheart.fragments.AbstractFragment;
 import com.wgjuh.byheart.fragments.FavoriteFragment;
@@ -51,8 +49,7 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
     private boolean isFabForDelete = false;
     private boolean isFabForFavorite = false;
     private AbstractFragment fragmentMultiSelection;
-    private AnalyticsApp analyticsApp;
-    private Tracker tracker;
+
     @Override
     public void onBackPressed() {
         if(mViewPager.getCurrentItem() != 0){
@@ -69,8 +66,6 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.tabbed_activity);
-        analyticsApp = (AnalyticsApp)getApplication();
-        tracker = analyticsApp.getDefaultTracker();
 
         sqlWorker = new SqlWorker(this);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -124,14 +119,6 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     @Override
-    protected void onResume() {
-        //
-        super.onResume();
-        tracker.setScreenName("Screen: TabbedScreen");
-        tracker.send(new HitBuilders.ScreenViewBuilder().build());
-    }
-
-    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if(requestCode == Data.PERMISSION_REQUEST_CODE && grantResults.length == 2){
             if(ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE) && (grantResults[0] != PackageManager.PERMISSION_GRANTED || grantResults[1] != PackageManager.PERMISSION_GRANTED) ){
@@ -175,28 +162,18 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
                     if (rootFragment.getFragmentManager().findFragmentById(R.id.frame_root) instanceof PoetsFragment){
                         PoetsFragment poetsFragment = ((PoetsFragment)rootFragment.getFragmentManager().findFragmentById(R.id.frame_root));
                         poetsFragment.updateToolbar(poetsFragment.getMultiSelection());
-                        tracker.setScreenName("PoetsFragment");
-                        tracker.send(new HitBuilders.ScreenViewBuilder().build());
                     }else{
                         PoemsFragment poemsFragment = ((PoemsFragment)rootFragment.getFragmentManager().findFragmentById(R.id.frame_root));
                         poemsFragment.updateToolbar(poemsFragment.getMultiSelection());
-                        tracker.setScreenName("PoemsFragment");
-                        tracker.send(new HitBuilders.ScreenViewBuilder().build());
                     }
                     if(isFabForDelete)
                         floatingActionButton.setImageResource(R.drawable.delete_hover);
                 }else{
                     FavoriteFragment favoriteFragment = ((FavoriteFragment)adapter.getItem(position));
                     favoriteFragment.updateToolbar(favoriteFragment.getMultiSelection());
-                    tracker.setScreenName("FavoriteFragment");
-                    tracker.send(new HitBuilders.ScreenViewBuilder().build());
                     if(isFabForFavorite)
                         floatingActionButton.setImageResource(R.drawable.favoritewhite);
                 }
-                tracker.send(new HitBuilders.EventBuilder()
-                        .setCategory("Action")
-                        .setAction("Go to tab: " + adapter.getItem(position))
-                        .build());
             }
 
             @Override
@@ -355,16 +332,13 @@ public class TabbedActivity extends AppCompatActivity implements View.OnClickLis
                         System.out.println("New Author");
                         intent = new Intent(this, NewAuthorActivity.class);
                         startActivityForResult(intent, REQUEST_ADD_NEW_AUTHOR);
-                        tracker.send(new HitBuilders.EventBuilder().setCategory("Action").setAction("Add new folder").build());
                     } else {
-                        tracker.send(new HitBuilders.EventBuilder().setCategory("Action").setAction("Add new poem").build());
                         System.out.println("new Poems");
                         intent = new Intent(this, NewPoemActivity.class);
                         intent.putExtra(KEY_AUTHOR,getViewPagerTitle());
                         startActivityForResult(intent,REQUEST_ADD_NEW_POEM);
                     }
                 } else {
-                    tracker.send(new HitBuilders.EventBuilder().setCategory("Action").setAction("Add new favorite").build());
                     System.out.println("new Favorite");
                     intent = new Intent(this, NewPoemActivity.class);
                     intent.putExtra(KEY_AUTHOR,getString(R.string.app_name));

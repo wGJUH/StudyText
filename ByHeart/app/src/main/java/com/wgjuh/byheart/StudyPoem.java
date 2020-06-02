@@ -29,8 +29,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.github.clans.fab.FloatingActionMenu;
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
 import com.wgjuh.byheart.adapters.TextRecyclerView;
 import com.wgjuh.byheart.myapplication.R;
 
@@ -65,22 +63,11 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
     ProgressDialog pbCount;
     ListView listView;
     Toolbar toolbar;
-    private AnalyticsApp analyticsApp;
-    private Tracker tracker;
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        tracker.setScreenName("StudyPoem");
-        tracker.send(new HitBuilders.ScreenViewBuilder().build());
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_study_poem);
-        analyticsApp = (AnalyticsApp) getApplication();
-        tracker = analyticsApp.getDefaultTracker();
         handler = new Handler();
         floatingActionMenu = (FloatingActionMenu) findViewById(R.id.fab_menu);
         sqlWorker = new SqlWorker(this);
@@ -305,10 +292,6 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
     }
 
     private void clearAllHiden() {
-        tracker.send(new HitBuilders.EventBuilder()
-                .setCategory("Action")
-                .setAction("Show all words")
-                .build());
         for (int i = 0; i < spannableBorders.size(); i++)
             for (int j = 0; j < spannableBorders.get(i).size(); j++) {
                 Point point = spannableBorders.get(i).get(j);
@@ -386,10 +369,6 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
     }
 
     private void showWordsByProc() {
-        tracker.send(new HitBuilders.EventBuilder()
-                .setCategory("Action")
-                .setAction("Show words by proc")
-                .build());
         int emptyRows = 0;
         boolean emptys = true;
         int showNow = 0;
@@ -492,10 +471,6 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
     }
 
     private void hideWordsByProc() {
-        tracker.send(new HitBuilders.EventBuilder()
-                .setCategory("Action")
-                .setAction("Hide words")
-                .build());
         int start = -1, end = -1;
         Point point;
         for (int i = 0; i < hided.size(); i++) {
@@ -571,11 +546,6 @@ public class StudyPoem extends AppCompatActivity implements Data, View.OnClickLi
                 saveSharedPrefBoolean(KEY_BUTTONS_PREFERENCES, !check);
                 hideShowFabMenu(!check);
                 item.setChecked(!check);
-                tracker.send(new HitBuilders.EventBuilder()
-                        .setCategory("Action")
-                        .setAction("toggle")
-                        .setLabel("bottom keybord" + item.isChecked())
-                        .build());
                 break;
             default:
                 break;

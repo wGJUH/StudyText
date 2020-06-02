@@ -10,7 +10,6 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -21,10 +20,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
 import com.squareup.picasso.Picasso;
-import com.wgjuh.byheart.AnalyticsApp;
 import com.wgjuh.byheart.Data;
 import com.wgjuh.byheart.NewAuthorActivity;
 import com.wgjuh.byheart.Values;
@@ -47,8 +43,7 @@ public class PoetsRecyclerView extends RecyclerView.Adapter<PoetsRecyclerView.Vi
     private Picasso picasso;
     private Boolean multiSelection;
     private SparseBooleanArray sparseBooleanArray;
-    private Tracker tracker;
-    private AnalyticsApp analyticsApp;
+
 
 
     public PoetsRecyclerView(Fragment context, Values values, Picasso picasso) {
@@ -66,8 +61,6 @@ public class PoetsRecyclerView extends RecyclerView.Adapter<PoetsRecyclerView.Vi
         this.ids = values.getIds();
         this.multiSelection = multiSelection;
         this.sparseBooleanArray = sparseBooleanArray;
-        analyticsApp = (AnalyticsApp) context.getActivity().getApplication();
-        tracker = analyticsApp.getDefaultTracker();
     }
 
     @Override
@@ -154,8 +147,6 @@ public class PoetsRecyclerView extends RecyclerView.Adapter<PoetsRecyclerView.Vi
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        tracker.send(new HitBuilders.EventBuilder().setCategory("Action")
-                                .setAction("Edit Folder").build());
                         Intent intent = new Intent(context.getContext(), NewAuthorActivity.class);
                         System.out.println("position: " + getAdapterPosition());
                         intent.putExtra(Data.KEY_AUTHOR, names.get(getAdapterPosition()));
@@ -189,7 +180,6 @@ public class PoetsRecyclerView extends RecyclerView.Adapter<PoetsRecyclerView.Vi
 
         @Override
         public boolean onLongClick(View v) {
-            tracker.send(new HitBuilders.EventBuilder().setCategory("Action").setAction("MultiSelectionFolders").build());
            /* *
              * todo удалить после тестирования*/
             //toggleSelecction((CardView) v);

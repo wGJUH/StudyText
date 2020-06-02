@@ -8,16 +8,15 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
-        android:name="com.wgjuh.byheart.AnalyticsApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher_app"
         android:label="@string/app_name"
         android:supportsRtl="true"
+        android:screenOrientation="portrait"
         android:theme="@style/AppTheme">
         <activity
             android:name="com.wgjuh.byheart.TabbedActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,17 +27,14 @@
         <activity
             android:name="com.wgjuh.byheart.NewAuthorActivity"
             android:label="@string/title_activity_new_author"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name="com.wgjuh.byheart.NewPoemActivity"
             android:label="@string/title_activity_new_poem"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name="com.wgjuh.byheart.StudyPoem"
             android:label="@string/title_activity_study_poem"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name="com.wgjuh.byheart.AboutActivity"></activity>
     </application>

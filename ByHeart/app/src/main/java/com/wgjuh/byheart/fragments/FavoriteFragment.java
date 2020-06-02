@@ -16,8 +16,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
-import com.wgjuh.byheart.AnalyticsApp;
 import com.wgjuh.byheart.SqlWorker;
 import com.wgjuh.byheart.TabbedActivity;
 import com.wgjuh.byheart.Values;
@@ -44,8 +42,7 @@ public class FavoriteFragment extends AbstractFragment {
     private Boolean multiSelection = false;
     private Toolbar toolbar;
     private TextView toolbarTextView;
-    private Tracker tracker;
-    private AnalyticsApp analyticsApp;
+
 
     public FavoriteFragment() {
 
@@ -66,8 +63,6 @@ public class FavoriteFragment extends AbstractFragment {
         toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
         if (toolbar != null)
             toolbarTextView = (TextView) toolbar.findViewById(R.id.toolbar_title);
-        analyticsApp = (AnalyticsApp) getActivity().getApplication();
-        tracker = analyticsApp.getDefaultTracker();
     }
 
     private void setValues() {
@@ -96,11 +91,6 @@ public class FavoriteFragment extends AbstractFragment {
         else myPoemsRecyclerView.notifyDataSetChanged();
         multiSelection = false;
         sparseBooleanArray.clear();
-        tracker.send(new HitBuilders.EventBuilder()
-                .setCategory("Action")
-                .setAction("Update favorites")
-                .build());
-        //setMultiSelection(false,0);
     }
 
     @Override
