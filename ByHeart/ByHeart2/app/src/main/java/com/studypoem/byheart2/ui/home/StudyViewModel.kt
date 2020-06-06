@@ -5,6 +5,7 @@ import android.content.res.Resources
 import android.graphics.Paint
 import android.graphics.Point
 import android.graphics.Typeface
+import android.provider.UserDictionary
 import android.text.Spannable
 import android.text.Spanned
 import android.text.style.BackgroundColorSpan
@@ -31,9 +32,12 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.StringBuilder
+import kotlin.math.log
 
 const val PATTERN_STRING = "\\n\\r|\\r\\n|\\r|\\n|\\Z|\\n\\n"
 const val PATTERN_WORD = "[A-zA-Z0-9а-яА-ЯёЁ]+"
+
+const val HIDDEN_PERCENT = 20
 
 sealed class Result {
     object Loading : Result()
@@ -46,9 +50,12 @@ class StudyViewModel : ViewModel() {
         "handler catch an error: ".loge(TAG, exception)
     }
     private val _text: MutableLiveData<String> = MutableLiveData(getTestText())
+    private val update : MutableLiveData<Boolean> = MutableLiveData()
+
     private var wordsCount: Int = 0
     private var lines: List<Line> = listOf()
 
+    val updateObserver : LiveData<Boolean> = update
     val text: LiveData<String> = _text
     val preparedText: LiveData<Result> = _text.switchMap {
         liveData(context = viewModelScope.coroutineContext + Dispatchers.IO + handler) {
@@ -86,6 +93,7 @@ class StudyViewModel : ViewModel() {
                     wordsCount = it.sumBy { it.wordBounds.size }
                 }
         }.join()
+        "toLines: $wordsCount".logd(TAG)
         return lines
     }
 
@@ -181,6 +189,22 @@ class StudyViewModel : ViewModel() {
             "Cras quis dui et nisl laoreet tincidunt et nec purus. Aenean ut erat ipsum. In euismod pulvinar libero in euismod. Donec sagittis imperdiet eros, a ornare elit ultrices ut. Aenean eget quam diam. Duis id maximus ex, id dignissim justo. Curabitur tincidunt nisl eget diam ornare auctor et non orci. Maecenas iaculis arcu in congue finibus. Aliquam erat volutpat. Donec scelerisque venenatis elit, at vestibulum purus euismod eget. Nunc hendrerit elit sed dolor pellentesque, ut elementum sem lobortis. Sed odio sem, posuere vel iaculis ut, accumsan vel nulla.\n" +
             "\n" +
             "Praesent non nisi sit amet quam cursus cursus quis eu lorem. Duis sagittis posuere orci, id ornare sem ullamcorper nec. Mauris orci turpis, sagittis in est quis, porta egestas urna. Curabitur et commodo enim, nec semper dolor. Maecenas placerat tortor sed felis volutpat scelerisque. Quisque risus odio, euismod mattis tellus sed, posuere semper ligula. Maecenas varius tellus orci, nec tempor ex elementum ut."
+
+    fun onHideClicked() {
+
+        var wordsToClose = wordsCount * HIDDEN_PERCENT / 100
+        val wordNotClosed = lines.sumBy { it.wordBounds.size }
+        wordsToClose = wordsToClose.coerceAtMost(wordNotClosed)
+        "onHideClicked: $wordsToClose $wordNotClosed".logd(TAG)
+        var i = 0
+        while (wordsToClose > 0){
+            if(lines[i++ % lines.size].hideRandom()){
+                wordsToClose -= 1
+            }
+        }
+        update.postValue(true)
+
+    }
 
     companion object {
         private val TAG = StudyViewModel::class.java.simpleName
